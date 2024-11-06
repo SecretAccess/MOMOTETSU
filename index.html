@@ -3,75 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>30万円プレゼントキャンペーン - 招待専用</title>
+    <title>特別な真理への招待</title>
     <style>
         body {
-            background: linear-gradient(135deg, #1e1e1e, #3a3a3a);
-            color: #f9f9f9;
+            background: radial-gradient(circle, #2e003e, #000000);
+            color: #eee;
             text-align: center;
-            font-family: "Verdana", sans-serif;
+            font-family: "Georgia", serif;
             overflow-x: hidden;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background: rgba(51, 51, 51, 0.9);
-            box-shadow: 0 4px 12px rgba(255, 223, 0, 0.5);
+            background: rgba(0, 0, 0, 0.85);
+            box-shadow: 0 4px 12px rgba(128, 0, 128, 0.7);
             border-radius: 12px;
             margin-top: 50px;
             position: relative;
             z-index: 10;
         }
         h1 {
-            color: #ffd700;
-            font-size: 34px;
+            color: #aa00ff;
+            font-size: 36px;
             margin-bottom: 20px;
-            text-shadow: 1px 1px 6px rgba(255, 223, 0, 0.8);
+            text-shadow: 1px 1px 8px rgba(170, 0, 255, 0.8);
         }
         .description {
-            font-size: 20px;
+            font-size: 18px;
             line-height: 1.6;
-            color: #d3d3d3;
+            color: #c1c1c1;
             margin-bottom: 30px;
         }
         .start-button, .next-button, .popup-button {
             display: inline-block;
             padding: 15px 30px;
-            font-size: 20px;
+            font-size: 18px;
             color: #fff;
-            background-color: #b8860b;
-            border: 2px solid #ffd700;
+            background-color: #4b0082;
+            border: 2px solid #aa00ff;
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(255, 215, 0, 0.6);
+            box-shadow: 0 4px 10px rgba(170, 0, 255, 0.6);
             margin: 10px;
         }
         .start-button:hover, .next-button:hover, .popup-button:hover {
-            background-color: #daa520;
+            background-color: #551a8b;
             transform: scale(1.05);
         }
         #result, #popup, #final-message, #loading {
-            font-size: 24px;
+            font-size: 20px;
             margin-top: 30px;
-            color: red;
+            color: #ff4500;
             font-weight: bold;
             display: none;
         }
         #loading {
-            color: #ffd700;
-            text-shadow: 0px 0px 6px rgba(255, 223, 0, 0.7);
+            color: #aa00ff;
+            text-shadow: 0px 0px 6px rgba(170, 0, 255, 0.7);
             animation: blink 1s infinite;
         }
         .highlight {
-            color: #ffd700;
+            color: #aa00ff;
             font-weight: bold;
         }
-        .official-badge {
+        .badge {
             font-size: 14px;
-            color: #333;
-            background: #ffd700;
+            color: #000;
+            background: #aa00ff;
             padding: 5px 10px;
             border-radius: 5px;
             display: inline-block;
@@ -83,7 +83,7 @@
             position: absolute;
             width: 10px;
             height: 10px;
-            background-color: gold;
+            background-color: #ff00ff;
             animation: confetti-fall linear infinite;
             z-index: 100;
         }
@@ -96,54 +96,40 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
-        /* 招待者情報のスタイル */
-        .invitation-info {
-            font-size: 18px;
-            color: #d3d3d3;
-            margin-bottom: 30px;
-        }
-        .inviter, .invitee {
-            font-weight: bold;
-            color: #ffd700;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="official-badge">招待専用キャンペーン</div>
-        <h1>30万プレゼント<br>キャンペーン！</h1>
-        <p class="invitation-info">
-            招待者: <span class="inviter">日下望史</span><br>
-            被招待者: <span class="invitee">日下智恵様</span>
-        </p>
-        <p class="description">日頃のご愛顧に感謝し、抽選で<b class="highlight">30万円</b>が当たる特別キャンペーンを開催中です！下のボタンをクリックして、運試しをしてみましょう。</p>
+        <div class="badge">秘密の招待</div>
+        <h1>特別な真理への招待</h1>
+        <p class="description">心の奥深くに眠る真理と永遠の幸福への道が、<span class="highlight">あなた</span>に開かれます。<br>このページを開いたのは偶然ではありません...</p>
 
-        <button class="start-button" onclick="startLottery()">抽選スタート</button>
+        <button class="start-button" onclick="startJourney()">真理への道を開く</button>
 
         <p id="result"></p>
-        <p id="loading">特別な情報を検索中です...</p>
+        <p id="loading">深淵を覗き込んでいます...</p>
 
         <div id="popup">
-            <p id="popup-message">お客さまだけの特別な情報が見つかりました！この情報を受け取りますか？</p>
+            <p id="popup-message">特別な真理の扉が今、あなたのために開かれました。この扉を開きますか？</p>
             <button class="popup-button" onclick="revealNextStep(true)">はい</button>
             <button class="popup-button" onclick="revealNextStep(false)">いいえ</button>
         </div>
 
         <p id="final-message"></p>
-        <button class="next-button" id="nextButton" onclick="revealNextStep(true)" style="display: none;">続きを見る</button>
+        <button class="next-button" id="nextButton" onclick="revealNextStep(true)" style="display: none;">真実を見る</button>
     </div>
 
     <script>
         let revealStep = 0;
 
-        function startLottery() {
+        function startJourney() {
             const button = document.querySelector(".start-button");
             button.disabled = true;
-            button.style.backgroundColor = "#555";
-            button.innerText = "抽選中...";
+            button.style.backgroundColor = "#333";
+            button.innerText = "選ばれし者として進行中...";
 
             setTimeout(() => {
-                document.getElementById("result").innerText = "残念！ハズれてしまいました。";
+                document.getElementById("result").innerText = "道は険しく、真理には近づけませんでした...";
                 document.getElementById("result").style.display = "block";
                 button.style.display = "none";
 
@@ -165,19 +151,19 @@
             const nextButton = document.getElementById("nextButton");
 
             if (!isInterested && revealStep === 0) {
-                popupMessage.innerText = "本当は気になりますよね？";
+                popupMessage.innerText = "本当に大切なことに気づかないのですか？";
                 return;
             }
 
             if (revealStep === 0) {
                 popup.style.display = "none";
-                finalMessage.innerText = "実は2025年6月に…";
+                finalMessage.innerText = "すべての真理は、2025年6月に明かされるでしょう...";
                 finalMessage.style.display = "block";
                 nextButton.style.display = "inline-block";
             } else if (revealStep === 1) {
-                finalMessage.innerText = "実は莉緒が2025年6月に…";
+                finalMessage.innerText = "しかし、心を開かなければその先に何もありません。";
             } else if (revealStep === 2) {
-                finalMessage.innerText = "莉緒が2025年6月にお姉さんになります！";
+                finalMessage.innerText = "永遠の幸福の扉が、ついに今ここに...";
                 nextButton.style.display = "none";
                 startConfetti();
             }
@@ -203,7 +189,7 @@
         }
 
         function getRandomColor() {
-            const colors = ["gold", "orange", "red", "green", "blue"];
+            const colors = ["#ff00ff", "#aa00ff", "#9400d3", "#4b0082"];
             return colors[Math.floor(Math.random() * colors.length)];
         }
     </script>
