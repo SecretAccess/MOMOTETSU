@@ -1,1 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勝手に入力が出るサイト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        input {
+            font-size: 1.5em;
+            padding: 10px;
+            width: 80%;
+            max-width: 400px;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>勝手に入力が出るサイト</h1>
+    <p id="message">メッセージが自動で入力されます...</p>
+    <input type="text" id="autoInput" placeholder="ここに自動入力されます" readonly>
+
+    <script>
+        const messages = [
+            "こんにちは！", 
+            "これはドッキリです", 
+            "何も入力しなくても大丈夫", 
+            "楽しんでね！", 
+            "最後のメッセージです！"
+        ];
+
+        const inputElement = document.getElementById('autoInput');
+        let messageIndex = 0;
+        let charIndex = 0;
+        let currentMessage = '';
+
+        function typeMessage() {
+            if (messageIndex < messages.length) {
+                if (charIndex < messages[messageIndex].length) {
+                    currentMessage += messages[messageIndex].charAt(charIndex);
+                    inputElement.value = currentMessage;
+                    charIndex++;
+                    setTimeout(typeMessage, 100); // 次の文字を表示する間隔
+                } else {
+                    messageIndex++;
+                    charIndex = 0;
+                    currentMessage = '';
+                    setTimeout(typeMessage, 1500); // 次のメッセージに切り替える間隔
+                }
+            } else {
+                document.getElementById('message').textContent = "これでおしまい！ドッキリでした！";
+            }
+        }
+
+        window.onload = typeMessage;
+    </script>
+</body>
+</html>
 
