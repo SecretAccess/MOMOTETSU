@@ -19,6 +19,30 @@
                 document.getElementById("welcome").style.display = "block";
             }
         };
+
+        // リセットボタンの処理
+        function resetAccess() {
+            const password = prompt("リセットするにはパスワードを入力してください:");
+            
+            if (password === "0000") {
+                // パスワードが正しい場合に確認メッセージを表示
+                if (confirm("アクセス制限をリセットします。よろしいですか？")) {
+                    localStorage.removeItem('visited'); // 訪問フラグを削除
+                    alert("アクセス制限がリセットされました。再度アクセスが可能です。");
+                    location.reload(); // ページをリロードして更新
+                }
+            } else {
+                // パスワードが間違っている場合の警告
+                alert("パスワードが間違っています。");
+            }
+        }
+
+        // 再読み込みやページ離脱時に警告メッセージを表示
+        window.addEventListener("beforeunload", function (e) {
+            const message = "このページを再読み込みすると、再度アクセスできなくなります。本当にリロードしますか？";
+            e.returnValue = message; // 標準の方法
+            return message;           // 互換性のために追加
+        });
     </script>
 </head>
 <body>
@@ -30,5 +54,8 @@
         <h1>アクセスは一度きりです。</h1>
         <p>このページには再度アクセスできません。</p>
     </div>
+
+    <!-- 管理者用リセットボタン -->
+    <button onclick="resetAccess()">アクセス制限をリセット</button>
 </body>
 </html>
