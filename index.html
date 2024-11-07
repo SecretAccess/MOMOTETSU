@@ -3,195 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>特別な真理への招待</title>
+    <title>一度だけアクセスできるサイト</title>
     <style>
-        body {
-            background: radial-gradient(circle, #2e003e, #000000);
-            color: #eee;
-            text-align: center;
-            font-family: "Georgia", serif;
-            overflow-x: hidden;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            box-shadow: 0 4px 12px rgba(128, 0, 128, 0.7);
-            border-radius: 12px;
-            margin-top: 50px;
-            position: relative;
-            z-index: 10;
-        }
-        h1 {
-            color: #aa00ff;
-            font-size: 36px;
-            margin-bottom: 20px;
-            text-shadow: 1px 1px 8px rgba(170, 0, 255, 0.8);
-        }
-        .description {
-            font-size: 18px;
-            line-height: 1.6;
-            color: #c1c1c1;
-            margin-bottom: 30px;
-        }
-        .start-button, .next-button, .popup-button {
-            display: inline-block;
-            padding: 15px 30px;
-            font-size: 18px;
-            color: #fff;
-            background-color: #4b0082;
-            border: 2px solid #aa00ff;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(170, 0, 255, 0.6);
-            margin: 10px;
-        }
-        .start-button:hover, .next-button:hover, .popup-button:hover {
-            background-color: #551a8b;
-            transform: scale(1.05);
-        }
-        #result, #popup, #final-message, #loading {
-            font-size: 20px;
-            margin-top: 30px;
-            color: #ff4500;
-            font-weight: bold;
-            display: none;
-        }
-        #loading {
-            color: #aa00ff;
-            text-shadow: 0px 0px 6px rgba(170, 0, 255, 0.7);
-            animation: blink 1s infinite;
-        }
-        .highlight {
-            color: #aa00ff;
-            font-weight: bold;
-        }
-        .badge {
-            font-size: 14px;
-            color: #000;
-            background: #aa00ff;
-            padding: 5px 10px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        /* 紙吹雪のスタイル */
-        .confetti {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background-color: #ff00ff;
-            animation: confetti-fall linear infinite;
-            z-index: 100;
-        }
-        @keyframes confetti-fall {
-            0% { transform: translateY(-100vh) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
-        }
-        /* 点滅アニメーション */
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        #welcome, #restricted { display: none; }
     </style>
+    <script>
+        window.onload = function() {
+            // 初回アクセス済みかどうかをlocalStorageでチェック
+            if (localStorage.getItem('visited')) {
+                // アクセス済みの場合、制限メッセージを表示
+                document.getElementById("restricted").style.display = "block";
+            } else {
+                // 初回アクセスの場合、訪問フラグをセットし、ウェルカムメッセージを表示
+                localStorage.setItem('visited', 'true');
+                document.getElementById("welcome").style.display = "block";
+            }
+        };
+    </script>
 </head>
 <body>
-    <div class="container">
-        <div class="badge">秘密の招待</div>
-        <h1>特別な真理への招待</h1>
-        <p class="description">心の奥深くに眠る真理と永遠の幸福への道が、<span class="highlight">あなた</span>に開かれます。<br>このページを開いたのは偶然ではありません...</p>
-
-        <button class="start-button" onclick="startJourney()">真理への道を開く</button>
-
-        <p id="result"></p>
-        <p id="loading">深淵を覗き込んでいます...</p>
-
-        <div id="popup">
-            <p id="popup-message">特別な真理の扉が今、あなたのために開かれました。この扉を開きますか？</p>
-            <button class="popup-button" onclick="revealNextStep(true)">はい</button>
-            <button class="popup-button" onclick="revealNextStep(false)">いいえ</button>
-        </div>
-
-        <p id="final-message"></p>
-        <button class="next-button" id="nextButton" onclick="revealNextStep(true)" style="display: none;">真実を見る</button>
+    <div id="welcome">
+        <h1>ようこそ！このページは一度だけアクセス可能です。</h1>
+        <p>このページは一度アクセスすると再度アクセスできません。</p>
     </div>
-
-    <script>
-        let revealStep = 0;
-
-        function startJourney() {
-            const button = document.querySelector(".start-button");
-            button.disabled = true;
-            button.style.backgroundColor = "#333";
-            button.innerText = "選ばれし者として進行中...";
-
-            setTimeout(() => {
-                document.getElementById("result").innerText = "道は険しく、真理には近づけませんでした...";
-                document.getElementById("result").style.display = "block";
-                button.style.display = "none";
-
-                setTimeout(() => {
-                    document.getElementById("loading").style.display = "block";
-
-                    setTimeout(() => {
-                        document.getElementById("loading").style.display = "none";
-                        document.getElementById("popup").style.display = "block";
-                    }, 2000);
-                }, 1000);
-            }, 3000);
-        }
-
-        function revealNextStep(isInterested) {
-            const finalMessage = document.getElementById("final-message");
-            const popup = document.getElementById("popup");
-            const popupMessage = document.getElementById("popup-message");
-            const nextButton = document.getElementById("nextButton");
-
-            if (!isInterested && revealStep === 0) {
-                popupMessage.innerText = "本当に大切なことに気づかないのですか？";
-                return;
-            }
-
-            if (revealStep === 0) {
-                popup.style.display = "none";
-                finalMessage.innerText = "すべての真理は、2025年6月に明かされるでしょう...";
-                finalMessage.style.display = "block";
-                nextButton.style.display = "inline-block";
-            } else if (revealStep === 1) {
-                finalMessage.innerText = "しかし、あなたの協力がなければそれは成し遂げられません。";
-            } else if (revealStep === 2) {
-                finalMessage.innerText = "その暁には、莉緒がついに姉となることでしょう。";
-                nextButton.style.display = "none";
-                startConfetti();
-            }
-
-            revealStep++;
-        }
-
-        function startConfetti() {
-            for (let i = 0; i < 100; i++) {
-                createConfetti();
-            }
-        }
-
-        function createConfetti() {
-            const confetti = document.createElement("div");
-            confetti.classList.add("confetti");
-            confetti.style.left = Math.random() * window.innerWidth + "px";
-            confetti.style.backgroundColor = getRandomColor();
-            confetti.style.animationDuration = Math.random() * 3 + 2 + "s";
-            document.body.appendChild(confetti);
-
-            setTimeout(() => { confetti.remove(); }, 5000);
-        }
-
-        function getRandomColor() {
-            const colors = ["#ff00ff", "#aa00ff", "#9400d3", "#4b0082"];
-            return colors[Math.floor(Math.random() * colors.length)];
-        }
-    </script>
+    <div id="restricted">
+        <h1>アクセスは一度きりです。</h1>
+        <p>このページには再度アクセスできません。</p>
+    </div>
 </body>
 </html>
