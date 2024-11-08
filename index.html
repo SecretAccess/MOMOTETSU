@@ -11,35 +11,48 @@
         align-items: center;
         justify-content: center;
         height: 100vh;
-        background: linear-gradient(to bottom, #87CEEB, #F0E68C);
+        background-image: url('background.png');
+        background-size: cover;
+        overflow: hidden;
     }
 
     .pikmin-container {
         position: relative;
-        width: 150px;
-        height: 300px;
+        width: 200px;
+        height: 400px;
         cursor: pointer;
     }
 
     .pikmin {
         position: absolute;
         bottom: 0;
-        width: 80px;
-        height: 150px;
-        transition: transform 0.5s ease-in-out;
-    }
-
-    .pulled {
-        transform: translateY(-250px);
+        width: 100px;
+        transition: transform 0.3s ease-in-out;
+        transform-origin: bottom;
     }
 
     .leaf {
-        animation: sway 1s infinite alternate;
+        position: absolute;
+        top: -40px;
+        left: 30px;
+        width: 40px;
+        animation: leafSwing 2s infinite alternate;
     }
 
-    @keyframes sway {
+    @keyframes leafSwing {
         0% { transform: rotate(-10deg); }
         100% { transform: rotate(10deg); }
+    }
+
+    .pulled {
+        transform: translateY(-300px) scale(1.2);
+    }
+
+    .message {
+        margin-top: 20px;
+        font-size: 1.5em;
+        color: #fff;
+        text-shadow: 1px 1px 2px #000;
     }
 </style>
 </head>
@@ -47,36 +60,43 @@
 
 <h1>赤いピクミンを引っこ抜いてみよう！</h1>
 <div class="pikmin-container" id="pikminContainer">
-    <svg class="pikmin" id="pikmin" viewBox="0 0 64 128">
-        <!-- ピクミンの体 -->
-        <ellipse cx="32" cy="96" rx="20" ry="30" fill="red" />
-        <!-- ピクミンの目 -->
-        <circle cx="24" cy="80" r="4" fill="white" />
-        <circle cx="40" cy="80" r="4" fill="white" />
-        <circle cx="24" cy="80" r="2" fill="black" />
-        <circle cx="40" cy="80" r="2" fill="black" />
-        <!-- ピクミンの葉っぱ -->
-        <path class="leaf" d="M32 50 C20 20, 44 20, 32 0" fill="green" />
-    </svg>
+    <img src="pikmin_red.png" class="pikmin" id="pikmin" alt="赤いピクミン">
+    <img src="leaf.png" class="leaf" id="leaf" alt="葉っぱ">
 </div>
+<div class="message" id="message">クリックしてピクミンを引っこ抜こう！</div>
 
 <audio id="pullSound" src="pull.mp3"></audio>
+<audio id="bgm" src="pikmin_theme.mp3" loop></audio>
 
 <script>
     const pikmin = document.getElementById('pikmin');
+    const leaf = document.getElementById('leaf');
     const container = document.getElementById('pikminContainer');
     const pullSound = document.getElementById('pullSound');
+    const bgm = document.getElementById('bgm');
+    const message = document.getElementById('message');
+
+    let pulled = false;
 
     container.addEventListener('click', () => {
-        // ピクミンを引っこ抜くアニメーション
-        pikmin.classList.toggle('pulled');
+        if (!pulled) {
+            // ピクミンを引っこ抜くアニメーション
+            pikmin.classList.add('pulled');
+            leaf.classList.add('pulled');
 
-        // 効果音を再生
-        if (pikmin.classList.contains('pulled')) {
+            // 効果音とBGMの再生
             pullSound.play();
+            bgm.play();
+
+            // メッセージ変更
+            message.textContent = "赤いピクミンを引っこ抜いた！";
+            pulled = true;
+        } else {
+            message.textContent = "もう引っこ抜いたよ！";
         }
     });
 </script>
 
 </body>
 </html>
+
