@@ -77,3 +77,11 @@ footer {
     font-size: 0.9em;
     color: #888;
 }
+/* ルーレット結果表示用 */
+#result1, #result2, #result3 {
+    margin-top: 10px;
+    font-size: 1.2em;
+    color: #d9534f;
+    text-align: center;
+    font-weight: bold;
+}
