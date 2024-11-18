@@ -87,13 +87,39 @@ footer {
 }
 /* ルーレットの見た目 */
 .roulette {
-    width: 100px;
-    height: 100px;
-    border: 5px solid #5bc0de;
+    width: 150px;
+    height: 150px;
     border-radius: 50%;
+    border: 5px solid #5bc0de;
     margin: 20px auto;
     background-image: conic-gradient(#d9534f 0% 25%, #5bc0de 25% 50%, #f0ad4e 50% 75%, #5cb85c 75% 100%);
     animation: spin 0s ease-out;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #5bc0de;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+/* アニメーション */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    70% { transform: rotate(2160deg); } /* 6回転 */
+    100% { transform: rotate(2520deg); } /* 7回転でゆっくり停止 */
 }
 
 .result {
@@ -104,9 +130,4 @@ footer {
     visibility: hidden;
 }
 
-/* ルーレット回転アニメーション */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(1440deg); } /* 4回転 */
-}
 
