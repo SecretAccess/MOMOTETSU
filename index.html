@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>桃鉄GP 2024 チップカウンター</title>
 <link rel="stylesheet" href="styles.css">
-<script defer src="script.js"></script>
+<script src="script.js" defer></script>
 </head>
 <body>
 <header>
@@ -21,7 +21,7 @@
         <h2>チップカウンター</h2>
         <div class="chip-container">
             <div class="chip-item">
-                <img id="black-chip" src="black-chip.png" alt="黒チップ">
+                <img src="black-chip.png" alt="黒チップ">
                 <div class="controls">
                     <button onclick="decrement('black')">-</button>
                     <span id="black-count">0</span>
@@ -32,7 +32,7 @@
             </div>
 
             <div class="chip-item">
-                <img id="white-chip" src="white-chip.png" alt="白チップ">
+                <img src="white-chip.png" alt="白チップ">
                 <div class="controls">
                     <button onclick="decrement('white')">-</button>
                     <span id="white-count">0</span>
@@ -43,7 +43,7 @@
             </div>
 
             <div class="chip-item">
-                <img id="color-chip" src="color-chip.png" alt="赤青緑チップ">
+                <img src="color-chip.png" alt="赤青緑チップ">
                 <div class="controls">
                     <button onclick="decrement('color')">-</button>
                     <span id="color-count">0</span>
@@ -66,157 +66,3 @@
 </footer>
 </body>
 </html>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
-    padding: 20px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 2em;
-    color: #d9534f;
-}
-
-nav {
-    margin-bottom: 20px;
-}
-
-nav a {
-    margin: 0 10px;
-    text-decoration: none;
-    color: #5bc0de;
-}
-
-main {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.chip-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-}
-
-.chip-item img {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 5px;
-}
-
-
-.controls {
-    display: flex;
-    justify-content: center;
-    margin: 5px 0;
-}
-
-button {
-    padding: 3px 8px;
-    margin: 0 3px;
-    font-size: 0.9em;
-}
-
-.chip-item {
-    width: 120px;
-}
-
-
-.summary {
-    text-align: center;
-    margin-top: 20px;
-}
-
-h3 {
-    margin-bottom: 10px;
-}
-
-p {
-    margin: 5px 0;
-}
-
-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #888;
-}
-// 初期化
-let blackCount = 0;
-let whiteCount = 0;
-let colorCount = 0;
-
-// ローカルストレージからデータを取得する関数
-const loadCounts = () => {
-    blackCount = parseInt(localStorage.getItem('blackCount')) || 0;
-    whiteCount = parseInt(localStorage.getItem('whiteCount')) || 0;
-    colorCount = parseInt(localStorage.getItem('colorCount')) || 0;
-};
-
-// ローカルストレージにデータを保存する関数
-const saveCounts = () => {
-    localStorage.setItem('blackCount', blackCount);
-    localStorage.setItem('whiteCount', whiteCount);
-    localStorage.setItem('colorCount', colorCount);
-};
-
-// 表示を更新する関数
-const updateDisplay = () => {
-    // 枚数の表示
-    document.getElementById('black-count').textContent = blackCount;
-    document.getElementById('white-count').textContent = whiteCount;
-    document.getElementById('color-count').textContent = colorCount;
-
-    // 金額の計算
-    const blackTotal = blackCount * 1000;
-    const whiteTotal = whiteCount * 500;
-    const colorTotal = colorCount * 300;
-
-    // 合計金額の表示
-    document.getElementById('black-total').textContent = `${blackTotal}円`;
-    document.getElementById('white-total').textContent = `${whiteTotal}円`;
-    document.getElementById('color-total').textContent = `${colorTotal}円`;
-
-    const totalAmount = blackTotal + whiteTotal + colorTotal;
-    document.getElementById('total-amount').textContent = `${totalAmount}円`;
-
-    // データを保存
-    saveCounts();
-};
-
-// 増減関数
-const increment = (chip) => {
-    if (chip === 'black') blackCount++;
-    if (chip === 'white') whiteCount++;
-    if (chip === 'color') colorCount++;
-    updateDisplay();
-};
-
-const decrement = (chip) => {
-    if (chip === 'black' && blackCount > 0) blackCount--;
-    if (chip === 'white' && whiteCount > 0) whiteCount--;
-    if (chip === 'color' && colorCount > 0) colorCount--;
-    updateDisplay();
-};
-
-// ページ読み込み時にデータを読み込んで表示を更新
-window.onload = () => {
-    loadCounts();
-    updateDisplay();
-};
-
