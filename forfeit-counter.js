@@ -45,8 +45,28 @@ const decrementForfeit = (player) => {
     updateDisplay();
 };
 
+// イベントリスナーの設定関数
+const setupEventListeners = () => {
+    // のぞむのボタン
+    document.getElementById('increment-nozomu').addEventListener('click', () => incrementForfeit('nozomu'));
+    document.getElementById('decrement-nozomu').addEventListener('click', () => decrementForfeit('nozomu'));
+
+    // まどかのボタン
+    document.getElementById('increment-madoka').addEventListener('click', () => incrementForfeit('madoka'));
+    document.getElementById('decrement-madoka').addEventListener('click', () => decrementForfeit('madoka'));
+
+    // ひかるのボタン
+    document.getElementById('increment-hikaru').addEventListener('click', () => incrementForfeit('hikaru'));
+    document.getElementById('decrement-hikaru').addEventListener('click', () => decrementForfeit('hikaru'));
+
+    // ちえのボタン
+    document.getElementById('increment-chie').addEventListener('click', () => incrementForfeit('chie'));
+    document.getElementById('decrement-chie').addEventListener('click', () => decrementForfeit('chie'));
+};
+
 // ページ読み込み時の処理
 document.addEventListener('DOMContentLoaded', () => {
     loadForfeitData();
     updateDisplay();
+    setupEventListeners();
 });
