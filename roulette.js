@@ -1,47 +1,49 @@
+// プレイヤー名の取得
+const getPlayerNames = () => {
+    const firstPlace = document.getElementById('first-place').value || '1位のプレイヤー';
+    const secondPlace = document.getElementById('second-place').value || '2位のプレイヤー';
+    const thirdPlace = document.getElementById('third-place').value || '3位のプレイヤー';
+    const fourthPlace = document.getElementById('fourth-place').value || '4位のプレイヤー';
+    return { firstPlace, secondPlace, thirdPlace, fourthPlace };
+};
+
+// ルーレットを回す関数
 const spinRoulette = (type) => {
     const roulette = document.getElementById(`roulette${type === 'prize1' ? 1 : type === 'prize2' ? 2 : 3}`);
     const resultDiv = document.getElementById(`result${type === 'prize1' ? 1 : type === 'prize2' ? 2 : 3}`);
+    const { firstPlace, secondPlace, thirdPlace, fourthPlace } = getPlayerNames();
     let resultText = '';
 
     // アニメーションをリセットしてから再設定
     roulette.style.animation = 'none';
-    void roulette.offsetWidth; // 強制的にリフロー
-    roulette.style.animation = 'spin 3s cubic-bezier(0.25, 0.1, 0.25, 1)';
+    void roulette.offsetWidth;
+    roulette.style.animation = 'spin 2s ease-out';
 
-    // 3秒後に結果を表示
     setTimeout(() => {
         const rand = Math.random();
-        
+
         if (type === 'prize1') {
             if (rand < 0.17) {
-                resultText = '2位が当選しました！';
+                resultText = `${secondPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
             } else if (rand < 0.50) {
-                resultText = '3位が当選しました！';
+                resultText = `${thirdPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
             } else {
-                resultText = '4位が当選しました！';
+                resultText = `${fourthPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
             }
         } else if (type === 'prize2') {
             if (rand < 0.14) {
-                resultText = '1位が当選しました！';
+                resultText = `${firstPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
             } else if (rand < 0.57) {
-                resultText = '3位が当選しました！';
+                resultText = `${thirdPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
             } else {
-                resultText = '4位が当選しました！';
+                resultText = `${fourthPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
             }
         } else if (type === 'prize3') {
-            if (rand < 0.25) {
-                resultText = '1位が当選しました！';
-            } else if (rand < 0.50) {
-                resultText = '2位が当選しました！';
-            } else if (rand < 0.75) {
-                resultText = '3位が当選しました！';
-            } else {
-                resultText = '4位が当選しました！';
-            }
+            const chosenPlayer = [firstPlace, secondPlace, thirdPlace, fourthPlace][Math.floor(rand * 4)];
+            resultText = `${chosenPlayer}が、没収された全てのチップを受け取ります。`;
         }
 
-        // 結果を表示
         resultDiv.textContent = resultText;
         resultDiv.style.visibility = 'visible';
-    }, 3000); // 3秒後に結果を表示
+    }, 2000);
 };
