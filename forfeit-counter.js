@@ -1,40 +1,52 @@
 // 初期化
-let forfeitAmount = 0;
-
-// ローカルストレージから没収金額を取得
-const loadForfeitAmount = () => {
-    forfeitAmount = Number(localStorage.getItem('forfeitAmount')) || 0;
+let forfeitData = {
+    nozomu: 0,
+    madoka: 0,
+    hikaru: 0,
+    chie: 0
 };
 
-// ローカルストレージに没収金額を保存
-const saveForfeitAmount = () => {
-    localStorage.setItem('forfeitAmount', forfeitAmount);
+// ローカルストレージからデータを取得
+const loadForfeitData = () => {
+    const storedData = JSON.parse(localStorage.getItem('forfeitData'));
+    if (storedData) {
+        forfeitData = storedData;
+    }
+};
+
+// ローカルストレージにデータを保存
+const saveForfeitData = () => {
+    localStorage.setItem('forfeitData', JSON.stringify(forfeitData));
 };
 
 // 表示を更新する関数
-const updateForfeitDisplay = () => {
-    document.getElementById('forfeit-amount').textContent = `${forfeitAmount}円`;
-    saveForfeitAmount();
+const updateDisplay = () => {
+    document.getElementById('nozomu-amount').textContent = `${forfeitData.nozomu}円`;
+    document.getElementById('madoka-amount').textContent = `${forfeitData.madoka}円`;
+    document.getElementById('hikaru-amount').textContent = `${forfeitData.hikaru}円`;
+    document.getElementById('chie-amount').textContent = `${forfeitData.chie}円`;
+
+    const totalAmount = forfeitData.nozomu + forfeitData.madoka + forfeitData.hikaru + forfeitData.chie;
+    document.getElementById('total-amount').textContent = `${totalAmount}円`;
+
+    saveForfeitData();
 };
 
 // 増減関数
-const incrementForfeit = () => {
-    forfeitAmount += 300;
-    updateForfeitDisplay();
+const incrementForfeit = (player) => {
+    forfeitData[player] += 300;
+    updateDisplay();
 };
 
-const decrementForfeit = () => {
-    if (forfeitAmount >= 300) {
-        forfeitAmount -= 300;
+const decrementForfeit = (player) => {
+    if (forfeitData[player] >= 300) {
+        forfeitData[player] -= 300;
     }
-    updateForfeitDisplay();
+    updateDisplay();
 };
 
 // ページ読み込み時の処理
 document.addEventListener('DOMContentLoaded', () => {
-    loadForfeitAmount();
-    updateForfeitDisplay();
-
-    document.getElementById('increment-forfeit').addEventListener('click', incrementForfeit);
-    document.getElementById('decrement-forfeit').addEventListener('click', decrementForfeit);
+    loadForfeitData();
+    updateDisplay();
 });
