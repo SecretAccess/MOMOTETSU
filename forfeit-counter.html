@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>桃鉄GP 没収金額カウンター</title>
+<link rel="stylesheet" href="styles.css">
+<script src="forfeit-counter.js" defer></script>
+</head>
+<body>
+<header>
+    <h1>没収金額カウンター</h1>
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+        <a href="roulette.html">抽選ルーレット</a>
+        <a href="forfeit-counter.html">没収金額</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <div class="character-space">
+            <img src="character.png" alt="キャラクター" id="character-img">
+        </div>
+        <div class="forfeit-container">
+            <h2>没収金額</h2>
+            <div class="controls">
+                <button id="decrement-forfeit">-</button>
+                <span id="forfeit-amount">0円</span>
+                <button id="increment-forfeit">+</button>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>桃鉄実行委員会 © 2024</p>
+</footer>
+</body>
+</html>
