@@ -37,12 +37,20 @@ const updateDisplay = () => {
     saveCounts();
 };
 
+// 振動機能の追加
+const vibrate = () => {
+    if (navigator.vibrate) {
+        navigator.vibrate(50); // 50ミリ秒の振動
+    }
+};
+
 // 増減関数
 const increment = (chip) => {
     if (chip === 'black') blackCount++;
     if (chip === 'white') whiteCount++;
     if (chip === 'color') colorCount++;
     updateDisplay();
+    vibrate();
 };
 
 const decrement = (chip) => {
@@ -50,6 +58,7 @@ const decrement = (chip) => {
     if (chip === 'white' && whiteCount > 0) whiteCount--;
     if (chip === 'color' && colorCount > 0) colorCount--;
     updateDisplay();
+    vibrate();
 };
 
 // ページ読み込み時にデータを読み込む
@@ -63,5 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         button.addEventListener('touchstart', (event) => {
             event.preventDefault(); // ダブルタップズームを防止
         });
+
+        // ボタンタップ時に振動機能を追加
+        button.addEventListener('click', vibrate);
     });
 });
