@@ -3,33 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>桃鉄GP 没収金額カウンター</title>
+<title>桃鉄GP 没収金額トラッカー</title>
 <link rel="stylesheet" href="styles.css">
-<script src="forfeit-counter.js" defer></script>
+<script src="forfeit-tracker.js" defer></script>
 </head>
 <body>
 <header>
-    <h1>没収金額カウンター</h1>
+    <h1>没収金額トラッカー</h1>
     <nav>
         <a href="index.html">チップカウンター</a>
         <a href="rules.html">大会ルール</a>
         <a href="roulette.html">抽選ルーレット</a>
-        <a href="forfeit-counter.html">没収金額</a>
+        <a href="forfeit-tracker.html">没収金額</a>
     </nav>
 </header>
 
 <main>
     <section>
-        <div class="character-space">
-            <img src="binbogami.png" alt="キャラクター" id="character-img">
-        </div>
-        <div class="forfeit-container">
-            <h2>没収金額</h2>
+        <div class="player-container">
+            <h2>のぞむ</h2>
             <div class="controls">
-                <button id="decrement-forfeit">-</button>
-                <span id="forfeit-amount">0Pt</span>
-                <button id="increment-forfeit">+</button>
+                <button onclick="decrementForfeit('nozomu')">-</button>
+                <span id="nozomu-amount">0円</span>
+                <button onclick="incrementForfeit('nozomu')">+</button>
             </div>
+        </div>
+
+        <div class="player-container">
+            <h2>まどか</h2>
+            <div class="controls">
+                <button onclick="decrementForfeit('madoka')">-</button>
+                <span id="madoka-amount">0円</span>
+                <button onclick="incrementForfeit('madoka')">+</button>
+            </div>
+        </div>
+
+        <div class="player-container">
+            <h2>ひかる</h2>
+            <div class="controls">
+                <button onclick="decrementForfeit('hikaru')">-</button>
+                <span id="hikaru-amount">0円</span>
+                <button onclick="incrementForfeit('hikaru')">+</button>
+            </div>
+        </div>
+
+        <div class="player-container">
+            <h2>ちえ</h2>
+            <div class="controls">
+                <button onclick="decrementForfeit('chie')">-</button>
+                <span id="chie-amount">0円</span>
+                <button onclick="incrementForfeit('chie')">+</button>
+            </div>
+        </div>
+
+        <div class="summary">
+            <h2>総合計</h2>
+            <span id="total-amount">0円</span>
         </div>
     </section>
 </main>
