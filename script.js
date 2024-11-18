@@ -5,7 +5,6 @@ let colorCount = 0;
 
 // ローカルストレージからデータを取得する関数
 const loadCounts = () => {
-    // ローカルストレージからデータを取得し、なければ初期値を設定
     blackCount = Number(localStorage.getItem('blackCount')) || 3;
     whiteCount = Number(localStorage.getItem('whiteCount')) || 6;
     colorCount = Number(localStorage.getItem('colorCount')) || 30;
@@ -53,8 +52,21 @@ const decrement = (chip) => {
     updateDisplay();
 };
 
+// イベントリスナーの設定
+const setupEventListeners = () => {
+    document.getElementById('increment-black').addEventListener('click', () => increment('black'));
+    document.getElementById('decrement-black').addEventListener('click', () => decrement('black'));
+
+    document.getElementById('increment-white').addEventListener('click', () => increment('white'));
+    document.getElementById('decrement-white').addEventListener('click', () => decrement('white'));
+
+    document.getElementById('increment-color').addEventListener('click', () => increment('color'));
+    document.getElementById('decrement-color').addEventListener('click', () => decrement('color'));
+};
+
 // ページ読み込み時にデータを読み込む
 document.addEventListener('DOMContentLoaded', () => {
     loadCounts();
     updateDisplay();
+    setupEventListeners();
 });
