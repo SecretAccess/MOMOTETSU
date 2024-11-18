@@ -3,73 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>桃鉄GP 2024 開催案内</title>
+<title>桃鉄GP 2024 チップカウンター</title>
 <link rel="stylesheet" href="styles.css">
+<script defer src="script.js"></script>
 </head>
 <body>
 <header>
-    <h1>桃鉄GP 開催のお知らせ</h1>
-    <p>令和4年11月21日<br>桃鉄実行委員会</p>
+    <h1>桃鉄GP 開催中</h1>
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+    </nav>
 </header>
 
 <main>
     <section>
-        <h2>大会概要</h2>
-        <p>恒例の桃鉄GPを下記の日程で開催いたします。今回は日本を飛び出し、世界が舞台となります。高い志を持ち、ご参加ください。なお、風紀を乱す言動は厳しい処罰の対象となりますのでご注意ください。</p>
-    </section>
+        <h2>チップカウンター</h2>
+        <div class="chip-container">
+            <div class="chip-item">
+                <img id="black-chip" src="black-chip.png" alt="黒チップ">
+                <div class="controls">
+                    <button onclick="decrement('black')">-</button>
+                    <span id="black-count">0</span>
+                    <button onclick="increment('black')">+</button>
+                </div>
+                <p>1000円相当</p>
+                <p>合計：<span id="black-total">0円</span></p>
+            </div>
 
-    <section>
-        <h2>記</h2>
-        <ul>
-            <li><strong>日時：</strong>令和4年12月30日（土）時間未定</li>
-            <li><strong>場所：</strong>宮城県石巻市恵み野二丁目7番地3<br>※ 駐車場台数に限りがございます。お乗り合わせの上、ご来場ください。</li>
-            <li><strong>参加費：</strong>
-                <ul>
-                    <li>大人：15,000円（昨年同様）</li>
-                    <li>小人：無料</li>
-                    <li>未就学児：無料</li>
-                </ul>
-            </li>
-        </ul>
-    </section>
+            <div class="chip-item">
+                <img id="white-chip" src="white-chip.png" alt="白チップ">
+                <div class="controls">
+                    <button onclick="decrement('white')">-</button>
+                    <span id="white-count">0</span>
+                    <button onclick="increment('white')">+</button>
+                </div>
+                <p>500円相当</p>
+                <p>合計：<span id="white-total">0円</span></p>
+            </div>
 
-    <section>
-        <h2>規程明細</h2>
-        <p>参加費はご入場時に専用チップと交換いたします。</p>
-        <ul>
-            <li>黒：3枚（3,000円相当）</li>
-            <li>白：6枚（3,000円相当）</li>
-            <li>赤青緑：30枚（9,000円相当）</li>
-        </ul>
-        <p>大会中はプレイヤー間でチップの移行が可能です。</p>
-    </section>
+            <div class="chip-item">
+                <img id="color-chip" src="color-chip.png" alt="赤青緑チップ">
+                <div class="controls">
+                    <button onclick="decrement('color')">-</button>
+                    <span id="color-count">0</span>
+                    <button onclick="increment('color')">+</button>
+                </div>
+                <p>300円相当</p>
+                <p>合計：<span id="color-total">0円</span></p>
+            </div>
+        </div>
 
-    <section>
-        <h2>ルール</h2>
-        <ul>
-            <li>10年モードで行います。</li>
-            <li>10年経過時、総資産額1位が優勝となります。</li>
-        </ul>
-
-        <h3>チップ移行条件</h3>
-        <ul>
-            <li>① 目的地に一番乗り → 全員から白チップ1枚</li>
-            <li>② 風紀を乱す言動 → 運営没収 赤青緑チップ1枚</li>
-            <li>③ ラスト2年は②の処罰がチップ2倍</li>
-            <li>④ 貧乏神を移す → 移したプレイヤーから赤青緑チップ1枚</li>
-            <li>⑤ ホノルルに一番乗り → 全員から黒チップ1枚</li>
-            <li>⑥ 閉幕時抽選 → 1位に5,000円相当チップ</li>
-            <li>⑦ 閉幕時抽選 → 2位に3,000円相当チップ</li>
-            <li>⑧ 閉幕時抽選 → 没収チップ全額プレゼント</li>
-        </ul>
-
-        <p>※ ⑥〜⑧の抽選は下位順位のプレイヤーの当選確率が上がります。</p>
-        <ul>
-            <li>⑥の確率：2位 17％、3位 33％、4位 50％</li>
-            <li>⑦の確率：1位 14％、3位 43％、4位 43％</li>
-            <li>⑧の確率：全プレイヤー 25％</li>
-        </ul>
-        <p>大会終了時、所持していたチップは記念にお持ち帰りください。</p>
+        <div class="summary">
+            <h3>総計</h3>
+            <p>総金額：<span id="total-amount">0円</span></p>
+        </div>
     </section>
 </main>
 
@@ -78,54 +66,3 @@
 </footer>
 </body>
 </html>
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
-    padding: 20px;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-header h1 {
-    font-size: 2em;
-    color: #d9534f;
-}
-
-main {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-h2 {
-    color: #5bc0de;
-    margin-bottom: 10px;
-}
-
-ul {
-    list-style: none;
-    margin-bottom: 20px;
-}
-
-li {
-    margin-bottom: 10px;
-}
-
-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #888;
-}
