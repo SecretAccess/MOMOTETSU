@@ -27,21 +27,26 @@ const updateDisplay = () => {
     const whiteTotal = whiteCount * 500;
     const colorTotal = colorCount * 300;
 
-    document.getElementById('black-total').textContent = `${blackTotal}円`;
-    document.getElementById('white-total').textContent = `${whiteTotal}円`;
-    document.getElementById('color-total').textContent = `${colorTotal}円`;
+    document.getElementById('black-total').textContent = `${blackTotal}Pt`;
+    document.getElementById('white-total').textContent = `${whiteTotal}Pt`;
+    document.getElementById('color-total').textContent = `${colorTotal}Pt`;
 
     const totalAmount = blackTotal + whiteTotal + colorTotal;
-    document.getElementById('total-amount').textContent = `${totalAmount}円`;
+    document.getElementById('total-amount').textContent = `${totalAmount}Pt`;
 
     saveCounts();
 };
 
-// 振動機能の追加
-const vibrate = () => {
-    if (navigator.vibrate) {
-        navigator.vibrate(50); // 50ミリ秒の振動
-    }
+// ボタンのクリックイベント設定
+const setupEventListeners = () => {
+    document.getElementById('increment-black').addEventListener('click', () => increment('black'));
+    document.getElementById('decrement-black').addEventListener('click', () => decrement('black'));
+
+    document.getElementById('increment-white').addEventListener('click', () => increment('white'));
+    document.getElementById('decrement-white').addEventListener('click', () => decrement('white'));
+
+    document.getElementById('increment-color').addEventListener('click', () => increment('color'));
+    document.getElementById('decrement-color').addEventListener('click', () => decrement('color'));
 };
 
 // 増減関数
@@ -50,7 +55,6 @@ const increment = (chip) => {
     if (chip === 'white') whiteCount++;
     if (chip === 'color') colorCount++;
     updateDisplay();
-    vibrate();
 };
 
 const decrement = (chip) => {
@@ -58,22 +62,11 @@ const decrement = (chip) => {
     if (chip === 'white' && whiteCount > 0) whiteCount--;
     if (chip === 'color' && colorCount > 0) colorCount--;
     updateDisplay();
-    vibrate();
 };
 
-// ページ読み込み時にデータを読み込む
+// ページ読み込み時の処理
 document.addEventListener('DOMContentLoaded', () => {
     loadCounts();
     updateDisplay();
-
-    // タッチイベントの誤反応防止設定
-    const buttons = document.querySelectorAll('button');
-    buttons.forEach((button) => {
-        button.addEventListener('touchstart', (event) => {
-            event.preventDefault(); // ダブルタップズームを防止
-        });
-
-        // ボタンタップ時に振動機能を追加
-        button.addEventListener('click', vibrate);
-    });
+    setupEventListeners();
 });
