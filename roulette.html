@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+<title>桃鉄GP 抽選ルーレット</title>
+<link rel="stylesheet" href="styles.css">
+<script src="roulette.js" defer></script>
+</head>
+<body>
+<header>
+    <h1>抽選ルーレット</h1>
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+        <a href="roulette.html">抽選ルーレット</a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h2>特別賞①ルーレット</h2>
+        <p>抽選で選ばれたプレイヤーが、1位に5,000円相当のチップを支払います。</p>
+        <button onclick="spinRoulette('prize1')">ルーレットを回す</button>
+        <div id="result1"></div>
+    </section>
+
+    <section>
+        <h2>特別賞②ルーレット</h2>
+        <p>抽選で選ばれたプレイヤーが、2位に3,000円相当のチップを支払います。</p>
+        <button onclick="spinRoulette('prize2')">ルーレットを回す</button>
+        <div id="result2"></div>
+    </section>
+
+    <section>
+        <h2>特別賞③ルーレット</h2>
+        <p>抽選で選ばれたプレイヤーが、没収されたすべてのチップを受け取ります。</p>
+        <button onclick="spinRoulette('prize3')">ルーレットを回す</button>
+        <div id="result3"></div>
+    </section>
+</main>
+
+<footer>
+    <p>桃鉄実行委員会 © 2024</p>
+</footer>
+</body>
+</html>
