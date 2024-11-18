@@ -5,19 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>桃鉄GP 2024 チップカウンター</title>
 <link rel="stylesheet" href="styles.css">
-<script defer src="script.js"></script>
 </head>
-
 
 <body>
 <header>
     <h1>桃鉄GP 開催中</h1>
-   <nav>
-    <a href="index.html">チップカウンター</a>
-    <a href="rules.html">大会ルール</a>
-    <a href="roulette.html">抽選ルーレット</a>
-</nav>
-
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+        <a href="roulette.html">抽選ルーレット</a>
+    </nav>
 </header>
 
 <main>
@@ -27,9 +24,9 @@
             <div class="chip-item">
                 <img src="black-chip.png" alt="黒チップ">
                 <div class="controls">
-                    <button onclick="decrement('black')">-</button>
+                    <button id="decrement-black">-</button>
                     <span id="black-count">0</span>
-                    <button onclick="increment('black')">+</button>
+                    <button id="increment-black">+</button>
                 </div>
                 <p>1000</p>
                 <p>合計：<span id="black-total">0Pt</span></p>
@@ -38,9 +35,9 @@
             <div class="chip-item">
                 <img src="white-chip.png" alt="白チップ">
                 <div class="controls">
-                    <button onclick="decrement('white')">-</button>
+                    <button id="decrement-white">-</button>
                     <span id="white-count">0</span>
-                    <button onclick="increment('white')">+</button>
+                    <button id="increment-white">+</button>
                 </div>
                 <p>500</p>
                 <p>合計：<span id="white-total">0Pt</span></p>
@@ -49,9 +46,9 @@
             <div class="chip-item">
                 <img src="color-chip.png" alt="赤青緑チップ">
                 <div class="controls">
-                    <button onclick="decrement('color')">-</button>
+                    <button id="decrement-color">-</button>
                     <span id="color-count">0</span>
-                    <button onclick="increment('color')">+</button>
+                    <button id="increment-color">+</button>
                 </div>
                 <p>300</p>
                 <p>合計：<span id="color-total">0Pt</span></p>
@@ -68,5 +65,7 @@
 <footer>
     <p>桃鉄実行委員会 © 2024</p>
 </footer>
+
+<script src="script.js"></script>
 </body>
 </html>
