@@ -5,9 +5,10 @@ let colorCount = 0;
 
 // ローカルストレージからデータを取得する関数
 const loadCounts = () => {
-    blackCount = Number(localStorage.getItem('blackCount')) || 0;
-    whiteCount = Number(localStorage.getItem('whiteCount')) || 0;
-    colorCount = Number(localStorage.getItem('colorCount')) || 0;
+    // ローカルストレージからデータを取得し、なければ初期値を設定
+    blackCount = Number(localStorage.getItem('blackCount')) || 3;
+    whiteCount = Number(localStorage.getItem('whiteCount')) || 6;
+    colorCount = Number(localStorage.getItem('colorCount')) || 30;
 };
 
 // ローカルストレージにデータを保存する関数
@@ -27,26 +28,14 @@ const updateDisplay = () => {
     const whiteTotal = whiteCount * 500;
     const colorTotal = colorCount * 300;
 
-    document.getElementById('black-total').textContent = `${blackTotal}Pt`;
-    document.getElementById('white-total').textContent = `${whiteTotal}Pt`;
-    document.getElementById('color-total').textContent = `${colorTotal}Pt`;
+    document.getElementById('black-total').textContent = `${blackTotal}円`;
+    document.getElementById('white-total').textContent = `${whiteTotal}円`;
+    document.getElementById('color-total').textContent = `${colorTotal}円`;
 
     const totalAmount = blackTotal + whiteTotal + colorTotal;
-    document.getElementById('total-amount').textContent = `${totalAmount}Pt`;
+    document.getElementById('total-amount').textContent = `${totalAmount}円`;
 
     saveCounts();
-};
-
-// ボタンのクリックイベント設定
-const setupEventListeners = () => {
-    document.getElementById('increment-black').addEventListener('click', () => increment('black'));
-    document.getElementById('decrement-black').addEventListener('click', () => decrement('black'));
-
-    document.getElementById('increment-white').addEventListener('click', () => increment('white'));
-    document.getElementById('decrement-white').addEventListener('click', () => decrement('white'));
-
-    document.getElementById('increment-color').addEventListener('click', () => increment('color'));
-    document.getElementById('decrement-color').addEventListener('click', () => decrement('color'));
 };
 
 // 増減関数
@@ -64,9 +53,8 @@ const decrement = (chip) => {
     updateDisplay();
 };
 
-// ページ読み込み時の処理
+// ページ読み込み時にデータを読み込む
 document.addEventListener('DOMContentLoaded', () => {
     loadCounts();
     updateDisplay();
-    setupEventListeners();
 });
