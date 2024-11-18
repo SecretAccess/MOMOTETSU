@@ -160,6 +160,20 @@ let blackCount = 0;
 let whiteCount = 0;
 let colorCount = 0;
 
+// ローカルストレージからデータを取得する関数
+const loadCounts = () => {
+    blackCount = parseInt(localStorage.getItem('blackCount')) || 0;
+    whiteCount = parseInt(localStorage.getItem('whiteCount')) || 0;
+    colorCount = parseInt(localStorage.getItem('colorCount')) || 0;
+};
+
+// ローカルストレージにデータを保存する関数
+const saveCounts = () => {
+    localStorage.setItem('blackCount', blackCount);
+    localStorage.setItem('whiteCount', whiteCount);
+    localStorage.setItem('colorCount', colorCount);
+};
+
 // 表示を更新する関数
 const updateDisplay = () => {
     // 枚数の表示
@@ -179,6 +193,9 @@ const updateDisplay = () => {
 
     const totalAmount = blackTotal + whiteTotal + colorTotal;
     document.getElementById('total-amount').textContent = `${totalAmount}円`;
+
+    // データを保存
+    saveCounts();
 };
 
 // 増減関数
@@ -196,5 +213,9 @@ const decrement = (chip) => {
     updateDisplay();
 };
 
-// 初期化時に表示を更新
-window.onload = updateDisplay;
+// ページ読み込み時にデータを読み込んで表示を更新
+window.onload = () => {
+    loadCounts();
+    updateDisplay();
+};
+
