@@ -19,6 +19,24 @@
 
 <main>
     <section>
+        <h2>ルール説明</h2>
+        <ul>
+            <li>特別賞①：抽選で選ばれたプレイヤーが、1位のプレイヤーに5,000円相当のチップを支払います。</li>
+            <li>特別賞②：抽選で選ばれたプレイヤーが、2位のプレイヤーに3,000円相当のチップを支払います。</li>
+            <li>特別賞③：抽選で選ばれたプレイヤーが、没収されたすべてのチップを受け取ります。</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>プレイヤー名入力</h2>
+        <label for="first-place">1位のプレイヤー名：</label>
+        <input type="text" id="first-place" placeholder="1位の名前を入力">
+        <br><br>
+        <label for="second-place">2位のプレイヤー名：</label>
+        <input type="text" id="second-place" placeholder="2位の名前を入力">
+    </section>
+
+    <section>
         <h2>特別賞①ルーレット</h2>
         <button onclick="spinRoulette('prize1')">ルーレットを回す</button>
         <div id="roulette1" class="roulette"></div>
