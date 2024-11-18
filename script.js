@@ -56,4 +56,12 @@ const decrement = (chip) => {
 document.addEventListener('DOMContentLoaded', () => {
     loadCounts();
     updateDisplay();
+
+    // タッチイベントの誤反応防止設定
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach((button) => {
+        button.addEventListener('touchstart', (event) => {
+            event.preventDefault(); // ダブルタップズームを防止
+        });
+    });
 });
