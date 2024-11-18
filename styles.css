@@ -9,6 +9,10 @@ body {
     background-color: #f0f0f0;
     color: #333;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
 }
 
 header {
@@ -17,7 +21,7 @@ header {
 }
 
 header h1 {
-    font-size: 1.8em;
+    font-size: 2.5em;
     color: #d9534f;
 }
 
@@ -36,75 +40,46 @@ main {
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
 }
 
 .chip-container {
     display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    height: 70vh;
+    justify-content: space-evenly;
 }
 
 .chip-item {
     text-align: center;
-    width: 100px;
+    width: 100%;
 }
 
 .chip-item img {
-    width: 32px;
-    height: 32px;
-    margin-bottom: 5px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 10px;
 }
 
 .controls {
     display: flex;
     justify-content: center;
-    margin: 5px 0;
+    gap: 40px;
+    margin: 10px 0;
 }
 
 button {
-    padding: 5px;
-    font-size: 0.8em;
-}
-
-.summary {
-    text-align: center;
-    margin-top: 20px;
-}
-
-footer {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 0.9em;
-    color: #888;
-}
-/* ルーレット結果表示用 */
-#result1, #result2, #result3 {
-    margin-top: 10px;
-    font-size: 1.2em;
-    color: #d9534f;
-    text-align: center;
-    font-weight: bold;
-}
-/* ルーレットの見た目 */
-.roulette {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    border: 5px solid #5bc0de;
-    margin: 20px auto;
-    background-image: conic-gradient(#d9534f 0% 25%, #5bc0de 25% 50%, #f0ad4e 50% 75%, #5cb85c 75% 100%);
-    animation: spin 0s ease-out;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 20px;
+    font-size: 2em;
     color: #fff;
     background-color: #5bc0de;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.1s;
 }
 
 button:hover {
@@ -115,11 +90,35 @@ button:active {
     transform: scale(0.95);
 }
 
+.summary {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2.5em;
+}
+
+footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1em;
+    color: #888;
+}
+
+/* ルーレットの見た目 */
+.roulette {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid #5bc0de;
+    margin: 20px auto;
+    background-image: conic-gradient(#d9534f 0% 25%, #5bc0de 25% 50%, #f0ad4e 50% 75%, #5cb85c 75% 100%);
+    animation: spin 0s ease-out;
+}
+
 /* アニメーション */
 @keyframes spin {
     0% { transform: rotate(0deg); }
-    70% { transform: rotate(2160deg); } /* 6回転 */
-    100% { transform: rotate(2520deg); } /* 7回転でゆっくり停止 */
+    70% { transform: rotate(2160deg); }
+    100% { transform: rotate(2520deg); }
 }
 
 .result {
@@ -129,5 +128,3 @@ button:active {
     margin-top: 10px;
     visibility: hidden;
 }
-
-
