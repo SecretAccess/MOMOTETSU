@@ -8,7 +8,7 @@ body {
     font-family: Arial, sans-serif;
     background-color: #f0f0f0;
     color: #333;
-    padding: 20px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -17,63 +17,64 @@ body {
 
 header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 header h1 {
-    font-size: 2.5em;
+    font-size: 2em;
     color: #d9534f;
 }
 
 nav {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 nav a {
-    margin: 0 10px;
+    margin: 0 8px;
     text-decoration: none;
     color: #5bc0de;
+    font-size: 1em;
 }
 
 main {
     background-color: #fff;
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 600px;
+    width: 90%;
+    max-width: 500px;
 }
 
 .chip-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 30px;
-    height: 70vh;
+    gap: 20px;
+    height: 60vh;
     justify-content: space-evenly;
 }
 
 .chip-item {
     text-align: center;
-    width: 100%;
+    width: 90%;
 }
 
 .chip-item img {
-    width: 64px;
-    height: 64px;
-    margin-bottom: 10px;
+    width: 50px;
+    height: 50px;
+    margin-bottom: 5px;
 }
 
 .controls {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 30px;
     margin: 10px 0;
 }
 
 button {
-    padding: 20px;
-    font-size: 2em;
+    padding: 15px;
+    font-size: 1.5em;
     color: #fff;
     background-color: #5bc0de;
     border: none;
@@ -93,15 +94,16 @@ button:active {
 .summary {
     text-align: center;
     margin-top: 20px;
-    font-size: 2.5em;
+    font-size: 1.8em;
 }
 
 footer {
     text-align: center;
-    margin-top: 20px;
-    font-size: 1em;
+    margin-top: 15px;
+    font-size: 0.9em;
     color: #888;
 }
+
 
 /* ルーレットの見た目 */
 .roulette {
