@@ -103,17 +103,16 @@ footer {
 }
 
 
-/* 没収金額カウンター用スタイル */
-.forfeit-container {
+/* 没収金額トラッカー用スタイル */
+.player-container {
     text-align: center;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .controls {
     display: flex;
     justify-content: center;
-    gap: 40px;
-    margin-top: 20px;
+    gap: 20px;
 }
 
 button {
@@ -135,13 +134,9 @@ button:active {
     transform: scale(0.95);
 }
 
-/* キャラクターのスペース */
-.character-space {
+.summary {
     text-align: center;
-    margin-bottom: 20px;
+    font-size: 2em;
+    margin-top: 30px;
 }
 
-#character-img {
-    width: 150px;
-    height: auto;
-}
