@@ -147,6 +147,14 @@ button:active {
 .rule-item p {
     color: #555;
 }
+/* チップ画像のスタイル */
+.chip-icon {
+    width: 20px; /* 画像の幅を調整 */
+    height: auto; /* アスペクト比を維持 */
+    vertical-align: middle; /* テキストと中央揃え */
+    margin: 0 5px; /* テキストとの間隔を調整 */
+}
+
 
 /* ルーレットページ専用スタイル */
 .roulette-section {
