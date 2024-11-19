@@ -24,19 +24,19 @@ const spinRoulette = (type) => {
 
         if (type === 'prize1') {
             if (rand < 0.17) {
-                resultText = `${secondPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
+                resultText = `${secondPlace}が、1位の${firstPlace}に15,000円相当のチップを支払います。`;
             } else if (rand < 0.50) {
-                resultText = `${thirdPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
+                resultText = `${thirdPlace}が、1位の${firstPlace}に15,000円相当のチップを支払います。`;
             } else {
-                resultText = `${fourthPlace}が、1位の${firstPlace}に5,000円相当のチップを支払います。`;
+                resultText = `${fourthPlace}が、1位の${firstPlace}に15,000円相当のチップを支払います。`;
             }
         } else if (type === 'prize2') {
             if (rand < 0.14) {
-                resultText = `${firstPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
+                resultText = `${firstPlace}が、2位の${secondPlace}に7,500円相当のチップを支払います。`;
             } else if (rand < 0.57) {
-                resultText = `${thirdPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
+                resultText = `${thirdPlace}が、2位の${secondPlace}に7,500円相当のチップを支払います。`;
             } else {
-                resultText = `${fourthPlace}が、2位の${secondPlace}に3,000円相当のチップを支払います。`;
+                resultText = `${fourthPlace}が、2位の${secondPlace}に7,500円相当のチップを支払います。`;
             }
         } else if (type === 'prize3') {
             const chosenPlayer = [firstPlace, secondPlace, thirdPlace, fourthPlace][Math.floor(rand * 4)];
