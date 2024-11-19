@@ -267,43 +267,28 @@ button:active {
     font-size: 2em;
     margin-top: 30px;
 }
-/* ダークテーマ */
+/* 裏目的地ページ専用のスタイル */
 body.hidden-destination {
-    background-color: #121212; /* 背景色をダークに */
+    background-color: #121212; /* 背景をダークに */
     color: #e0e0e0; /* 明るい文字色 */
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
 }
 
-/* ヘッダー */
-header.hidden-destination {
-    background-color: #1f1f1f;
-    color: #ffcc00; /* ゴールド */
-    text-align: center;
-    padding: 20px 0;
+/* 裏目的地専用のヘッダー */
+body.hidden-destination header {
+    background-color: #1f1f1f; /* ダーク背景 */
+    color: #ffcc00; /* ゴールド文字色 */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-header h1 {
-    font-size: 2em;
-    margin: 0;
-}
-
-nav {
-    margin-top: 10px;
-}
-
-nav a {
+/* 裏目的地専用のナビゲーションリンク */
+body.hidden-destination nav a {
     color: #ffcc00; /* ゴールド */
-    margin: 0 10px;
-    text-decoration: none;
-    font-size: 1.2em;
 }
 
-nav a:hover {
+body.hidden-destination nav a:hover {
     text-decoration: underline;
 }
+
 
 /* メインコンテンツ */
 main {
