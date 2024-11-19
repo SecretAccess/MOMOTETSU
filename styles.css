@@ -268,32 +268,112 @@ button:active {
     margin-top: 30px;
 }
 /* ダークテーマ */
-.dark-section {
-    background-color: #2e2e2e;
-    color: #ffffff;
+body.hidden-destination {
+    background-color: #121212; /* 背景色をダークに */
+    color: #e0e0e0; /* 明るい文字色 */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* ヘッダー */
+header.hidden-destination {
+    background-color: #1f1f1f;
+    color: #ffcc00; /* ゴールド */
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    font-size: 2em;
+    margin: 0;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: #ffcc00; /* ゴールド */
+    margin: 0 10px;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* メインコンテンツ */
+main {
     padding: 20px;
-    margin: 10px 0;
-    border-radius: 8px;
     text-align: center;
 }
 
+/* ルールセクション */
+.rules-section {
+    background-color: #1e1e1e;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rules-section h2 {
+    font-size: 1.5em;
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.rules-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.rules-section li {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
 .chip-icon {
-    width: 20px;
+    width: 30px;
     height: auto;
     vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* 抽選セクション */
+.draw-section h2 {
+    font-size: 1.5em;
+    color: #ffcc00;
+    margin-bottom: 20px;
 }
 
 .draw-button {
-    padding: 10px 20px;
-    font-size: 1em;
+    background-color: #d9534f; /* 赤系 */
     color: #fff;
-    background-color: #d9534f;
+    padding: 15px 30px;
+    font-size: 1.2em;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin: 10px;
+    transition: transform 0.2s;
 }
 
+.draw-button:hover {
+    transform: scale(1.1);
+}
+
+/* 抽選結果表示 */
+.result-area {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #ffcc00;
+    font-weight: bold;
+}
+
+/* ポップアップ */
 .popup {
     background-color: rgba(0, 0, 0, 0.8);
     color: #fff;
@@ -303,18 +383,20 @@ button:active {
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 10px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: none; /* 初期状態では非表示 */
 }
 
-.hidden {
-    display: none;
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }
 
 .popup-button {
-    padding: 10px;
+    padding: 10px 20px;
     background-color: #5bc0de;
     color: #fff;
     border: none;
@@ -322,10 +404,6 @@ button:active {
     cursor: pointer;
 }
 
-.result-area {
-    margin-top: 20px;
-    font-size: 1.2em;
-    color: #ffcc00;
-    font-weight: bold;
+.popup-button:hover {
+    background-color: #31a4c2;
 }
-
