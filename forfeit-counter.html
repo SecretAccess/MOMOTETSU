@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>桃鉄GP 没収金額カウンター</title>
+<title>桃鉄GP 没収ポイントカウンター</title>
 <link rel="stylesheet" href="styles.css">
 <script src="forfeit-counter.js" defer></script>
 </head>
 <body>
 <header>
-    <h1>没収金額カウンター</h1>
+    <h1>没収ポイントカウンター</h1>
     <nav>
         <a href="index.html">チップカウンター</a>
         <a href="rules.html">大会ルール</a>
         <a href="roulette.html">抽選ルーレット</a>
-        <a href="forfeit-counter.html">没収金額</a>
+        <a href="forfeit-counter.html">没収ポイント</a>
     </nav>
 </header>
 
@@ -24,7 +24,7 @@
             <h2>のぞむ</h2>
             <div class="controls">
                 <button id="decrement-nozomu">-</button>
-                <span id="nozomu-amount">0円</span>
+                <span id="nozomu-amount">0Pt</span>
                 <button id="increment-nozomu">+</button>
             </div>
         </div>
@@ -33,7 +33,7 @@
             <h2>まどか</h2>
             <div class="controls">
                 <button id="decrement-madoka">-</button>
-                <span id="madoka-amount">0円</span>
+                <span id="madoka-amount">0Pt</span>
                 <button id="increment-madoka">+</button>
             </div>
         </div>
@@ -42,7 +42,7 @@
             <h2>ひかる</h2>
             <div class="controls">
                 <button id="decrement-hikaru">-</button>
-                <span id="hikaru-amount">0円</span>
+                <span id="hikaru-amount">0Pt</span>
                 <button id="increment-hikaru">+</button>
             </div>
         </div>
@@ -51,14 +51,14 @@
             <h2>ちえ</h2>
             <div class="controls">
                 <button id="decrement-chie">-</button>
-                <span id="chie-amount">0円</span>
+                <span id="chie-amount">0Pt</span>
                 <button id="increment-chie">+</button>
             </div>
         </div>
 
         <div class="summary">
             <h2>総合計</h2>
-            <span id="total-amount">0円</span>
+            <span id="total-amount">0Pt</span>
         </div>
     </section>
 </main>
