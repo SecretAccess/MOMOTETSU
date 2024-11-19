@@ -31,7 +31,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${firstPlace}</span>
                 <span>💰</span>
-                <span class="amount">15,000円</span>
+                <span class="amount">15,000Pt</span>
             `;
         } else if (rand < 0.50) {
             resultText = `
@@ -39,7 +39,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${firstPlace}</span>
                 <span>💰</span>
-                <span class="amount">15,000円</span>
+                <span class="amount">15,000Pt</span>
             `;
         } else {
             resultText = `
@@ -47,7 +47,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${firstPlace}</span>
                 <span>💰</span>
-                <span class="amount">15,000円</span>
+                <span class="amount">15,000Pt</span>
             `;
         }
     } else if (type === 'prize2') {
@@ -57,7 +57,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${secondPlace}</span>
                 <span>💰</span>
-                <span class="amount">7,500円</span>
+                <span class="amount">7,500Pt</span>
             `;
         } else if (rand < 0.57) {
             resultText = `
@@ -65,7 +65,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${secondPlace}</span>
                 <span>💰</span>
-                <span class="amount">7,500円</span>
+                <span class="amount">7,500Pt</span>
             `;
         } else {
             resultText = `
@@ -73,7 +73,7 @@ const spinRoulette = (type) => {
                 <span>→</span>
                 <span class="player">${secondPlace}</span>
                 <span>💰</span>
-                <span class="amount">7,500円</span>
+                <span class="amount">7,500Pt</span>
             `;
         }
     } else if (type === 'prize3') {
