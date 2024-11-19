@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>裏目的地 - 桃鉄GP 2024</title>
+<link rel="stylesheet" href="styles.css">
+<script src="hidden-destination.js" defer></script>
+</head>
+<body>
+<header>
+    <h1>裏目的地</h1>
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+        <a href="roulette.html">抽選ルーレット</a>
+        <a href="forfeit-counter.html">没収ポイント</a>
+    </nav>
+</header>
+
+<main>
+    <section class="dark-section">
+        <h2>裏目的地ルール</h2>
+        <p>裏目的地に到着したプレイヤーは、全員から <img src="black-chip.png" alt="黒チップ" class="chip-icon"> 黒1枚を獲得。</p>
+    </section>
+
+    <section class="dark-section">
+        <h2>目的地抽選</h2>
+        <p>抽選ボタンを押して、裏目的地を決定してください。</p>
+        <button id="draw-button" class="draw-button">抽選ボタン</button>
+        <div id="popup" class="popup hidden">
+            <p>再抽選してよろしいですか？</p>
+            <button id="confirm-yes" class="popup-button">はい</button>
+            <button id="confirm-no" class="popup-button">いいえ</button>
+        </div>
+        <div id="result" class="result-area"></div>
+    </section>
+</main>
+
+<footer>
+    <p>桃鉄実行委員会 © 2024</p>
+</footer>
+</body>
+</html>
