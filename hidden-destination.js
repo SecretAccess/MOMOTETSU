@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', async () => {
     let areas;
 
-    // JSONデータを読み込む
     try {
         const response = await fetch('destination-data.json');
         areas = await response.json();
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     let currentResult = '';
 
-    // 裏目的地を抽選する
     const drawDestination = () => {
         const areaKeys = Object.keys(areas);
         const selectedArea = areaKeys[Math.floor(Math.random() * areaKeys.length)];
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         resultArea.textContent = `裏目的地: ${currentResult}`;
     };
 
-    // 抽選ボタンが押されたときの動作
     drawButton.addEventListener('click', () => {
         if (currentResult) {
             popup.classList.remove('hidden');
@@ -39,13 +36,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    // 「はい」をクリックで再抽選
     confirmYes.addEventListener('click', () => {
         popup.classList.add('hidden');
         drawDestination();
     });
 
-    // 「いいえ」をクリックでポップアップを閉じる
     confirmNo.addEventListener('click', () => {
         popup.classList.add('hidden');
     });
