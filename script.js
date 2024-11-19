@@ -27,15 +27,14 @@ const updateDisplay = () => {
     const whiteTotal = whiteCount * 500;
     const colorTotal = colorCount * 300;
 
-    document.getElementById('black-total').textContent = `${blackTotal}円`;
-    document.getElementById('white-total').textContent = `${whiteTotal}円`;
-    document.getElementById('color-total').textContent = `${colorTotal}円`;
+    document.getElementById('black-total').textContent = `${blackTotal}Pt`;
+    document.getElementById('white-total').textContent = `${whiteTotal}Pt`;
+    document.getElementById('color-total').textContent = `${colorTotal}Pt`;
 
     const totalAmount = blackTotal + whiteTotal + colorTotal;
-    document.getElementById('total-amount').textContent = `${totalAmount}円`;
-
-    saveCounts();
+    document.getElementById('total-amount').textContent = `${totalAmount}Pt`; // ここを修正
 };
+
 
 // 増減関数
 const increment = (chip) => {
