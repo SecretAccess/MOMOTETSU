@@ -19,77 +19,76 @@ const spinRoulette = (type) => {
     void roulette.offsetWidth;
     roulette.style.animation = 'spin-animation 2s ease-out';
 
+    // 結果を計算・表示
+    setTimeout(() => {
+        const rand = Math.random();
 
- setTimeout(() => {
-    const rand = Math.random();
-
-    // デザイン付きの結果表示を設定
-    if (type === 'prize1') {
-        if (rand < 0.17) {
+        if (type === 'prize1') {
+            if (rand < 0.17) {
+                resultText = `
+                    <span class="player">${secondPlace}</span>
+                    <span>→</span>
+                    <span class="player">${firstPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">15,000Pt</span>
+                `;
+            } else if (rand < 0.50) {
+                resultText = `
+                    <span class="player">${thirdPlace}</span>
+                    <span>→</span>
+                    <span class="player">${firstPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">15,000Pt</span>
+                `;
+            } else {
+                resultText = `
+                    <span class="player">${fourthPlace}</span>
+                    <span>→</span>
+                    <span class="player">${firstPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">15,000Pt</span>
+                `;
+            }
+        } else if (type === 'prize2') {
+            if (rand < 0.14) {
+                resultText = `
+                    <span class="player">${firstPlace}</span>
+                    <span>→</span>
+                    <span class="player">${secondPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">7,500Pt</span>
+                `;
+            } else if (rand < 0.57) {
+                resultText = `
+                    <span class="player">${thirdPlace}</span>
+                    <span>→</span>
+                    <span class="player">${secondPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">7,500Pt</span>
+                `;
+            } else {
+                resultText = `
+                    <span class="player">${fourthPlace}</span>
+                    <span>→</span>
+                    <span class="player">${secondPlace}</span>
+                    <span>💰</span>
+                    <span class="amount">7,500Pt</span>
+                `;
+            }
+        } else if (type === 'prize3') {
+            const chosenPlayer = [firstPlace, secondPlace, thirdPlace, fourthPlace][Math.floor(rand * 4)];
             resultText = `
-                <span class="player">${secondPlace}</span>
-                <span>→</span>
-                <span class="player">${firstPlace}</span>
-                <span>💰</span>
-                <span class="amount">15,000Pt</span>
-            `;
-        } else if (rand < 0.50) {
-            resultText = `
-                <span class="player">${thirdPlace}</span>
-                <span>→</span>
-                <span class="player">${firstPlace}</span>
-                <span>💰</span>
-                <span class="amount">15,000Pt</span>
-            `;
-        } else {
-            resultText = `
-                <span class="player">${fourthPlace}</span>
-                <span>→</span>
-                <span class="player">${firstPlace}</span>
-                <span>💰</span>
-                <span class="amount">15,000Pt</span>
+                <span class="player">${chosenPlayer}</span>
+                <span>が</span>
+                <span class="amount">没収された全てのチップ</span>
+                <span>を受け取ります。</span>
             `;
         }
-    } else if (type === 'prize2') {
-        if (rand < 0.14) {
-            resultText = `
-                <span class="player">${firstPlace}</span>
-                <span>→</span>
-                <span class="player">${secondPlace}</span>
-                <span>💰</span>
-                <span class="amount">7,500Pt</span>
-            `;
-        } else if (rand < 0.57) {
-            resultText = `
-                <span class="player">${thirdPlace}</span>
-                <span>→</span>
-                <span class="player">${secondPlace}</span>
-                <span>💰</span>
-                <span class="amount">7,500Pt</span>
-            `;
-        } else {
-            resultText = `
-                <span class="player">${fourthPlace}</span>
-                <span>→</span>
-                <span class="player">${secondPlace}</span>
-                <span>💰</span>
-                <span class="amount">7,500Pt</span>
-            `;
-        }
-    } else if (type === 'prize3') {
-        const chosenPlayer = [firstPlace, secondPlace, thirdPlace, fourthPlace][Math.floor(rand * 4)];
-        resultText = `
-            <span class="player">${chosenPlayer}</span>
-            <span>が</span>
-            <span class="amount">没収された全てのチップ</span>
-            <span>を受け取ります。</span>
-        `;
-    }
 
-    resultDiv.innerHTML = resultText; // 結果をHTMLに挿入
-    resultDiv.style.visibility = 'visible';
-}, 2000);
-
+        resultDiv.innerHTML = resultText; // 結果をHTMLに挿入
+        resultDiv.style.visibility = 'visible';
+    }, 2000);
+};
 
 // ルール説明の表示・非表示切り替え
 document.addEventListener('DOMContentLoaded', () => {
@@ -106,4 +105,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-
