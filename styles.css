@@ -57,51 +57,79 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
+    gap: 16px; /* 少し小さくしてコンパクトに */
+    padding: 20px;
+    background: #f9f9f9; /* 全体の背景を柔らかい色に */
+    border-radius: 12px; /* 柔らかい印象を与える角丸 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影を軽く追加 */
 }
 
 .chip-item {
     text-align: center;
     width: 100%;
+    max-width: 300px; /* 最大幅を制限 */
+    padding: 10px;
+    background: #fff; /* カード風に */
+    border-radius: 8px; /* 角を丸める */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 影を追加 */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chip-item:hover {
+    transform: translateY(-5px); /* 少し浮かせる */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* ホバー時の影 */
 }
 
 .chip-item img {
-    width: 50px;
-    height: 50px;
-    margin-bottom: 10px;
+    width: 60px; /* サイズを少し大きく */
+    height: auto; /* アスペクト比を維持 */
+    margin-bottom: 8px; /* 余白を調整 */
+    border: 2px solid #5bc0de; /* ボーダーでアクセント */
+    border-radius: 50%; /* 丸くする */
 }
 
 .controls {
     display: flex;
     justify-content: center;
-    gap: 20px;
-    margin: 10px 0;
+    gap: 12px; /* ボタン間の距離を調整 */
+    margin: 8px 0; /* 上下の余白を調整 */
 }
 
 button {
-    padding: 15px;
-    font-size: 1.5em;
+    padding: 12px 20px; /* ボタンを小さめに */
+    font-size: 1.2em; /* フォントサイズを調整 */
     color: #fff;
-    background-color: #5bc0de;
+    background: linear-gradient(135deg, #5bc0de, #46a1c9); /* グラデーション追加 */
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 軽い影 */
+    transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
 }
 
 button:hover {
-    transform: scale(1.05);
+    transform: scale(1.1); /* 大きく見せる */
+    background: linear-gradient(135deg, #46a1c9, #3b90b0); /* 濃いグラデーション */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 影を増強 */
 }
 
 button:active {
-    transform: scale(0.95);
+    transform: scale(0.95); /* 押下時に縮む */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 影を小さく */
 }
 
 .summary {
     text-align: center;
     margin-top: 20px;
-    font-size: 1.8em;
+    font-size: 2em; /* 大きめの文字 */
+    font-weight: bold; /* 強調 */
+    color: #46a1c9; /* テーマカラー */
+    background: #f0f8ff; /* 薄い背景色 */
+    padding: 10px;
+    border-radius: 8px; /* 丸み */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影 */
 }
+
 /* ルールページ専用スタイル */
 .rule-section {
     margin: 20px 0;
