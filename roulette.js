@@ -17,7 +17,8 @@ const spinRoulette = (type) => {
     // アニメーションをリセットしてから再設定
     roulette.style.animation = 'none';
     void roulette.offsetWidth;
-    roulette.style.animation = 'spin 2s ease-out';
+    roulette.style.animation = 'spin-animation 2s ease-out';
+
 
     setTimeout(() => {
         const rand = Math.random();
