@@ -7,27 +7,27 @@
     <link rel="stylesheet" href="styles.css">
     <script src="hidden-destination.js" defer></script>
 </head>
-<body>
-<header>
+<body class="hidden-destination">
+<header class="hidden-destination">
     <h1>裏目的地 抽選</h1>
     <nav>
         <a href="index.html">チップカウンター</a>
         <a href="rules.html">大会ルール</a>
         <a href="roulette.html">抽選ルーレット</a>
-        <a href="forfeit-counter.html">没収ポイント</a>
+        <a href="hidden-destination.html">裏目的地</a>
     </nav>
 </header>
 
 <main>
     <section>
         <h2>裏目的地 抽選機能</h2>
-        <button id="draw-button" class="draw-button">抽選開始</button>
-        <div id="popup" class="popup hidden">
+        <button id="draw-button" class="draw-button hidden-destination">抽選開始</button>
+        <div id="popup" class="popup hidden hidden-destination">
             <p>再抽選してよろしいですか？</p>
-            <button id="confirm-yes" class="popup-button">はい</button>
-            <button id="confirm-no" class="popup-button">いいえ</button>
+            <button id="confirm-yes" class="popup-button hidden-destination">はい</button>
+            <button id="confirm-no" class="popup-button hidden-destination">いいえ</button>
         </div>
-        <div id="result" class="result-area"></div>
+        <div id="result" class="result-area hidden-destination"></div>
     </section>
 </main>
 
