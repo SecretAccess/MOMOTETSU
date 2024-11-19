@@ -47,3 +47,20 @@ const spinRoulette = (type) => {
         resultDiv.style.visibility = 'visible';
     }, 2000);
 };
+
+// ルール説明の表示・非表示切り替え
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleButton = document.getElementById('toggle-rules');
+    const rulesList = document.getElementById('rules-list');
+
+    toggleButton.addEventListener('click', () => {
+        if (rulesList.classList.contains('hidden')) {
+            rulesList.classList.remove('hidden');
+            toggleButton.textContent = 'ルールを非表示';
+        } else {
+            rulesList.classList.add('hidden');
+            toggleButton.textContent = 'ルールを表示';
+        }
+    });
+});
+
