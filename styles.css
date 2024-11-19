@@ -130,46 +130,52 @@ button:active {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影 */
 }
 
-/* ルールページ専用スタイル */
+/* ルールセクション全体のスタイル */
 .rule-section {
-    margin: 20px 0;
+    margin: 20px auto; /* 上下に余白を確保 */
     padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: #fdfdfd; /* 柔らかい白背景 */
+    border-radius: 10px; /* 角を少し丸める */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 軽めの影で立体感 */
+    border: 1px solid #ddd; /* 薄い境界線 */
 }
 
+/* 各ルール項目のスタイル */
 .rule-item {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* 項目間の余白 */
     padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    background-color: #ffffff; /* 真っ白な背景でスッキリ */
+    border-radius: 8px; /* 柔らかな印象 */
+    border-left: 5px solid #d9534f; /* 左に目立つライン */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 軽い影で浮き上がらせる */
 }
 
+/* 見出しのスタイル */
 .rule-item h3 {
-    font-size: 1.3em;
-    color: #d9534f;
+    font-size: 1.2em;
+    color: #d9534f; /* 強調色 */
     margin-bottom: 10px;
-    display: flex;
-    align-items: center;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ddd; /* 見出し下に区切り線 */
 }
 
-.rule-item h3 span {
-    font-weight: bold;
-    font-size: 1.5em;
-    margin-right: 10px;
+/* 内容のスタイル */
+.rule-item p, .rule-item ul {
+    font-size: 1em;
+    color: #555; /* 読みやすい色 */
+    line-height: 1.6; /* 読みやすさ向上 */
 }
 
+/* リスト内の余白と整列 */
 .rule-item ul {
-    list-style-type: none; /* 「・」を消す */
-    padding-left: 20px;
-    color: #555;
+    list-style-type: none; /* 記号を非表示 */
+    padding-left: 20px; /* インデントを少し */
 }
 
 .rule-item ul li {
-    margin-bottom: 10px;
+    margin-bottom: 10px; /* 項目間に余白 */
 }
+
 
 .rule-item p {
     color: #555;
