@@ -18,14 +18,13 @@ body {
 
 /* 共通のナビゲーションリンク */
 nav a {
-    color: #5bc0de; /* 水色 */
-    margin: 0 10px;
-    text-decoration: none;
-    font-size: 1.2em;
+    font-size: 1em; /* フォントサイズを調整 */
+    padding: 5px 10px; /* 内側の余白を小さくする */
 }
-
-nav a:hover {
-    text-decoration: underline;
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* リンク間のスペースを減らす */
 }
 
 /* 共通のヘッダー */
