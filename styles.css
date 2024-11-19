@@ -420,3 +420,12 @@ main {
 .popup-button:hover {
     background-color: #31a4c2;
 }
+.city-name {
+    font-size: 2em; /* 大きくする */
+    font-weight: bold; /* 太字 */
+    color: #ffcc00; /* ゴールドで目立たせる */
+    display: block; /* 改行を強制 */
+    margin-top: 10px; /* 上部に余白を追加 */
+    text-align: center; /* 中央揃え */
+}
+
