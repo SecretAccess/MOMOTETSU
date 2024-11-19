@@ -513,4 +513,21 @@ main {
     margin-top: 10px; /* 上部に余白を追加 */
     text-align: center; /* 中央揃え */
 }
+/* 裏目的地専用のナビゲーション背景を真っ黒にする */
+body.hidden-destination nav {
+    background-color: #000; /* 背景色を真っ黒に設定 */
+    padding: 10px 0; /* 上下の余白を追加 */
+}
+
+body.hidden-destination nav a {
+    background-color: #000; /* リンク背景を真っ黒に設定 */
+    color: #ffcc00; /* リンクの文字色をゴールドに */
+    padding: 8px 12px; /* 内側の余白を設定 */
+    border-radius: 5px; /* 角を丸く */
+}
+
+body.hidden-destination nav a:hover {
+    text-decoration: underline; /* ホバー時に下線を表示 */
+    background-color: #333; /* ホバー時に背景を少し明るく */
+}
 
