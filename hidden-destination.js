@@ -18,15 +18,21 @@ document.addEventListener('DOMContentLoaded', async () => {
     let currentResult = '';
 
     const drawDestination = () => {
-        const areaKeys = Object.keys(areas);
-        const selectedArea = areaKeys[Math.floor(Math.random() * areaKeys.length)];
-        const subAreaKeys = Object.keys(areas[selectedArea]);
-        const selectedSubArea = subAreaKeys[Math.floor(Math.random() * subAreaKeys.length)];
-        const cities = areas[selectedArea][selectedSubArea];
-        const selectedCity = cities[Math.floor(Math.random() * cities.length)];
-        currentResult = `${selectedArea} > ${selectedSubArea} > ${selectedCity}`;
-        resultArea.textContent = `裏目的地: ${currentResult}`;
-    };
+    const areaKeys = Object.keys(areas);
+    const selectedArea = areaKeys[Math.floor(Math.random() * areaKeys.length)];
+    const subAreaKeys = Object.keys(areas[selectedArea]);
+    const selectedSubArea = subAreaKeys[Math.floor(Math.random() * subAreaKeys.length)];
+    const cities = areas[selectedArea][selectedSubArea];
+    const selectedCity = cities[Math.floor(Math.random() * cities.length)];
+
+    // 結果を表示（都市名を大きく）
+    currentResult = `${selectedArea} > ${selectedSubArea}`;
+    resultArea.innerHTML = `
+        裏目的地: ${currentResult}<br>
+        <span id="city-name" class="city-name">${selectedCity}</span>
+    `;
+};
+
 
     drawButton.addEventListener('click', () => {
         if (currentResult) {
