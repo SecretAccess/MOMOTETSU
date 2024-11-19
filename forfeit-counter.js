@@ -21,13 +21,13 @@ const saveForfeitData = () => {
 
 // 表示を更新する関数
 const updateDisplay = () => {
-    document.getElementById('nozomu-amount').textContent = `${forfeitData.nozomu}円`;
-    document.getElementById('madoka-amount').textContent = `${forfeitData.madoka}円`;
-    document.getElementById('hikaru-amount').textContent = `${forfeitData.hikaru}円`;
-    document.getElementById('chie-amount').textContent = `${forfeitData.chie}円`;
+    document.getElementById('nozomu-amount').textContent = `${forfeitData.nozomu}Pt`;
+    document.getElementById('madoka-amount').textContent = `${forfeitData.madoka}Pt`;
+    document.getElementById('hikaru-amount').textContent = `${forfeitData.hikaru}Pt`;
+    document.getElementById('chie-amount').textContent = `${forfeitData.chie}Pt`;
 
     const totalAmount = forfeitData.nozomu + forfeitData.madoka + forfeitData.hikaru + forfeitData.chie;
-    document.getElementById('total-amount').textContent = `${totalAmount}円`;
+    document.getElementById('total-amount').textContent = `${totalAmount}Pt`;
 
     saveForfeitData();
 };
