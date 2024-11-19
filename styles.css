@@ -103,6 +103,50 @@ button:active {
     margin-top: 20px;
     font-size: 1.8em;
 }
+/* ルールページ専用スタイル */
+.rule-section {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.rule-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.rule-item h3 {
+    font-size: 1.3em;
+    color: #d9534f;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.rule-item h3 span {
+    font-weight: bold;
+    font-size: 1.5em;
+    margin-right: 10px;
+}
+
+.rule-item ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    color: #555;
+}
+
+.rule-item ul li {
+    margin-bottom: 10px;
+}
+
+.rule-item p {
+    color: #555;
+}
 
 /* ルーレットページ専用スタイル */
 .roulette-section {
