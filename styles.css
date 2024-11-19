@@ -350,7 +350,8 @@ main {
     margin-bottom: 20px;
 }
 
-.draw-button {
+.draw-button,
+.popup-button {
     background-color: #d9534f; /* 赤系 */
     color: #fff;
     padding: 15px 30px;
@@ -358,12 +359,15 @@ main {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
 }
 
-.draw-button:hover {
+.draw-button:hover,
+.popup-button:hover {
     transform: scale(1.1);
+    background-color: #c9302c; /* 濃い赤 */
 }
+
 
 /* 抽選結果表示 */
 .result-area {
