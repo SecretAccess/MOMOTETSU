@@ -25,13 +25,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     const cities = areas[selectedArea][selectedSubArea];
     const selectedCity = cities[Math.floor(Math.random() * cities.length)];
 
-    // 結果を表示（都市名を大きく）
-    currentResult = `${selectedArea} > ${selectedSubArea}`;
+    // 改行して階層を表示、都市名だけ大きく
     resultArea.innerHTML = `
-        裏目的地: ${currentResult}<br>
-        <span id="city-name" class="city-name">${selectedCity}</span>
+        <div>
+            <span class="destination-area">${selectedArea}</span><br>
+            <span class="destination-subarea">${selectedSubArea}</span><br>
+            <span class="city-name">${selectedCity}</span>
+        </div>
     `;
 };
+
 
 
     drawButton.addEventListener('click', () => {
