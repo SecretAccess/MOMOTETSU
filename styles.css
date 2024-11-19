@@ -53,6 +53,57 @@ footer {
     color: #888;
 }
 
+/* --- チップカウンター用スタイル --- */
+.chip-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.chip-item {
+    text-align: center;
+    width: 100%;
+}
+
+.chip-item img {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin: 10px 0;
+}
+
+button {
+    padding: 15px;
+    font-size: 1.5em;
+    color: #fff;
+    background-color: #5bc0de;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.summary {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1.8em;
+}
+
 /* ルーレットページ専用スタイル */
 .roulette-section {
     margin-top: 20px;
