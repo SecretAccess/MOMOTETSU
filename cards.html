@@ -29,9 +29,9 @@
     </div>
 
     <!-- The Modal -->
-    <div id="card-modal" class="event-modal">
-        <div class="event-modal-content">
-            <span class="event-close">&times;</span>
+    <div id="card-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
             <h2 id="modal-title"></h2>
             <p id="modal-rule"></p>
         </div>
@@ -40,61 +40,25 @@
     <script>
         // カードデータ
         const cards = [
-            {
-                title: "運命の操作",
-                rule: "指定したプレイヤーの次のターンの進路を操作することができる。"
-            },
-            {
-                title: "天災",
-                rule: "全員から黒チップ1枚を没収。"
-            },
-            {
-                title: "阻害計画",
-                rule: "次の目的地到達ボーナスを無効化。"
-            },
-            {
-                title: "革命",
-                rule: "1位のプレイヤーと自身のチップを交換する。"
-            },
-            {
-                title: "経済成長期",
-                rule: "次回の目的地到達ボーナスが2倍。"
-            },
-            {
-                title: "経済不況",
-                rule: "今回の目的地到達ボーナスなし。"
-            },
-            {
-                title: "偽善の心",
-                rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。"
-            },
-            {
-                title: "強奪",
-                rule: "指定したプレイヤーから黒チップ1枚を奪取。"
-            },
-            {
-                title: "大富豪の恩恵",
-                rule: "全員から黒チップ1枚ずつを獲得します。"
-            },
-            {
-                title: "破産宣告",
-                rule: "指定したプレイヤーの全ての黒チップを没収します。"
-            },
-            {
-                title: "復讐の一撃",
-                rule: "指定したプレイヤーから黒チップ2枚を奪取します。"
-            },
-            {
-                title: "無敵の防御",
-                rule: "他のプレイヤーのカード効果を受けなくなります。"
-            }
+            { title: "運命の操作", rule: "指定したプレイヤーの次のターンの進路を操作することができる。" },
+            { title: "天災", rule: "全員から黒チップ1枚を没収。" },
+            { title: "阻害計画", rule: "次の目的地到達ボーナスを無効化。" },
+            { title: "革命", rule: "1位のプレイヤーと自身のチップを交換する。" },
+            { title: "経済成長期", rule: "次回の目的地到達ボーナスが2倍。" },
+            { title: "経済不況", rule: "今回の目的地到達ボーナスなし。" },
+            { title: "偽善の心", rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。" },
+            { title: "強奪", rule: "指定したプレイヤーから黒チップ1枚を奪取。" },
+            { title: "大富豪の恩恵", rule: "全員から黒チップ1枚ずつを獲得します。" },
+            { title: "破産宣告", rule: "指定したプレイヤーの全ての黒チップを没収します。" },
+            { title: "復讐の一撃", rule: "指定したプレイヤーから黒チップ2枚を奪取します。" },
+            { title: "無敵の防御", rule: "他のプレイヤーのカード効果を受けなくなります。" }
         ];
 
         const cardGrid = document.getElementById('card-grid');
         const modal = document.getElementById('card-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalRule = document.getElementById('modal-rule');
-        const closeBtn = document.querySelector('.event-close');
+        const closeBtn = document.querySelector('.close');
         const resetButton = document.getElementById('reset-button');
 
         // ローカルストレージキー
@@ -124,7 +88,7 @@
         shuffledOrder.forEach((cardIndex) => {
             const card = cards[cardIndex];
             const cardElement = document.createElement('div');
-            cardElement.classList.add('event-card');
+            cardElement.classList.add('card');
             cardElement.dataset.index = cardIndex;
 
             // 使用済みの場合は非表示
@@ -134,13 +98,13 @@
 
             // カードの内部構造
             const cardInner = document.createElement('div');
-            cardInner.classList.add('event-card-inner');
+            cardInner.classList.add('card-inner');
 
             const cardFront = document.createElement('div');
-            cardFront.classList.add('event-card-front');
+            cardFront.classList.add('card-front');
 
             const cardBack = document.createElement('div');
-            cardBack.classList.add('event-card-back');
+            cardBack.classList.add('card-back');
             cardBack.innerHTML = `<strong>${card.title}</strong><br>${card.rule}`;
 
             cardInner.appendChild(cardFront);
