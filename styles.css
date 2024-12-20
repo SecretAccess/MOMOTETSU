@@ -690,7 +690,7 @@ body.hidden-destination nav a:hover {
 /* レスポンシブデザイン */
 @media (max-width: 600px) {
     #card-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(6, 1fr);
         grid-gap: 8px;
     }
     .event-card {
