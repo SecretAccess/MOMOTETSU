@@ -758,10 +758,6 @@ body.hidden-destination nav a:hover {
     background-color: #315f7d;
 }
 
-#explanation-content {
-    margin-top: 10px;
-    display: none; /* 初期状態では非表示 */
-}
 
 #explanation-content.visible {
     display: block;
@@ -780,12 +776,51 @@ body.hidden-destination nav a:hover {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* hidden クラスで非表示に */
+/* カード説明セクションのスタイル */
+#card-explanation {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+#card-explanation h2 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+#toggle-explanation {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: #4682b4;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#toggle-explanation:hover {
+    background-color: #315f7d;
+}
+
+#explanation-content {
+    margin-top: 10px;
+    /* display: none; 削除 */
+}
+
+#explanation-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+#explanation-content li {
+    background-color: #f8f8ff;
+    margin-bottom: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* hidden クラスのみで非表示に */
 .hidden {
     display: none;
 }
 
-/* visible クラスで表示 */
-.visible {
-    display: block;
-}
