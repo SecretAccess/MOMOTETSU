@@ -568,21 +568,21 @@ body.hidden-destination nav a:hover {
 /* カードグリッドのスタイル */
 #card-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr); /* デフォルトは3列 */
     grid-gap: 10px;
     justify-items: center;
     margin-bottom: 20px;
 }
 
 /* カードのスタイル */
-.event-card {
-    width: 90px;
-    height: 130px;
+.card {
+    width: 80px; /* 縦向き用のサイズ */
+    height: 120px;
     perspective: 1000px;
     position: relative;
 }
 
-.event-card-inner {
+.card-inner {
     position: relative;
     width: 100%;
     height: 100%;
@@ -594,11 +594,11 @@ body.hidden-destination nav a:hover {
     cursor: pointer;
 }
 
-.event-card.flipped .event-card-inner {
+.card.flipped .card-inner {
     transform: rotateY(180deg);
 }
 
-.event-card-front, .event-card-back {
+.card-front, .card-back {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -606,23 +606,24 @@ body.hidden-destination nav a:hover {
     border-radius: 10px;
 }
 
-.event-card-front {
+.card-front {
     background-color: #2e8b57;
     background-image: url('momotetsu.png');
     background-size: cover;
     background-position: center;
 }
 
-.event-card-back {
+.card-back {
     background-color: #fff;
     transform: rotateY(180deg);
     padding: 10px;
     box-sizing: border-box;
     overflow: auto;
+    font-size: 12px;
 }
 
 /* モーダルのスタイル */
-.event-modal {
+.modal {
     display: none; /* デフォルトでは非表示 */
     position: fixed; /* 固定 */
     z-index: 100; /* 最前面 */
@@ -634,7 +635,7 @@ body.hidden-destination nav a:hover {
     background-color: rgba(0,0,0,0.5); /* 半透明の背景 */
 }
 
-.event-modal-content {
+.modal-content {
     background-color: #fff;
     margin: 20% auto; /* 上から20%、中央に配置 */
     padding: 20px;
@@ -651,7 +652,7 @@ body.hidden-destination nav a:hover {
     to {opacity: 1;}
 }
 
-.event-close {
+.close {
     color: #aaa;
     position: absolute;
     top: 10px;
@@ -661,13 +662,13 @@ body.hidden-destination nav a:hover {
     cursor: pointer;
 }
 
-.event-close:hover,
-.event-close:focus {
+.close:hover,
+.close:focus {
     color: black;
 }
 
 /* 使用済みカードを非表示にする */
-.event-card.used {
+.card.used {
     visibility: hidden;
 }
 
@@ -688,23 +689,42 @@ body.hidden-destination nav a:hover {
 }
 
 /* レスポンシブデザイン */
-@media (max-width: 600px) {
+
+/* 横向き（ランドスケープ）の場合 */
+@media (orientation: landscape) {
     #card-grid {
-        grid-template-columns: repeat(6, 1fr);
-        grid-gap: 8px;
+        grid-template-columns: repeat(6, 1fr); /* 6列に変更 */
     }
-    .event-card {
+    .card {
+        width: 60px; /* 横向き用のサイズ */
+        height: 90px;
+    }
+    .card-back {
+        font-size: 10px;
+    }
+}
+
+/* 縦向き（ポートレート）の場合 */
+@media (orientation: portrait) {
+    #card-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3列に変更 */
+    }
+    .card {
         width: 80px;
         height: 120px;
     }
-    h1 {
-        font-size: 20px;
+    .card-back {
+        font-size: 12px;
     }
-    #reset-button {
-        font-size: 14px;
-        padding: 8px 16px;
+}
+
+/* 小さい画面向けの追加調整 */
+@media (max-width: 400px) {
+    #card-grid {
+        grid-template-columns: repeat(2, 1fr); /* 必要に応じて2列 */
     }
-    .event-modal-content {
-        margin: 30% auto; /* 小さい画面向けに調整 */
+    .card {
+        width: 60px;
+        height: 90px;
     }
 }
