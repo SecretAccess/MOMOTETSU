@@ -580,6 +580,8 @@ body.hidden-destination nav a:hover {
     height: 120px;
     perspective: 1000px;
     position: relative;
+    /* ボーダーを削除 */
+    border: none;
 }
 
 .card-inner {
@@ -592,7 +594,10 @@ body.hidden-destination nav a:hover {
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     border-radius: 10px;
     cursor: pointer;
+    /* ボーダーを削除 */
+    border: none;
 }
+
 
 .card.flipped .card-inner {
     transform: rotateY(180deg);
