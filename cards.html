@@ -134,6 +134,9 @@
                 font-size: 14px;
                 padding: 8px 16px;
             }
+            .modal-content {
+                margin: 30% auto; /* Adjust for smaller screens */
+            }
         }
     </style>
 </head>
@@ -219,12 +222,20 @@
         const resetButton = document.getElementById('reset-button');
 
         // ローカルストレージキー
-        const STORAGE_KEY = 'usedCards';
+        const STORAGE_USED_CARDS = 'usedCards';
+        const STORAGE_SHUFFLED_ORDER = 'shuffledOrder';
 
         // 使用済みカードのIDを取得
-        let usedCards = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+        let usedCards = JSON.parse(localStorage.getItem(STORAGE_USED_CARDS)) || [];
 
-        // シャッフル関数
+        // シャッフルされた順序を取得または生成
+        let shuffledOrder = JSON.parse(localStorage.getItem(STORAGE_SHUFFLED_ORDER));
+        if (!shuffledOrder) {
+            shuffledOrder = shuffle([...Array(cards.length).keys()]);
+            localStorage.setItem(STORAGE_SHUFFLED_ORDER, JSON.stringify(shuffledOrder));
+        }
+
+        // シャッフル関数（Fisher-Yatesアルゴリズム）
         function shuffle(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -233,11 +244,8 @@
             return array;
         }
 
-        // カードをシャッフル
-        const shuffledCards = shuffle([...Array(cards.length).keys()]);
-
         // カードを生成
-        shuffledCards.forEach((cardIndex) => {
+        shuffledOrder.forEach((cardIndex) => {
             const card = cards[cardIndex];
             const cardElement = document.createElement('div');
             cardElement.classList.add('card');
@@ -274,7 +282,7 @@
 
                 // カードを使用済みに追加
                 usedCards.push(cardIndex);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(usedCards));
+                localStorage.setItem(STORAGE_USED_CARDS, JSON.stringify(usedCards));
 
                 // カードをめくる
                 cardElement.classList.add('flipped');
@@ -303,7 +311,8 @@
         // リセットボタン
         resetButton.addEventListener('click', () => {
             if (confirm("本当にリセットしますか？")) {
-                localStorage.removeItem(STORAGE_KEY);
+                localStorage.removeItem(STORAGE_USED_CARDS);
+                localStorage.removeItem(STORAGE_SHUFFLED_ORDER);
                 window.location.reload();
             }
         });
