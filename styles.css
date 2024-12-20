@@ -564,3 +564,147 @@ body.hidden-destination nav a:hover {
     text-decoration: underline; /* ホバー時に下線を表示 */
     background-color: #333; /* ホバー時に背景を少し明るく */
 }
+
+/* カードグリッドのスタイル */
+#card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    justify-items: center;
+    margin-bottom: 20px;
+}
+
+/* カードのスタイル */
+.event-card {
+    width: 90px;
+    height: 130px;
+    perspective: 1000px;
+    position: relative;
+}
+
+.event-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.event-card.flipped .event-card-inner {
+    transform: rotateY(180deg);
+}
+
+.event-card-front, .event-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+}
+
+.event-card-front {
+    background-color: #2e8b57;
+    background-image: url('momotetsu.png');
+    background-size: cover;
+    background-position: center;
+}
+
+.event-card-back {
+    background-color: #fff;
+    transform: rotateY(180deg);
+    padding: 10px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+/* モーダルのスタイル */
+.event-modal {
+    display: none; /* デフォルトでは非表示 */
+    position: fixed; /* 固定 */
+    z-index: 100; /* 最前面 */
+    left: 0;
+    top: 0;
+    width: 100%; /* 全幅 */
+    height: 100%; /* 全高 */
+    overflow: auto; /* 必要に応じてスクロール */
+    background-color: rgba(0,0,0,0.5); /* 半透明の背景 */
+}
+
+.event-modal-content {
+    background-color: #fff;
+    margin: 20% auto; /* 上から20%、中央に配置 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 400px; /* 画面サイズに応じて調整 */
+    border-radius: 10px;
+    position: relative;
+    animation: fadeIn 0.5s;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+}
+
+.event-close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.event-close:hover,
+.event-close:focus {
+    color: black;
+}
+
+/* 使用済みカードを非表示にする */
+.event-card.used {
+    visibility: hidden;
+}
+
+/* リセットボタンのスタイル */
+#reset-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #dc143c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+#reset-button:hover {
+    background-color: #a50e2c;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 600px) {
+    #card-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 8px;
+    }
+    .event-card {
+        width: 80px;
+        height: 120px;
+    }
+    h1 {
+        font-size: 20px;
+    }
+    #reset-button {
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+    .event-modal-content {
+        margin: 30% auto; /* 小さい画面向けに調整 */
+    }
+}
