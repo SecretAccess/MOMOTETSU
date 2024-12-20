@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>桃鉄カスタムイベントカード</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .card {
+            width: 100px;
+            height: 150px;
+            background-color: #2e8b57;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.2s;
+        }
+        .card.used {
+            visibility: hidden;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto; /* 10% from the top and centered */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px; /* Could be more or less, depending on screen size */
+            border-radius: 10px;
+            position: relative;
+        }
+        .close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+        /* Reset Button */
+        #reset-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #dc143c;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #reset-button:hover {
+            background-color: #a50e2c;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>桃鉄カスタムイベントカード</h1>
+
+    <!-- Card Grid -->
+    <div id="card-grid">
+        <!-- Cards will be dynamically inserted here -->
+    </div>
+
+    <!-- Reset Button -->
+    <button id="reset-button">リセット</button>
+
+    <!-- The Modal -->
+    <div id="card-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modal-title"></h2>
+            <p id="modal-rule"></p>
+        </div>
+    </div>
+
+    <script>
+        // カードデータ
+        const cards = [
+            {
+                title: "運命の操作",
+                rule: "指定したプレイヤーの次のターンの進路を操作することができる。"
+            },
+            {
+                title: "天災",
+                rule: "全員から黒チップ1枚を没収。"
+            },
+            {
+                title: "阻害計画",
+                rule: "次の目的地到達ボーナスを無効化。"
+            },
+            {
+                title: "革命",
+                rule: "1位のプレイヤーと自身のチップを交換する。"
+            },
+            {
+                title: "経済成長期",
+                rule: "次回の目的地到達ボーナスが2倍。"
+            },
+            {
+                title: "経済不況",
+                rule: "今回の目的地到達ボーナスなし。"
+            },
+            {
+                title: "偽善の心",
+                rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。"
+            },
+            {
+                title: "強奪",
+                rule: "指定したプレイヤーから黒チップ1枚を奪取。"
+            },
+            {
+                title: "大富豪の恩恵",
+                rule: "全員から黒チップ1枚ずつを獲得します。"
+            },
+            {
+                title: "破産宣告",
+                rule: "指定したプレイヤーの全ての黒チップを没収します。"
+            },
+            {
+                title: "復讐の一撃",
+                rule: "指定したプレイヤーから黒チップ2枚を奪取します。"
+            },
+            {
+                title: "無敵の防御",
+                rule: "他のプレイヤーのカード効果を受けなくなります。"
+            }
+        ];
+
+        const cardGrid = document.getElementById('card-grid');
+        const modal = document.getElementById('card-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalRule = document.getElementById('modal-rule');
+        const closeBtn = document.getElementsByClassName('close')[0];
+        const resetButton = document.getElementById('reset-button');
+
+        // ローカルストレージキー
+        const STORAGE_KEY = 'usedCards';
+
+        // 使用済みカードのIDを取得
+        let usedCards = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+
+        // カードを生成
+        cards.forEach((card, index) => {
+            const cardElement = document.createElement('div');
+            cardElement.classList.add('card');
+            cardElement.dataset.index = index;
+
+            // 使用済みの場合は非表示
+            if (usedCards.includes(index)) {
+                cardElement.classList.add('used');
+            }
+
+            // クリックイベント
+            cardElement.addEventListener('click', () => {
+                if (usedCards.includes(index)) return; // 使用済みなら無視
+
+                // モーダルにタイトルとルールを表示
+                modalTitle.textContent = card.title;
+                modalRule.textContent = card.rule;
+                modal.style.display = "block";
+
+                // カードを使用済みに追加
+                usedCards.push(index);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(usedCards));
+
+                // カードを非表示にする
+                cardElement.classList.add('used');
+            });
+
+            cardGrid.appendChild(cardElement);
+        });
+
+        // モーダルを閉じる
+        closeBtn.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        // モーダル外をクリックした場合も閉じる
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // リセットボタン
+        resetButton.addEventListener('click', () => {
+            if (confirm("本当にリセットしますか？")) {
+                localStorage.removeItem(STORAGE_KEY);
+                window.location.reload();
+            }
+        });
+    </script>
+
+</body>
+</html>
