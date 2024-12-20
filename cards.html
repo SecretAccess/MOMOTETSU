@@ -57,6 +57,10 @@
     </div>
 
     <script>
+        // カード説明セクションの要素
+const toggleExplanationBtn = document.getElementById('toggle-explanation');
+const explanationContent = document.getElementById('explanation-content');
+
         // カードデータ
         const cards = [
             { title: "運命の操作", rule: "指定したプレイヤーの次のターンの進路を操作することができる。" },
@@ -176,15 +180,16 @@
                 window.location.reload();
             }
         });
-         // 説明セクションのトグル機能
-        toggleExplanationBtn.addEventListener('click', () => {
-            explanationContent.classList.toggle('hidden');
-            if (explanationContent.classList.contains('hidden')) {
-                toggleExplanationBtn.textContent = "カード一覧を見る";
-            } else {
-                toggleExplanationBtn.textContent = "カード一覧を隠す";
-            }
-        });
+       // 説明セクションのトグル機能
+toggleExplanationBtn.addEventListener('click', () => {
+    explanationContent.classList.toggle('hidden');
+    if (explanationContent.classList.contains('hidden')) {
+        toggleExplanationBtn.textContent = "カード一覧を見る";
+    } else {
+        toggleExplanationBtn.textContent = "カード一覧を隠す";
+    }
+});
+
     </script>
 </body>
 </html>
