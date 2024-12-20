@@ -4,167 +4,34 @@
     <meta charset="UTF-8">
     <title>桃鉄カスタムイベントカード</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f8ff;
-            margin: 0;
-            padding: 10px;
-            text-align: center;
-        }
-        h1 {
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-        #card-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-gap: 10px;
-            justify-items: center;
-            margin-bottom: 20px;
-        }
-        .card {
-            width: 90px;
-            height: 130px;
-            perspective: 1000px;
-            position: relative;
-        }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            border-radius: 10px;
-            cursor: pointer;
-        }
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 10px;
-        }
-        .card-front {
-            background-color: #2e8b57;
-            background-image: url('momotetsu.png');
-            background-size: cover;
-            background-position: center;
-        }
-        .card-back {
-            background-color: #fff;
-            transform: rotateY(180deg);
-            padding: 10px;
-            box-sizing: border-box;
-            overflow: auto;
-        }
-        /* Modal Styles */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 10; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.5); /* Black w/ opacity */
-        }
-        .modal-content {
-            background-color: #fff;
-            margin: 20% auto; /* 20% from the top and centered */
-            padding: 20px;
-            border: 1px solid #888;
-            width: 90%;
-            max-width: 400px; /* Could be more or less, depending on screen size */
-            border-radius: 10px;
-            position: relative;
-            animation: fadeIn 0.5s;
-        }
-        @keyframes fadeIn {
-            from {opacity: 0;}
-            to {opacity: 1;}
-        }
-        .close {
-            color: #aaa;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .close:hover,
-        .close:focus {
-            color: black;
-        }
-        /* Reset Button */
-        #reset-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #dc143c;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        #reset-button:hover {
-            background-color: #a50e2c;
-        }
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            #card-grid {
-                grid-template-columns: repeat(2, 1fr);
-                grid-gap: 8px;
-            }
-            .card {
-                width: 80px;
-                height: 120px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            #reset-button {
-                font-size: 14px;
-                padding: 8px 16px;
-            }
-            .modal-content {
-                margin: 30% auto; /* Adjust for smaller screens */
-            }
-        }
-    </style>
+    <!-- 既存のスタイルシートをリンク -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<header>
-    <h1>チャンスカード</h1>
-    <nav>
-    <a href="index.html">チップカウンター</a>
-    <a href="rules.html">大会ルール</a>
-    <a href="cards.html">チャンスカード</a>
-    <a href="roulette.html">抽選ルーレット</a>
-    <a href="forfeit-counter.html">没収ポイント</a>
-    <a href="hidden-destination.html">裏目的地</a>
-</nav>
+    <header>
+        <h1>チャンスカード</h1>
+        <nav>
+            <a href="index.html">チップカウンター</a>
+            <a href="rules.html">大会ルール</a>
+            <a href="cards.html">チャンスカード</a>
+            <a href="roulette.html">抽選ルーレット</a>
+            <a href="forfeit-counter.html">没収ポイント</a>
+            <a href="hidden-destination.html">裏目的地</a>
+        </nav>
+    </header>
 
-</header>
     <!-- Reset Button -->
     <button id="reset-button">リセット</button>
 
     <!-- Card Grid -->
     <div id="card-grid">
-        <!-- Cards will be dynamically inserted here -->
+        <!-- カードはJavaScriptで動的に挿入されます -->
     </div>
 
     <!-- The Modal -->
-    <div id="card-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+    <div id="card-modal" class="event-modal">
+        <div class="event-modal-content">
+            <span class="event-close">&times;</span>
             <h2 id="modal-title"></h2>
             <p id="modal-rule"></p>
         </div>
@@ -227,7 +94,7 @@
         const modal = document.getElementById('card-modal');
         const modalTitle = document.getElementById('modal-title');
         const modalRule = document.getElementById('modal-rule');
-        const closeBtn = document.getElementsByClassName('close')[0];
+        const closeBtn = document.querySelector('.event-close');
         const resetButton = document.getElementById('reset-button');
 
         // ローカルストレージキー
@@ -257,7 +124,7 @@
         shuffledOrder.forEach((cardIndex) => {
             const card = cards[cardIndex];
             const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
+            cardElement.classList.add('event-card');
             cardElement.dataset.index = cardIndex;
 
             // 使用済みの場合は非表示
@@ -267,13 +134,13 @@
 
             // カードの内部構造
             const cardInner = document.createElement('div');
-            cardInner.classList.add('card-inner');
+            cardInner.classList.add('event-card-inner');
 
             const cardFront = document.createElement('div');
-            cardFront.classList.add('card-front');
+            cardFront.classList.add('event-card-front');
 
             const cardBack = document.createElement('div');
-            cardBack.classList.add('card-back');
+            cardBack.classList.add('event-card-back');
             cardBack.innerHTML = `<strong>${card.title}</strong><br>${card.rule}`;
 
             cardInner.appendChild(cardFront);
@@ -284,20 +151,21 @@
             cardElement.addEventListener('click', () => {
                 if (usedCards.includes(cardIndex)) return; // 使用済みなら無視
 
-                // モーダルにタイトルとルールを表示
-                modalTitle.textContent = card.title;
-                modalRule.textContent = card.rule;
-                modal.style.display = "block";
-
-                // カードを使用済みに追加
-                usedCards.push(cardIndex);
-                localStorage.setItem(STORAGE_USED_CARDS, JSON.stringify(usedCards));
-
                 // カードをめくる
                 cardElement.classList.add('flipped');
 
-                // めくった後に非表示にする（アニメーションの後）
+                // めくった後にモーダルを表示し、カードを使用済みに追加
                 setTimeout(() => {
+                    // モーダルにタイトルとルールを表示
+                    modalTitle.textContent = card.title;
+                    modalRule.textContent = card.rule;
+                    modal.style.display = "block";
+
+                    // カードを使用済みに追加
+                    usedCards.push(cardIndex);
+                    localStorage.setItem(STORAGE_USED_CARDS, JSON.stringify(usedCards));
+
+                    // カードを非表示にする
                     cardElement.classList.add('used');
                 }, 600); // アニメーション時間と合わせる
             });
@@ -326,6 +194,5 @@
             }
         });
     </script>
-
 </body>
 </html>
