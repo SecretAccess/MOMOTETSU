@@ -1,197 +1,566 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>桃鉄カスタムイベントカード</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 既存のスタイルシートをリンク -->
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <header>
-        <h1>チャンスカード</h1>
-        <nav>
-            <a href="index.html">チップカウンター</a>
-            <a href="rules.html">大会ルール</a>
-            <a href="cards.html">チャンスカード</a>
-            <a href="roulette.html">抽選ルーレット</a>
-            <a href="forfeit-counter.html">没収ポイント</a>
-            <a href="hidden-destination.html">裏目的地</a>
-        </nav>
-    </header>
+/* 共通スタイル */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    <!-- Reset Button -->
-    <button id="reset-button">リセット</button>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
 
-    <!-- Card Grid -->
-    <div id="card-grid">
-        <!-- カードはJavaScriptで動的に挿入されます -->
-    </div>
+/* 共通のナビゲーションリンク */
+nav a {
+    font-size: 1em; /* フォントサイズを調整 */
+    padding: 5px 10px; /* 内側の余白を小さくする */
+}
+nav {
+    display: flex;
+    justify-content: center;
+    gap: 5px; /* リンク間のスペースを減らす */
+}
 
-    <!-- The Modal -->
-    <div id="card-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2 id="modal-title"></h2>
-            <p id="modal-rule"></p>
-        </div>
-    </div>
+/* 共通のヘッダー */
+header {
+    text-align: center;
+    padding: 20px;
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-    <script>
-        // カードデータ
-        const cards = [
-            {
-                title: "運命の操作",
-                rule: "指定したプレイヤーの次のターンの進路を操作することができる。"
-            },
-            {
-                title: "天災",
-                rule: "全員から黒チップ1枚を没収。"
-            },
-            {
-                title: "阻害計画",
-                rule: "次の目的地到達ボーナスを無効化。"
-            },
-            {
-                title: "革命",
-                rule: "1位のプレイヤーと自身のチップを交換する。"
-            },
-            {
-                title: "経済成長期",
-                rule: "次回の目的地到達ボーナスが2倍。"
-            },
-            {
-                title: "経済不況",
-                rule: "今回の目的地到達ボーナスなし。"
-            },
-            {
-                title: "偽善の心",
-                rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。"
-            },
-            {
-                title: "強奪",
-                rule: "指定したプレイヤーから黒チップ1枚を奪取。"
-            },
-            {
-                title: "大富豪の恩恵",
-                rule: "全員から黒チップ1枚ずつを獲得します。"
-            },
-            {
-                title: "破産宣告",
-                rule: "指定したプレイヤーの全ての黒チップを没収します。"
-            },
-            {
-                title: "復讐の一撃",
-                rule: "指定したプレイヤーから黒チップ2枚を奪取します。"
-            },
-            {
-                title: "無敵の防御",
-                rule: "他のプレイヤーのカード効果を受けなくなります。"
-            }
-        ];
 
-        const cardGrid = document.getElementById('card-grid');
-        const modal = document.getElementById('card-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalRule = document.getElementById('modal-rule');
-        const closeBtn = document.getElementsByClassName('close')[0];
-        const resetButton = document.getElementById('reset-button');
+main {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 600px;
+}
 
-        // ローカルストレージキー
-        const STORAGE_USED_CARDS = 'usedCards';
-        const STORAGE_SHUFFLED_ORDER = 'shuffledOrder';
+footer {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: #888;
+}
 
-        // 使用済みカードのIDを取得
-        let usedCards = JSON.parse(localStorage.getItem(STORAGE_USED_CARDS)) || [];
+/* --- チップカウンター用スタイル --- */
+.chip-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px; /* 少し小さくしてコンパクトに */
+    padding: 20px;
+    background: #f9f9f9; /* 全体の背景を柔らかい色に */
+    border-radius: 12px; /* 柔らかい印象を与える角丸 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 影を軽く追加 */
+}
 
-        // シャッフルされた順序を取得または生成
-        let shuffledOrder = JSON.parse(localStorage.getItem(STORAGE_SHUFFLED_ORDER));
-        if (!shuffledOrder) {
-            shuffledOrder = shuffle([...Array(cards.length).keys()]);
-            localStorage.setItem(STORAGE_SHUFFLED_ORDER, JSON.stringify(shuffledOrder));
-        }
+.chip-item {
+    text-align: center;
+    width: 100%;
+    max-width: 300px; /* 最大幅を制限 */
+    padding: 10px;
+    background: #fff; /* カード風に */
+    border-radius: 8px; /* 角を丸める */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 影を追加 */
+    transition: transform 0.2s, box-shadow 0.2s;
+}
 
-        // シャッフル関数（Fisher-Yatesアルゴリズム）
-        function shuffle(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-            return array;
-        }
+.chip-item:hover {
+    transform: translateY(-5px); /* 少し浮かせる */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* ホバー時の影 */
+}
 
-        // カードを生成
-        shuffledOrder.forEach((cardIndex) => {
-            const card = cards[cardIndex];
-            const cardElement = document.createElement('div');
-            cardElement.classList.add('card');
-            cardElement.dataset.index = cardIndex;
+.chip-item img {
+    width: 60px; /* サイズを少し大きく */
+    height: auto; /* アスペクト比を維持 */
+    margin-bottom: 8px; /* 余白を調整 */
+    border: 2px solid #5bc0de; /* ボーダーでアクセント */
+    border-radius: 50%; /* 丸くする */
+}
 
-            // 使用済みの場合は非表示
-            if (usedCards.includes(cardIndex)) {
-                cardElement.classList.add('used');
-            }
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px; /* ボタン間の距離を調整 */
+    margin: 8px 0; /* 上下の余白を調整 */
+}
 
-            // カードの内部構造
-            const cardInner = document.createElement('div');
-            cardInner.classList.add('card-inner');
+button {
+    padding: 12px 20px; /* ボタンを小さめに */
+    font-size: 1.2em; /* フォントサイズを調整 */
+    color: #fff;
+    background: linear-gradient(135deg, #5bc0de, #46a1c9); /* グラデーション追加 */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 軽い影 */
+    transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
+}
 
-            const cardFront = document.createElement('div');
-            cardFront.classList.add('card-front');
+button:hover {
+    transform: scale(1.1); /* 大きく見せる */
+    background: linear-gradient(135deg, #46a1c9, #3b90b0); /* 濃いグラデーション */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 影を増強 */
+}
 
-            const cardBack = document.createElement('div');
-            cardBack.classList.add('card-back');
-            cardBack.innerHTML = `<strong>${card.title}</strong><br>${card.rule}`;
+button:active {
+    transform: scale(0.95); /* 押下時に縮む */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* 影を小さく */
+}
 
-            cardInner.appendChild(cardFront);
-            cardInner.appendChild(cardBack);
-            cardElement.appendChild(cardInner);
+.summary {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 2em; /* 大きめの文字 */
+    font-weight: bold; /* 強調 */
+    color: #46a1c9; /* テーマカラー */
+    background: #f0f8ff; /* 薄い背景色 */
+    padding: 10px;
+    border-radius: 8px; /* 丸み */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 軽い影 */
+}
 
-            // クリックイベント
-            cardElement.addEventListener('click', () => {
-                if (usedCards.includes(cardIndex)) return; // 使用済みなら無視
+/* ルールセクション全体のスタイル */
+.rule-section {
+    margin: 20px auto; /* 上下に余白を確保 */
+    padding: 20px;
+    background-color: #fdfdfd; /* 柔らかい白背景 */
+    border-radius: 10px; /* 角を少し丸める */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 軽めの影で立体感 */
+    border: 1px solid #ddd; /* 薄い境界線 */
+}
 
-                // モーダルにタイトルとルールを表示
-                modalTitle.textContent = card.title;
-                modalRule.textContent = card.rule;
-                modal.style.display = "block";
+/* 各ルール項目のスタイル */
+.rule-item {
+    margin-bottom: 15px; /* 項目間の余白 */
+    padding: 15px;
+    background-color: #ffffff; /* 真っ白な背景でスッキリ */
+    border-radius: 8px; /* 柔らかな印象 */
+    border-left: 5px solid #d9534f; /* 左に目立つライン */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05); /* 軽い影で浮き上がらせる */
+}
 
-                // カードを使用済みに追加
-                usedCards.push(cardIndex);
-                localStorage.setItem(STORAGE_USED_CARDS, JSON.stringify(usedCards));
+/* 見出しのスタイル */
+.rule-item h3 {
+    font-size: 1.2em;
+    color: #d9534f; /* 強調色 */
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #ddd; /* 見出し下に区切り線 */
+}
 
-                // カードをめくる
-                cardElement.classList.add('flipped');
+/* 内容のスタイル */
+.rule-item p, .rule-item ul {
+    font-size: 1em;
+    color: #555; /* 読みやすい色 */
+    line-height: 1.6; /* 読みやすさ向上 */
+}
 
-                // めくった後に非表示にする（アニメーションの後）
-                setTimeout(() => {
-                    cardElement.classList.add('used');
-                }, 600); // アニメーション時間と合わせる
-            });
+/* リスト内の余白と整列 */
+.rule-item ul {
+    list-style-type: none; /* 記号を非表示 */
+    padding-left: 20px; /* インデントを少し */
+}
 
-            cardGrid.appendChild(cardElement);
-        });
+.rule-item ul li {
+    margin-bottom: 10px; /* 項目間に余白 */
+}
 
-        // モーダルを閉じる
-        closeBtn.onclick = function() {
-            modal.style.display = "none";
-        }
 
-        // モーダル外をクリックした場合も閉じる
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
+.rule-item p {
+    color: #555;
+}
+/* 説明文内のチップ画像スタイル */
+.rule-item .chip-icon {
+    width: 1em; /* 文字サイズに合わせる */
+    height: auto; /* アスペクト比を維持 */
+    vertical-align: middle; /* 文字と画像を揃える */
+    margin: 0 0.2em; /* 文字との間隔を調整 */
+}
+/* カウントダウンタイマーのスタイル */
+.countdown {
+    margin: 20px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #d9534f;
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
 
-        // リセットボタン
-        resetButton.addEventListener('click', () => {
-            if (confirm("本当にリセットしますか？")) {
-                localStorage.removeItem(STORAGE_USED_CARDS);
-                localStorage.removeItem(STORAGE_SHUFFLED_ORDER);
-                window.location.reload();
-            }
-        });
-    </script>
-</body>
-</html>
+
+
+/* ルーレットページ専用スタイル */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+header {
+    background-color: #4aa3c7;
+    color: #fff;
+    padding: 20px 10px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+nav {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #fff;
+    background-color: #357ca5;
+    padding: 8px 12px;
+    border-radius: 5px;
+}
+
+nav a:hover {
+    background-color: #285c79;
+}
+
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #4aa3c7;
+    color: #fff;
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fefefe;
+}
+
+section h2 {
+    text-align: center;
+    color: #357ca5;
+    font-size: 1.8em;
+    margin-bottom: 15px;
+}
+button {
+    padding: 10px 20px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #4cae4c;
+}
+
+input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin: 10px 0;
+    display: block;
+}
+.roulette {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    width: 200px;
+    height: 200px;
+    background-image: conic-gradient(#ff6f61 0% 25%, #ffcc5c 25% 50%, #88d8b0 50% 75%, #6b5b95 75% 100%);
+    border: 4px solid #333;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+   animation: none; /* 初期値はアニメーションなし */
+}
+
+.result {
+    text-align: center;
+    font-size: 1.5em;
+    color: #357ca5;
+    margin-top: 10px;
+    font-weight: bold;
+}
+.hidden {
+    display: none;
+    transition: max-height 0.3s ease-out;
+}
+
+#rules-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+#rules-list li {
+    margin: 8px 0;
+    padding: 5px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+@keyframes spin-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.result span {
+    display: inline-block;
+    margin: 0 3px;
+    font-size: 1.1em;
+    line-height: 1.4;
+}
+
+.result span.player {
+    font-weight: bold;
+    color: #4aa3c7; /* プレイヤー名を目立たせる */
+}
+
+.result span.amount {
+    color: #ff6f61; /* 金額を目立たせる */
+    font-weight: bold;
+}
+
+.result span {
+    vertical-align: middle;
+}
+
+/* 没収金額トラッカー用スタイル */
+.player-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+button {
+    padding: 15px;
+    font-size: 1.5em;
+    color: #fff;
+    background-color: #5bc0de;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.summary {
+    text-align: center;
+    font-size: 2em;
+    margin-top: 30px;
+}
+/* 裏目的地ページ専用のスタイル */
+body.hidden-destination {
+    background-color: #121212; /* 背景をダークに */
+    color: #e0e0e0; /* 明るい文字色 */
+}
+
+/* 裏目的地専用のヘッダー */
+body.hidden-destination header {
+    background-color: #1f1f1f; /* ダーク背景 */
+    color: #ffcc00; /* ゴールド文字色 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* 裏目的地専用のナビゲーションリンク */
+body.hidden-destination nav a {
+    color: #ffcc00; /* ゴールド */
+}
+
+body.hidden-destination nav a:hover {
+    text-decoration: underline;
+}
+
+
+/* メインコンテンツ */
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+/* ルールセクション */
+.rules-section {
+    background-color: #1e1e1e;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.rules-section h2 {
+    font-size: 1.5em;
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.rules-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.rules-section li {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.chip-icon {
+    width: 30px;
+    height: auto;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+/* 抽選セクション */
+.draw-section h2 {
+    font-size: 1.5em;
+    color: #ffcc00;
+    margin-bottom: 20px;
+}
+
+.draw-button,
+.popup-button {
+    background-color: #d9534f; /* 赤系 */
+    color: #fff;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.draw-button:hover,
+.popup-button:hover {
+    transform: scale(1.1);
+    background-color: #c9302c; /* 濃い赤 */
+}
+
+
+/* 抽選結果表示 */
+.result-area {
+    margin-top: 20px;
+    font-size: 1.5em;
+    color: #ffcc00;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.popup {
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.popup.hidden {
+    display: none; /* 非表示にするクラス */
+}
+
+
+.popup-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.popup-button {
+    padding: 10px 20px;
+    background-color: #5bc0de;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.popup-button:hover {
+    background-color: #31a4c2;
+}
+.city-name {
+    font-size: 2em; /* 大きくする */
+    font-weight: bold; /* 太字 */
+    color: #ffcc00; /* ゴールドで目立たせる */
+    display: block; /* 改行を強制 */
+    margin-top: 10px; /* 上部に余白を追加 */
+    text-align: center; /* 中央揃え */
+}
+/* 裏目的地専用のナビゲーション背景を真っ黒にする */
+body.hidden-destination nav {
+    background-color: #000; /* 背景色を真っ黒に設定 */
+    padding: 10px 0; /* 上下の余白を追加 */
+}
+
+body.hidden-destination nav a {
+    background-color: #000; /* リンク背景を真っ黒に設定 */
+    color: #ffcc00; /* リンクの文字色をゴールドに */
+    padding: 8px 12px; /* 内側の余白を設定 */
+    border-radius: 5px; /* 角を丸く */
+}
+
+body.hidden-destination nav a:hover {
+    text-decoration: underline; /* ホバー時に下線を表示 */
+    background-color: #333; /* ホバー時に背景を少し明るく */
+}
