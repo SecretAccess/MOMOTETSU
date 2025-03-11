@@ -2,8 +2,8 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>桃鉄GP 没収ポイントカウンター</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>桃鉄GP 2024 マスターダッシュボード</title>
 <style>
 /* 基本スタイル */
 :root {
@@ -22,6 +22,10 @@
   --player2-color: #3498db;
   --player3-color: #2ecc71;
   --player4-color: #9b59b6;
+  
+  /* カードの色 */
+  --card-front: #f39c12;
+  --card-back: #2ecc71;
 }
 
 * {
@@ -35,6 +39,7 @@ body {
   background-color: var(--background-color);
   color: var(--text-color);
   line-height: 1.6;
+  padding-bottom: 60px;
 }
 
 /* ヘッダースタイル */
@@ -44,6 +49,7 @@ header {
   padding: 1rem;
   text-align: center;
   box-shadow: var(--shadow);
+  position: relative;
 }
 
 header h1 {
@@ -71,29 +77,31 @@ nav a:hover {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-/* メインコンテンツ */
-main {
-  max-width: 1000px;
+/* メインレイアウト */
+.dashboard-container {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 20px;
+  max-width: 1600px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 20px;
 }
 
-section {
-  background-color: var(--card-bg);
-  border-radius: 8px;
-  padding: 2rem;
-  box-shadow: var(--shadow);
-  margin-bottom: 2rem;
+/* 左側のコンテンツ（プレイヤーエリアなど） */
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-/* プレイヤーカードスタイル */
+/* プレイヤーグリッド */
 .players-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  margin-bottom: 2rem;
 }
 
+/* プレイヤーカード */
 .player-card {
   background: white;
   border-radius: 12px;
@@ -109,14 +117,20 @@ section {
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
 .player-card h2 {
   color: white;
   text-align: center;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
+  padding: 0.5rem 1rem;
   border-radius: 8px;
   font-size: 1.5rem;
-  position: relative;
+  margin: 0;
 }
 
 .player-card:nth-child(1) h2 {
@@ -135,191 +149,285 @@ section {
   background-color: var(--player4-color);
 }
 
-.amount-display {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin: 1rem 0;
-  color: var(--text-color);
-  min-height: 60px;
+.player-stats {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 10px;
 }
 
-.controls {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  align-items: center;
-}
-
-.controls button {
-  background-color: var(--button-bg);
-  border: none;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  font-size: 1.8rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-}
-
-.controls button:hover {
-  background-color: var(--button-active);
-}
-
-.controls button:active {
-  transform: scale(0.95);
-}
-
-.controls .increment {
-  background-color: rgba(46, 204, 113, 0.2);
-}
-
-.controls .increment:hover {
-  background-color: rgba(46, 204, 113, 0.3);
-}
-
-.controls .decrement {
-  background-color: rgba(231, 76, 60, 0.2);
-}
-
-.controls .decrement:hover {
-  background-color: rgba(231, 76, 60, 0.3);
-}
-
-/* クイックボタン改善版 */
-.quick-buttons {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
-  width: 100%;
-  max-width: 150px;
-}
-
-.quick-buttons button {
-  background-color: var(--button-bg);
-  border: none;
-  padding: 8px 0;
-  border-radius: 4px;
+.stat-badge {
+  background-color: #f8f8f8;
+  padding: 5px 8px;
+  border-radius: 15px;
   font-size: 0.8rem;
-  width: 100%;
-  height: auto;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.1s;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  font-weight: bold;
 }
 
-.quick-buttons .color {
-  background-color: rgba(243, 156, 18, 0.2);
-}
-
-.quick-buttons .white {
+.transfers-count {
   background-color: rgba(52, 152, 219, 0.2);
 }
 
-.quick-buttons .black {
-  background-color: rgba(52, 73, 94, 0.2);
+.forfeit-count {
+  background-color: rgba(231, 76, 60, 0.2);
 }
 
-.quick-buttons button:hover {
-  background-color: var(--button-active);
-  transform: translateY(-2px);
+.player-chips {
+  display: flex;
+  justify-content: space-around;
+  margin: 15px 0;
 }
 
-.quick-buttons button:active {
-  transform: scale(0.95);
+.chip-type {
+  text-align: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  width: 30%;
 }
 
-/* チップアイコン */
-.chip-icon {
-  width: 12px;
-  height: 12px;
-  display: inline-block;
-  border-radius: 50%;
-  margin-right: 2px;
-  vertical-align: middle;
+.chip-type h3 {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.chip-count {
+  font-size: 1.3rem;
+  font-weight: bold;
 }
 
 .black-chip {
-  background-color: #34495e;
+  background-color: rgba(52, 73, 94, 0.1);
 }
 
 .white-chip {
+  background-color: rgba(189, 195, 199, 0.3);
+}
+
+.color-chip {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
+}
+
+.player-total {
+  text-align: center;
+  background: linear-gradient(to right, #f6f6f6, #f0f0f0);
+  padding: 10px;
+  border-radius: 8px;
+  margin: 10px 0;
+}
+
+.total-label {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+.total-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.player-actions {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 15px;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+}
+
+.transfer-btn {
+  background-color: rgba(52, 152, 219, 0.2);
+  color: #2980b9;
+}
+
+.transfer-btn:hover {
+  background-color: rgba(52, 152, 219, 0.3);
+}
+
+.forfeit-btn {
+  background-color: rgba(231, 76, 60, 0.2);
+  color: #c0392b;
+}
+
+.forfeit-btn:hover {
+  background-color: rgba(231, 76, 60, 0.3);
+}
+
+/* アクションパネル */
+.action-panel {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.panel-title {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.panel-title h3 {
+  font-size: 1.3rem;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .toggle-slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(30px);
+}
+
+.toggle-label {
+  margin-right: 10px;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.transfer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.form-group label {
+  min-width: 80px;
+  font-weight: bold;
+}
+
+.form-control {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  flex-grow: 1;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.chip-selector {
+  display: flex;
+  gap: 10px;
+}
+
+.chip-option {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.chip-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.black-icon {
+  background-color: #34495e;
+}
+
+.white-icon {
   background-color: #ecf0f1;
   border: 1px solid #bdc3c7;
 }
 
-.color-chip {
+.color-icon {
   background: linear-gradient(135deg, #e74c3c, #3498db, #2ecc71);
 }
 
-/* 合計表示 */
-.summary {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #c0392b 100%);
+.submit-btn {
+  background-color: var(--secondary-color);
   color: white;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  margin-top: 2rem;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-}
-
-.summary h2 {
-  margin-bottom: 0.5rem;
-  font-size: 1.8rem;
-  color: white;
-}
-
-.summary::before {
-  content: "💰";
-  position: absolute;
-  font-size: 10rem;
-  opacity: 0.1;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-#total-amount {
-  font-size: 3rem;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
   font-weight: bold;
-  display: block;
-  margin: 1rem 0;
+  align-self: flex-end;
+  transition: background-color 0.2s;
+}
+
+.submit-btn:hover {
+  background-color: #2980b9;
 }
 
 /* 履歴セクション */
 .history-section {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: #f8f8f8;
-  border-radius: 8px;
-}
-
-.history-section h3 {
-  text-align: center;
-  margin-bottom: 1rem;
-  color: var(--text-color);
-}
-
-.history-list {
+  margin-top: 20px;
   max-height: 200px;
   overflow-y: auto;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background-color: white;
+  border-radius: 5px;
 }
 
 .history-item {
-  padding: 0.8rem;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--border-color);
   font-size: 0.9rem;
 }
@@ -328,97 +436,455 @@ section {
   border-bottom: none;
 }
 
-.history-item.added {
-  background-color: rgba(46, 204, 113, 0.1);
+.history-item.transfer {
+  background-color: rgba(52, 152, 219, 0.1);
 }
 
-.history-item.subtracted {
+.history-item.forfeit {
   background-color: rgba(231, 76, 60, 0.1);
 }
 
-/* リセットボタン */
-.reset-section {
+.no-history {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+}
+
+/* 右側のサイドコンテンツ */
+.side-content {
   display: flex;
-  justify-content: center;
-  margin-top: 2rem;
+  flex-direction: column;
+  gap: 20px;
 }
 
-#reset-button {
-  background-color: var(--primary-color);
+/* サマリーカード */
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.summary-title {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.total-forfeit {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #c0392b 100%);
   color: white;
-  border: none;
-  padding: 0.8rem 1.5rem;
-  border-radius: 4px;
-  font-size: 1rem;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.total-forfeit::before {
+  content: "💰";
+  position: absolute;
+  font-size: 5rem;
+  opacity: 0.1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.forfeit-label {
+  font-size: 0.9rem;
+}
+
+.forfeit-value {
+  font-size: 2rem;
   font-weight: bold;
+  margin: 5px 0;
+}
+
+.rankings {
+  list-style: none;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ranking-item:last-child {
+  border-bottom: none;
+}
+
+.player-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.player-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.player1-color {
+  background-color: var(--player1-color);
+}
+
+.player2-color {
+  background-color: var(--player2-color);
+}
+
+.player3-color {
+  background-color: var(--player3-color);
+}
+
+.player4-color {
+  background-color: var(--player4-color);
+}
+
+.ranking-value {
+  font-weight: bold;
+}
+
+/* カードエリア */
+.active-rules {
+  margin-bottom: 20px;
+}
+
+.rules-list {
+  list-style: none;
+}
+
+.rule-item {
+  background-color: #f8f8f8;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.rule-name {
+  font-weight: bold;
+}
+
+.rule-action {
+  color: #777;
+  font-size: 0.8rem;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-#reset-button:hover {
-  background-color: #c0392b;
+.rule-action:hover {
+  color: var(--primary-color);
 }
 
-#reset-button:active {
-  transform: scale(0.98);
+.no-rules {
+  padding: 15px;
+  text-align: center;
+  color: #777;
+  background-color: #f8f8f8;
+  border-radius: 5px;
 }
 
-/* 貧乏神スタイル */
-.binbogami-container {
-  position: fixed;
+/* カードデッキ */
+.card-deck {
+  perspective: 1000px;
+  height: 280px;
+  position: relative;
+  cursor: pointer;
+}
+
+.deck-label {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.8s;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.card-front {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card-front);
+  background: linear-gradient(135deg, var(--card-front) 0%, #e67e22 100%);
+  color: white;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.card-front:before {
+  content: "?";
+  font-size: 5rem;
+  opacity: 0.2;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.card-front:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.1) 10px,
+    rgba(255, 255, 255, 0.2) 10px,
+    rgba(255, 255, 255, 0.2) 20px
+  );
+  border-radius: 10px;
+}
+
+.cards-remaining {
+  position: absolute;
   bottom: 10px;
   right: 10px;
-  z-index: 100;
-  transition: transform 0.5s ease-in-out;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  z-index: 2;
 }
 
-.binbogami-container img {
-  width: 120px;
-  height: auto;
-  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.3));
-  transition: transform 0.3s;
+/* モーダルスタイル */
+.modal-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
 }
 
-.binbogami-container img:hover {
-  transform: scale(1.1) rotate(5deg);
+.modal {
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: modalFadeIn 0.3s;
 }
 
-.binbogami-active {
-  animation: shake 0.5s ease-in-out;
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-50px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) rotate(-2deg); }
-  20%, 40%, 60%, 80% { transform: translateX(5px) rotate(2deg); }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-15px) rotate(5deg); }
+.modal-title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
 }
 
-/* パーティクル効果 */
-.particle {
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.close-modal:hover {
+  color: var(--primary-color);
+}
+
+.modal-body {
+  margin-bottom: 20px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.modal-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cancel-btn {
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.confirm-btn {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+/* カード表示モーダル */
+.card-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.revealed-card {
+  background: var(--card-back);
+  background: linear-gradient(135deg, var(--card-back) 0%, #27ae60 100%);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  position: relative;
+  display: inline-block;
+}
+
+.card-title:after {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 2px;
+  background-color: rgba(255, 255, 255, 0.5);
   position: absolute;
-  pointer-events: none;
-  background-color: var(--primary-color);
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  opacity: 0.7;
-  animation: particle-rise 1.5s ease-out forwards;
+  bottom: -5px;
+  left: 20%;
 }
 
-@keyframes particle-rise {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 0.7;
+.card-description {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* トースト通知 */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.toast {
+  background-color: white;
+  color: var(--text-color);
+  padding: 12px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+  animation: toastFadeIn 0.3s, toastFadeOut 0.3s 2.7s;
+  animation-fill-mode: forwards;
+  opacity: 0;
+}
+
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastFadeOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(50px); }
+}
+
+.toast-icon {
+  font-size: 1.5rem;
+}
+
+.toast-success {
+  border-left: 4px solid #2ecc71;
+}
+
+.toast-warning {
+  border-left: 4px solid #f39c12;
+}
+
+.toast-error {
+  border-left: 4px solid #e74c3c;
+}
+
+.toast-content {
+  flex-grow: 1;
+}
+
+.toast-title {
+  font-weight: bold;
+  margin-bottom: 3px;
+}
+
+.toast-message {
+  font-size: 0.9rem;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 1200px) {
+  .dashboard-container {
+    grid-template-columns: 1fr;
   }
-  100% {
-    transform: translateY(-100px) scale(0);
-    opacity: 0;
+  
+  .players-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .players-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .player-chips {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .chip-type {
+    width: 100%;
   }
 }
 
@@ -429,544 +895,1102 @@ section {
 
 @keyframes pulse-animation {
   0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-/* フッター */
-footer {
-  background-color: var(--primary-color);
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: 2rem;
+.shake {
+  animation: shake-animation 0.5s;
 }
 
-footer p {
-  font-size: 0.9rem;
+@keyframes shake-animation {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
 }
 
-/* レスポンシブデザイン */
-@media (max-width: 768px) {
-  .players-grid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .player-card {
-    padding: 1.2rem;
-  }
-  
-  .controls button {
-    width: 40px;
-    height: 40px;
-    font-size: 1.4rem;
-  }
-  
-  .summary {
-    padding: 1.5rem;
-  }
-  
-  #total-amount {
-    font-size: 2.5rem;
-  }
-  
-  .binbogami-container img {
-    width: 80px;
-  }
-  
-  section {
-    padding: 1.2rem;
-  }
-  
-  /* モバイル向けクイックボタン最適化 */
-  .quick-buttons {
-    max-width: 120px;
-  }
-  
-  .quick-buttons button {
-    font-size: 0.75rem;
-    padding: 6px 0;
-  }
+.float {
+  animation: float-animation 3s infinite ease-in-out;
 }
 
-/* 小さなスマホ向け */
-@media (max-width: 350px) {
-  .player-card {
-    padding: 1rem;
-  }
-  
-  .controls {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .controls-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-  }
-  
-  .quick-buttons {
-    max-width: 100%;
-  }
+@keyframes float-animation {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 </style>
 </head>
 <body>
 <header>
-    <h1>没収ポイントカウンター</h1>
-    <nav>
-         <a href="index.html">チップカウンター</a>
-         <a href="rules.html">大会ルール</a>
-         <a href="cards.html">チャンスカード</a>
-         <a href="roulette.html">抽選ルーレット</a>
-         <a href="forfeit-counter.html">没収ポイント</a>
-         <a href="hidden-destination.html">裏目的地</a>
-    </nav>
+  <h1>桃鉄GP マスターダッシュボード</h1>
+  <nav>
+    <a href="index.html">チップカウンター</a>
+    <a href="rules.html">大会ルール</a>
+    <a href="cards.html">チャンスカード</a>
+    <a href="roulette.html">抽選ルーレット</a>
+    <a href="forfeit-counter.html">没収ポイント</a>
+    <a href="hidden-destination.html">裏目的地</a>
+  </nav>
 </header>
-<main>
-    <section>
-        <div class="players-grid">
-            <div class="player-card">
-                <h2>のぞむ</h2>
-                <div class="amount-display" id="nozomu-amount">0 Pt</div>
-                <div class="controls">
-                    <button class="decrement" id="decrement-nozomu">-</button>
-                    <div class="quick-buttons">
-                        <button class="color" data-player="nozomu" data-amount="100">
-                            <span class="chip-icon color-chip"></span>100
-                        </button>
-                        <button class="white" data-player="nozomu" data-amount="500">
-                            <span class="chip-icon white-chip"></span>500
-                        </button>
-                        <button class="black" data-player="nozomu" data-amount="1000">
-                            <span class="chip-icon black-chip"></span>1K
-                        </button>
-                    </div>
-                    <button class="increment" id="increment-nozomu">+</button>
-                </div>
-            </div>
-            
-            <div class="player-card">
-                <h2>まどか</h2>
-                <div class="amount-display" id="madoka-amount">0 Pt</div>
-                <div class="controls">
-                    <button class="decrement" id="decrement-madoka">-</button>
-                    <div class="quick-buttons">
-                        <button class="color" data-player="madoka" data-amount="100">
-                            <span class="chip-icon color-chip"></span>100
-                        </button>
-                        <button class="white" data-player="madoka" data-amount="500">
-                            <span class="chip-icon white-chip"></span>500
-                        </button>
-                        <button class="black" data-player="madoka" data-amount="1000">
-                            <span class="chip-icon black-chip"></span>1K
-                        </button>
-                    </div>
-                    <button class="increment" id="increment-madoka">+</button>
-                </div>
-            </div>
-            
-            <div class="player-card">
-                <h2>ひかる</h2>
-                <div class="amount-display" id="hikaru-amount">0 Pt</div>
-                <div class="controls">
-                    <button class="decrement" id="decrement-hikaru">-</button>
-                    <div class="quick-buttons">
-                        <button class="color" data-player="hikaru" data-amount="100">
-                            <span class="chip-icon color-chip"></span>100
-                        </button>
-                        <button class="white" data-player="hikaru" data-amount="500">
-                            <span class="chip-icon white-chip"></span>500
-                        </button>
-                        <button class="black" data-player="hikaru" data-amount="1000">
-                            <span class="chip-icon black-chip"></span>1K
-                        </button>
-                    </div>
-                    <button class="increment" id="increment-hikaru">+</button>
-                </div>
-            </div>
-            
-            <div class="player-card">
-                <h2>ちえ</h2>
-                <div class="amount-display" id="chie-amount">0 Pt</div>
-                <div class="controls">
-                    <button class="decrement" id="decrement-chie">-</button>
-                    <div class="quick-buttons">
-                        <button class="color" data-player="chie" data-amount="100">
-                            <span class="chip-icon color-chip"></span>100
-                        </button>
-                        <button class="white" data-player="chie" data-amount="500">
-                            <span class="chip-icon white-chip"></span>500
-                        </button>
-                        <button class="black" data-player="chie" data-amount="1000">
-                            <span class="chip-icon black-chip"></span>1K
-                        </button>
-                    </div>
-                    <button class="increment" id="increment-chie">+</button>
-                </div>
-            </div>
+
+<div class="dashboard-container">
+  <!-- 左側のメインコンテンツ -->
+  <div class="main-content">
+    <!-- プレイヤーグリッド -->
+    <div class="players-grid">
+      <!-- プレイヤー1 -->
+      <div class="player-card" data-player="nozomu">
+        <div class="player-header">
+          <h2>のぞむ</h2>
+          <div class="player-stats">
+            <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
+            <span class="stat-badge forfeit-count" title="没収回数">0</span>
+          </div>
         </div>
-        
-        <div class="summary">
-            <h2>没収ポイント総合計</h2>
-            <span id="total-amount">0 Pt</span>
+        <div class="player-chips">
+          <div class="chip-type black-chip">
+            <h3>黒チップ</h3>
+            <div class="chip-count" data-chip-type="black">3</div>
+          </div>
+          <div class="chip-type white-chip">
+            <h3>白チップ</h3>
+            <div class="chip-count" data-chip-type="white">6</div>
+          </div>
+          <div class="chip-type color-chip">
+            <h3>カラーチップ</h3>
+            <div class="chip-count" data-chip-type="color">30</div>
+          </div>
         </div>
-        
-        <div class="history-section">
-            <h3>履歴</h3>
-            <div class="history-list" id="history-list">
-                <!-- 履歴はJavaScriptで動的に追加されます -->
-            </div>
+        <div class="player-total">
+          <div class="total-label">総資産</div>
+          <div class="total-value" data-total>15,000 Pt</div>
         </div>
-        
-        <div class="reset-section">
-            <button id="reset-button">カウンターをリセット</button>
+        <div class="player-actions">
+          <button class="action-btn transfer-btn" data-action="transfer">
+            <span>移動</span>
+          </button>
+          <button class="action-btn forfeit-btn" data-action="forfeit">
+            <span>没収</span>
+          </button>
         </div>
-    </section>
-</main>
-<footer>
-    <p>桃鉄実行委員会 © 2024</p>
-</footer>
-<div class="binbogami-container">
-    <img src="binbogami.png" alt="貧乏神キャラ" id="binbogami">
+      </div>
+      
+      <!-- プレイヤー2 -->
+      <div class="player-card" data-player="madoka">
+        <div class="player-header">
+          <h2>まどか</h2>
+          <div class="player-stats">
+            <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
+            <span class="stat-badge forfeit-count" title="没収回数">0</span>
+          </div>
+        </div>
+        <div class="player-chips">
+          <div class="chip-type black-chip">
+            <h3>黒チップ</h3>
+            <div class="chip-count" data-chip-type="black">3</div>
+          </div>
+          <div class="chip-type white-chip">
+            <h3>白チップ</h3>
+            <div class="chip-count" data-chip-type="white">6</div>
+          </div>
+          <div class="chip-type color-chip">
+            <h3>カラーチップ</h3>
+            <div class="chip-count" data-chip-type="color">30</div>
+          </div>
+        </div>
+        <div class="player-total">
+          <div class="total-label">総資産</div>
+          <div class="total-value" data-total>15,000 Pt</div>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn transfer-btn" data-action="transfer">
+            <span>移動</span>
+          </button>
+          <button class="action-btn forfeit-btn" data-action="forfeit">
+            <span>没収</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- プレイヤー3 -->
+      <div class="player-card" data-player="hikaru">
+        <div class="player-header">
+          <h2>ひかる</h2>
+          <div class="player-stats">
+            <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
+            <span class="stat-badge forfeit-count" title="没収回数">0</span>
+          </div>
+        </div>
+        <div class="player-chips">
+          <div class="chip-type black-chip">
+            <h3>黒チップ</h3>
+            <div class="chip-count" data-chip-type="black">3</div>
+          </div>
+          <div class="chip-type white-chip">
+            <h3>白チップ</h3>
+            <div class="chip-count" data-chip-type="white">6</div>
+          </div>
+          <div class="chip-type color-chip">
+            <h3>カラーチップ</h3>
+            <div class="chip-count" data-chip-type="color">30</div>
+          </div>
+        </div>
+        <div class="player-total">
+          <div class="total-label">総資産</div>
+          <div class="total-value" data-total>15,000 Pt</div>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn transfer-btn" data-action="transfer">
+            <span>移動</span>
+          </button>
+          <button class="action-btn forfeit-btn" data-action="forfeit">
+            <span>没収</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- プレイヤー4 -->
+      <div class="player-card" data-player="chie">
+        <div class="player-header">
+          <h2>ちえ</h2>
+          <div class="player-stats">
+            <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
+            <span class="stat-badge forfeit-count" title="没収回数">0</span>
+          </div>
+        </div>
+        <div class="player-chips">
+          <div class="chip-type black-chip">
+            <h3>黒チップ</h3>
+            <div class="chip-count" data-chip-type="black">3</div>
+          </div>
+          <div class="chip-type white-chip">
+            <h3>白チップ</h3>
+            <div class="chip-count" data-chip-type="white">6</div>
+          </div>
+          <div class="chip-type color-chip">
+            <h3>カラーチップ</h3>
+            <div class="chip-count" data-chip-type="color">30</div>
+          </div>
+        </div>
+        <div class="player-total">
+          <div class="total-label">総資産</div>
+          <div class="total-value" data-total>15,000 Pt</div>
+        </div>
+        <div class="player-actions">
+          <button class="action-btn transfer-btn" data-action="transfer">
+            <span>移動</span>
+          </button>
+          <button class="action-btn forfeit-btn" data-action="forfeit">
+            <span>没収</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- アクションパネル -->
+    <div class="action-panel">
+      <div class="panel-title">
+        <h3>ポイント操作</h3>
+        <div style="display: flex; align-items: center;">
+          <span class="toggle-label">倍モード</span>
+          <label class="toggle-switch">
+            <input type="checkbox" id="double-mode-toggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+      <div class="transfer-form">
+        <div class="form-group">
+          <label>操作タイプ</label>
+          <select id="action-type" class="form-control">
+            <option value="transfer">プレイヤー間移動</option>
+            <option value="forfeit">没収</option>
+          </select>
+        </div>
+        <div class="form-group" id="from-player-group">
+          <label>From</label>
+          <select id="from-player" class="form-control">
+            <option value="nozomu">のぞむ</option>
+            <option value="madoka">まどか</option>
+            <option value="hikaru">ひかる</option>
+            <option value="chie">ちえ</option>
+          </select>
+        </div>
+        <div class="form-group" id="to-player-group">
+          <label>To</label>
+          <select id="to-player" class="form-control">
+            <option value="nozomu">のぞむ</option>
+            <option value="madoka">まどか</option>
+            <option value="hikaru">ひかる</option>
+            <option value="chie">ちえ</option>
+            <option value="forfeit">没収</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>チップタイプ</label>
+          <div class="chip-selector">
+            <label class="chip-option">
+              <input type="radio" name="chip-type" value="black" checked>
+              <span class="chip-icon black-icon"></span>
+              <span>黒 (1000Pt)</span>
+            </label>
+            <label class="chip-option">
+              <input type="radio" name="chip-type" value="white">
+              <span class="chip-icon white-icon"></span>
+              <span>白 (500Pt)</span>
+            </label>
+            <label class="chip-option">
+              <input type="radio" name="chip-type" value="color">
+              <span class="chip-icon color-icon"></span>
+              <span>カラー (300Pt)</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>枚数</label>
+          <input type="number" id="chip-count" class="form-control" min="1" value="1">
+        </div>
+        <button id="submit-action" class="submit-btn">実行</button>
+      </div>
+      <div class="history-section">
+        <div class="no-history">まだ履歴はありません</div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 右側のサイドコンテンツ -->
+  <div class="side-content">
+    <!-- サマリーカード -->
+    <div class="summary-card">
+      <h3 class="summary-title">統計</h3>
+      <div class="total-forfeit">
+        <div class="forfeit-label">没収ポイント合計</div>
+        <div class="forfeit-value" id="total-forfeit">0 Pt</div>
+      </div>
+      <h4 style="margin-bottom: 10px;">取引ランキング</h4>
+      <ul class="rankings" id="transfer-ranking">
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player1-color"></span>
+            <span>のぞむ</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player2-color"></span>
+            <span>まどか</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player3-color"></span>
+            <span>ひかる</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player4-color"></span>
+            <span>ちえ</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+      </ul>
+      
+      <h4 style="margin: 15px 0 10px;">没収ランキング</h4>
+      <ul class="rankings" id="forfeit-ranking">
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player1-color"></span>
+            <span>のぞむ</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player2-color"></span>
+            <span>まどか</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player3-color"></span>
+            <span>ひかる</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+        <li class="ranking-item">
+          <div class="player-name">
+            <span class="player-indicator player4-color"></span>
+            <span>ちえ</span>
+          </div>
+          <div class="ranking-value">0</div>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- カードエリア -->
+    <div class="summary-card">
+      <h3 class="summary-title">適用中のルール</h3>
+      <div class="active-rules">
+        <div class="no-rules" id="no-rules-message">現在適用中のルールはありません</div>
+        <ul class="rules-list" id="rules-list"></ul>
+      </div>
+      <div class="deck-label">チャンスカードを引く</div>
+      <div class="card-deck" id="card-deck">
+        <div class="card">
+          <div class="card-front"></div>
+        </div>
+        <div class="cards-remaining" id="cards-remaining">12枚</div>
+      </div>
+    </div>
+  </div>
 </div>
+
+<!-- 移動確認モーダル -->
+<div class="modal-container" id="transfer-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">ポイント移動確認</h3>
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="modal-body" id="transfer-modal-body">
+      <p>のぞむから まどか へ 黒チップ 1枚 (1000Pt) を移動します。</p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel-btn">キャンセル</button>
+      <button class="modal-btn confirm-btn" id="confirm-transfer">実行</button>
+    </div>
+  </div>
+</div>
+
+<!-- 没収確認モーダル -->
+<div class="modal-container" id="forfeit-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">ポイント没収確認</h3>
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="modal-body" id="forfeit-modal-body">
+      <p>のぞむから カラーチップ 1枚 (300Pt) を没収します。</p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel-btn">キャンセル</button>
+      <button class="modal-btn confirm-btn" id="confirm-forfeit">実行</button>
+    </div>
+  </div>
+</div>
+
+<!-- カード表示モーダル -->
+<div class="modal-container" id="card-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">チャンスカード</h3>
+      <button class="close-modal">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="card-reveal">
+        <div class="revealed-card">
+          <div class="card-title" id="card-title">カードタイトル</div>
+          <div class="card-description" id="card-description">カードの効果説明がここに表示されます。</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel-btn" id="discard-card">破棄</button>
+      <button class="modal-btn confirm-btn" id="apply-card">適用</button>
+    </div>
+  </div>
+</div>
+
+<!-- トースト通知 -->
+<div class="toast-container" id="toast-container"></div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // プレイヤーの設定
-    const players = {
-        nozomu: { amount: 0, element: document.getElementById('nozomu-amount') },
-        madoka: { amount: 0, element: document.getElementById('madoka-amount') },
-        hikaru: { amount: 0, element: document.getElementById('hikaru-amount') },
-        chie: { amount: 0, element: document.getElementById('chie-amount') }
+  // チップの値を定義
+  const CHIP_VALUES = {
+    black: 1000,
+    white: 500,
+    color: 300
+  };
+  
+  // プレイヤーデータ
+  const players = {
+    nozomu: {
+      name: "のぞむ",
+      chips: { black: 3, white: 6, color: 30 },
+      total: 15000,
+      transferCount: 0,
+      forfeitCount: 0
+    },
+    madoka: {
+      name: "まどか",
+      chips: { black: 3, white: 6, color: 30 },
+      total: 15000,
+      transferCount: 0,
+      forfeitCount: 0
+    },
+    hikaru: {
+      name: "ひかる",
+      chips: { black: 3, white: 6, color: 30 },
+      total: 15000,
+      transferCount: 0,
+      forfeitCount: 0
+    },
+    chie: {
+      name: "ちえ",
+      chips: { black: 3, white: 6, color: 30 },
+      total: 15000,
+      transferCount: 0,
+      forfeitCount: 0
+    }
+  };
+  
+  // 没収ポイント合計
+  let totalForfeit = 0;
+  
+  // 倍モードフラグ
+  let doubleMode = false;
+  
+  // チャンスカードデータ
+  const cards = [
+    { title: "運命の操作", rule: "指定したプレイヤーの次のターンの進路を操作することができる。" },
+    { title: "天災", rule: "全員から黒チップ1枚を没収。" },
+    { title: "阻害計画", rule: "次の目的地到達ボーナスを無効化。" },
+    { title: "革命の灯", rule: "1位のプレイヤーと自身のチップを交換する。" },
+    { title: "経済成長期", rule: "次回の目的地到達ボーナスが2倍。" },
+    { title: "経済不況", rule: "今回の目的地到達ボーナス没収。" },
+    { title: "偽善の心", rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。" },
+    { title: "強奪", rule: "指定したプレイヤーから黒チップ1枚を獲得。" },
+    { title: "大富豪の恩恵", rule: "全員から黒チップ1枚ずつを獲得。" },
+    { title: "破産宣告", rule: "指定したプレイヤーの全ての黒チップを没収。" },
+    { title: "復讐の一撃", rule: "指定したプレイヤーから黒チップ2枚を獲得。" },
+    { title: "無敵の防御", rule: "他のプレイヤーのカード効果を受けなくなる。" }
+  ];
+  
+  // カードをシャッフル
+  let shuffledCards = [...cards].sort(() => Math.random() - 0.5);
+  let activeRules = [];
+  
+  // 履歴データ
+  let history = [];
+  
+  // DOM要素の参照を取得
+  const actionTypeSelect = document.getElementById('action-type');
+  const fromPlayerSelect = document.getElementById('from-player');
+  const toPlayerSelect = document.getElementById('to-player');
+  const chipTypeRadios = document.getElementsByName('chip-type');
+  const chipCountInput = document.getElementById('chip-count');
+  const submitActionBtn = document.getElementById('submit-action');
+  const doubleModeToggle = document.getElementById('double-mode-toggle');
+  const fromPlayerGroup = document.getElementById('from-player-group');
+  const toPlayerGroup = document.getElementById('to-player-group');
+  const historySection = document.querySelector('.history-section');
+  const transferModal = document.getElementById('transfer-modal');
+  const forfeitModal = document.getElementById('forfeit-modal');
+  const transferModalBody = document.getElementById('transfer-modal-body');
+  const forfeitModalBody = document.getElementById('forfeit-modal-body');
+  const confirmTransferBtn = document.getElementById('confirm-transfer');
+  const confirmForfeitBtn = document.getElementById('confirm-forfeit');
+  const totalForfeitDisplay = document.getElementById('total-forfeit');
+  const transferRanking = document.getElementById('transfer-ranking');
+  const forfeitRanking = document.getElementById('forfeit-ranking');
+  const cardDeck = document.getElementById('card-deck');
+  const cardsRemaining = document.getElementById('cards-remaining');
+  const cardModal = document.getElementById('card-modal');
+  const cardTitle = document.getElementById('card-title');
+  const cardDescription = document.getElementById('card-description');
+  const applyCardBtn = document.getElementById('apply-card');
+  const discardCardBtn = document.getElementById('discard-card');
+  const rulesList = document.getElementById('rules-list');
+  const noRulesMessage = document.getElementById('no-rules-message');
+  const toastContainer = document.getElementById('toast-container');
+  
+  // 現在選択中のカード
+  let currentCard = null;
+  
+  // モーダルを閉じるボタンのイベントリスナー
+  document.querySelectorAll('.close-modal, .cancel-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.modal-container').forEach(modal => {
+        modal.style.display = 'none';
+      });
+    });
+  });
+  
+  // プレイヤーのチップ数と総資産を更新する関数
+  function updatePlayerDisplay(playerId) {
+    const player = players[playerId];
+    const playerCard = document.querySelector(`.player-card[data-player="${playerId}"]`);
+    
+    if (playerCard) {
+      // チップ数を更新
+      Object.keys(player.chips).forEach(chipType => {
+        const chipElement = playerCard.querySelector(`[data-chip-type="${chipType}"]`);
+        if (chipElement) {
+          chipElement.textContent = player.chips[chipType];
+        }
+      });
+      
+      // 総資産を更新
+      const totalElement = playerCard.querySelector('[data-total]');
+      if (totalElement) {
+        totalElement.textContent = `${player.total.toLocaleString()} Pt`;
+      }
+      
+      // 移動回数と没収回数を更新
+      const transfersCountElement = playerCard.querySelector('.transfers-count');
+      const forfeitCountElement = playerCard.querySelector('.forfeit-count');
+      
+      if (transfersCountElement) {
+        transfersCountElement.textContent = player.transferCount;
+      }
+      
+      if (forfeitCountElement) {
+        forfeitCountElement.textContent = player.forfeitCount;
+      }
+    }
+  }
+  
+  // 総資産を計算する関数
+  function calculateTotal(player) {
+    let total = 0;
+    Object.keys(player.chips).forEach(chipType => {
+      total += player.chips[chipType] * CHIP_VALUES[chipType];
+    });
+    return total;
+  }
+  
+  // 没収ポイント合計を更新する関数
+  function updateTotalForfeit() {
+    totalForfeitDisplay.textContent = `${totalForfeit.toLocaleString()} Pt`;
+  }
+  
+  // ランキングを更新する関数
+  function updateRankings() {
+    // 取引ランキング
+    const transferEntries = Object.entries(players).map(([id, player]) => ({ id, count: player.transferCount }));
+    transferEntries.sort((a, b) => b.count - a.count);
+    
+    const transferItems = transferRanking.querySelectorAll('.ranking-item');
+    transferEntries.forEach((entry, index) => {
+      const item = transferItems[index];
+      if (item) {
+        const playerName = item.querySelector('.player-name span:last-child');
+        const rankingValue = item.querySelector('.ranking-value');
+        
+        if (playerName) {
+          playerName.textContent = players[entry.id].name;
+        }
+        
+        if (rankingValue) {
+          rankingValue.textContent = entry.count;
+        }
+      }
+    });
+    
+    // 没収ランキング
+    const forfeitEntries = Object.entries(players).map(([id, player]) => ({ id, count: player.forfeitCount }));
+    forfeitEntries.sort((a, b) => b.count - a.count);
+    
+    const forfeitItems = forfeitRanking.querySelectorAll('.ranking-item');
+    forfeitEntries.forEach((entry, index) => {
+      const item = forfeitItems[index];
+      if (item) {
+        const playerName = item.querySelector('.player-name span:last-child');
+        const rankingValue = item.querySelector('.ranking-value');
+        
+        if (playerName) {
+          playerName.textContent = players[entry.id].name;
+        }
+        
+        if (rankingValue) {
+          rankingValue.textContent = entry.count;
+        }
+      }
+    });
+  }
+  
+  // 履歴を追加する関数
+  function addHistory(action, from, to, chipType, count, points) {
+    const now = new Date();
+    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+    
+    let message = '';
+    if (action === 'transfer') {
+      message = `${timeString} - ${players[from].name} → ${players[to].name}: ${chipType} ×${count} (${points.toLocaleString()} Pt)`;
+    } else if (action === 'forfeit') {
+      message = `${timeString} - ${players[from].name} から没収: ${chipType} ×${count} (${points.toLocaleString()} Pt)`;
+    }
+    
+    const historyItem = document.createElement('div');
+    historyItem.classList.add('history-item', action);
+    historyItem.textContent = message;
+    
+    // 「まだ履歴はありません」メッセージを削除
+    const noHistory = historySection.querySelector('.no-history');
+    if (noHistory) {
+      noHistory.remove();
+    }
+    
+    // 先頭に追加
+    if (historySection.firstChild) {
+      historySection.insertBefore(historyItem, historySection.firstChild);
+    } else {
+      historySection.appendChild(historyItem);
+    }
+    
+    // 履歴配列に追加
+    history.unshift({
+      action,
+      from,
+      to,
+      chipType,
+      count,
+      points,
+      timestamp: now.getTime()
+    });
+    
+    // 履歴の数を制限（最新20件のみ）
+    if (historySection.children.length > 20) {
+      historySection.removeChild(historySection.lastChild);
+    }
+    
+    // ローカルストレージに保存
+    saveState();
+  }
+  
+  // プレイヤー間のポイント移動を実行する関数
+  function executeTransfer(fromPlayer, toPlayer, chipType, count) {
+    // 枚数が整数であることを確認
+    count = parseInt(count);
+    if (isNaN(count) || count <= 0) {
+      showToast('error', 'エラー', '枚数は1以上の整数である必要があります。');
+      return false;
+    }
+    
+    // チップが十分にあるか確認
+    if (players[fromPlayer].chips[chipType] < count) {
+      showToast('error', 'エラー', `${players[fromPlayer].name}の${chipType}チップが不足しています。`);
+      return false;
+    }
+    
+    // ポイント計算
+    const pointValue = CHIP_VALUES[chipType] * count;
+    
+    // チップを移動
+    players[fromPlayer].chips[chipType] -= count;
+    players[toPlayer].chips[chipType] += count;
+    
+    // 総資産を再計算
+    players[fromPlayer].total = calculateTotal(players[fromPlayer]);
+    players[toPlayer].total = calculateTotal(players[toPlayer]);
+    
+    // 移動回数をインクリメント
+    players[fromPlayer].transferCount++;
+    players[toPlayer].transferCount++;
+    
+    // 表示を更新
+    updatePlayerDisplay(fromPlayer);
+    updatePlayerDisplay(toPlayer);
+    updateRankings();
+    
+    // 履歴に追加
+    addHistory('transfer', fromPlayer, toPlayer, getChipTypeName(chipType), count, pointValue);
+    
+    // 通知
+    showToast('success', 'ポイント移動', `${players[fromPlayer].name}から${players[toPlayer].name}へ${pointValue.toLocaleString()} Pt移動しました。`);
+    
+    return true;
+  }
+  
+  // プレイヤーからのポイント没収を実行する関数
+  function executeForfeit(fromPlayer, chipType, count) {
+    // 枚数が整数であることを確認
+    count = parseInt(count);
+    if (isNaN(count) || count <= 0) {
+      showToast('error', 'エラー', '枚数は1以上の整数である必要があります。');
+      return false;
+    }
+    
+    // 倍モードの場合は枚数を倍にする
+    if (doubleMode) {
+      count *= 2;
+    }
+    
+    // チップが十分にあるか確認
+    if (players[fromPlayer].chips[chipType] < count) {
+      showToast('error', 'エラー', `${players[fromPlayer].name}の${chipType}チップが不足しています。`);
+      return false;
+    }
+    
+    // ポイント計算
+    const pointValue = CHIP_VALUES[chipType] * count;
+    
+    // チップを没収
+    players[fromPlayer].chips[chipType] -= count;
+    totalForfeit += pointValue;
+    
+    // 総資産を再計算
+    players[fromPlayer].total = calculateTotal(players[fromPlayer]);
+    
+    // 没収回数をインクリメント
+    players[fromPlayer].forfeitCount++;
+    
+    // 表示を更新
+    updatePlayerDisplay(fromPlayer);
+    updateTotalForfeit();
+    updateRankings();
+    
+    // 履歴に追加
+    addHistory('forfeit', fromPlayer, 'forfeit', getChipTypeName(chipType), count, pointValue);
+    
+    // 通知
+    showToast('warning', 'ポイント没収', `${players[fromPlayer].name}から${pointValue.toLocaleString()} Ptを没収しました。`);
+    
+    return true;
+  }
+  
+  // チップタイプの日本語名を取得する関数
+  function getChipTypeName(chipType) {
+    switch (chipType) {
+      case 'black':
+        return '黒チップ';
+      case 'white':
+        return '白チップ';
+      case 'color':
+        return 'カラーチップ';
+      default:
+        return chipType;
+    }
+  }
+  
+  // トースト通知を表示する関数
+  function showToast(type, title, message) {
+    const toast = document.createElement('div');
+    toast.classList.add('toast', `toast-${type}`);
+    
+    let icon = '';
+    switch (type) {
+      case 'success':
+        icon = '✅';
+        break;
+      case 'warning':
+        icon = '⚠️';
+        break;
+      case 'error':
+        icon = '❌';
+        break;
+      default:
+        icon = 'ℹ️';
+    }
+    
+    toast.innerHTML = `
+      <div class="toast-icon">${icon}</div>
+      <div class="toast-content">
+        <div class="toast-title">${title}</div>
+        <div class="toast-message">${message}</div>
+      </div>
+    `;
+    
+    toastContainer.appendChild(toast);
+    
+    // 3秒後に削除
+    setTimeout(() => {
+      toast.remove();
+    }, 3000);
+  }
+  
+  // 選択されたチップタイプを取得する関数
+  function getSelectedChipType() {
+    for (const radio of chipTypeRadios) {
+      if (radio.checked) {
+        return radio.value;
+      }
+    }
+    return 'black'; // デフォルト
+  }
+  
+  // 抽選されたカードを表示する関数
+  function showCard(card) {
+    cardTitle.textContent = card.title;
+    cardDescription.textContent = card.rule;
+    cardModal.style.display = 'flex';
+    currentCard = card;
+  }
+  
+  // カードを適用する関数
+  function applyCardRule(card) {
+    activeRules.push(card);
+    updateActiveRules();
+    showToast('success', 'カード適用', `「${card.title}」を適用しました。`);
+  }
+  
+  // 適用中のルールを更新する関数
+  function updateActiveRules() {
+    if (activeRules.length === 0) {
+      rulesList.innerHTML = '';
+      noRulesMessage.style.display = 'block';
+      return;
+    }
+    
+    noRulesMessage.style.display = 'none';
+    rulesList.innerHTML = '';
+    
+    activeRules.forEach((rule, index) => {
+      const li = document.createElement('li');
+      li.classList.add('rule-item');
+      li.innerHTML = `
+        <span class="rule-name">${rule.title}</span>
+        <span class="rule-action" data-index="${index}">削除</span>
+      `;
+      rulesList.appendChild(li);
+    });
+    
+    // 削除ボタンのイベントリスナー
+    document.querySelectorAll('.rule-action').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const index = parseInt(this.dataset.index);
+        const removedRule = activeRules.splice(index, 1)[0];
+        updateActiveRules();
+        showToast('warning', 'ルール削除', `「${removedRule.title}」を削除しました。`);
+      });
+    });
+    
+    // ローカルストレージに保存
+    saveState();
+  }
+  
+  // 残りのカード枚数を更新する関数
+  function updateRemainingCards() {
+    cardsRemaining.textContent = `${shuffledCards.length}枚`;
+  }
+  
+  // 状態をローカルストレージに保存する関数
+  function saveState() {
+    const state = {
+      players,
+      totalForfeit,
+      doubleMode,
+      history,
+      activeRules,
+      shuffledCards
     };
     
-    // 合計表示要素
-    const totalAmountElement = document.getElementById('total-amount');
+    localStorage.setItem('momotetsuDashboardState', JSON.stringify(state));
+  }
+  
+  // ローカルストレージから状態を読み込む関数
+  function loadState() {
+    const savedState = localStorage.getItem('momotetsuDashboardState');
+    if (!savedState) return;
     
-    // 履歴リスト要素
-    const historyList = document.getElementById('history-list');
-    
-    // 貧乏神要素
-    const binbogami = document.getElementById('binbogami');
-    
-    // ローカルストレージキー
-    const STORAGE_KEY = 'forfeitedPoints';
-    const HISTORY_KEY = 'forfeitHistory';
-    
-    // ローカルストレージから状態を復元
-    function restoreState() {
-        const savedState = localStorage.getItem(STORAGE_KEY);
-        if (savedState) {
-            const state = JSON.parse(savedState);
-            
-            // 各プレイヤーの没収ポイントを復元
-            for (const player in state) {
-                if (players.hasOwnProperty(player)) {
-                    players[player].amount = state[player];
-                    updateDisplay(player);
-                }
-            }
-            
-            // 合計を更新
-            updateTotal();
-        }
-        
-        // 履歴の復元
-        const savedHistory = localStorage.getItem(HISTORY_KEY);
-        if (savedHistory) {
-            const historyItems = JSON.parse(savedHistory);
-            historyItems.forEach(item => {
-                addHistoryItem(item.player, item.amount, item.timestamp, false);
-            });
-        }
-    }
-    
-    // 状態をローカルストレージに保存
-    function saveState() {
-        const state = {};
-        for (const player in players) {
-            state[player] = players[player].amount;
-        }
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-    
-    // 履歴をローカルストレージに保存
-    function saveHistory() {
-        const historyItems = Array.from(historyList.querySelectorAll('.history-item'))
-            .map(item => ({
-                player: item.dataset.player,
-                amount: parseInt(item.dataset.amount),
-                timestamp: parseInt(item.dataset.timestamp)
-            }));
-        
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(historyItems));
-    }
-    
-    // 表示の更新
-    function updateDisplay(player) {
-        players[player].element.textContent = `${players[player].amount.toLocaleString()} Pt`;
-        
-        // アニメーション効果
-        players[player].element.classList.add('pulse');
-        setTimeout(() => {
-            players[player].element.classList.remove('pulse');
-        }, 500);
-    }
-    
-    // 合計の更新
-    function updateTotal() {
-        const total = Object.values(players).reduce((sum, player) => sum + player.amount, 0);
-        totalAmountElement.textContent = `${total.toLocaleString()} Pt`;
-        
-        // アニメーション効果
-        totalAmountElement.classList.add('pulse');
-        setTimeout(() => {
-            totalAmountElement.classList.remove('pulse');
-        }, 500);
-    }
-    
-    // 没収ポイントを増減
-    function changeAmount(player, amount) {
-        // 負の数になる場合は0にする
-        players[player].amount = Math.max(0, players[player].amount + amount);
-        
-        // 表示を更新
-        updateDisplay(player);
-        
-        // 合計を更新
-        updateTotal();
-        
-        // 貧乏神のアクション
-        animateBinbogami();
-        
-        // 履歴に追加
-        const timestamp = new Date().getTime();
-        addHistoryItem(player, amount, timestamp);
-        
-        // ポイント付与/没収時にパーティクル効果
-        createParticles(player, amount > 0);
-        
-        // 状態を保存
-        saveState();
-        saveHistory();
-    }
-    
-    // 履歴アイテムを追加
-    function addHistoryItem(player, amount, timestamp, isNew = true) {
-        const item = document.createElement('div');
-        item.classList.add('history-item');
-        item.dataset.player = player;
-        item.dataset.amount = amount;
-        item.dataset.timestamp = timestamp;
-        
-        // 増減によってクラスを追加
-        if (amount > 0) {
-            item.classList.add('added');
-        } else if (amount < 0) {
-            item.classList.add('subtracted');
-        }
-        
-        // 日時のフォーマット
-        const date = new Date(timestamp);
-        const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
-        
-        // 日本語のプレイヤー名
-        const playerNames = {
-            nozomu: 'のぞむ',
-            madoka: 'まどか',
-            hikaru: 'ひかる',
-            chie: 'ちえ'
-        };
-        
-        item.textContent = `${timeStr} - ${playerNames[player]}: ${amount > 0 ? '+' : ''}${amount.toLocaleString()} Pt`;
-        
-        // 新しいアイテムは先頭に追加
-        if (isNew) {
-            historyList.insertBefore(item, historyList.firstChild);
-        } else {
-            historyList.appendChild(item);
-        }
-        
-        // 履歴の数を制限（最新50件のみ）
-        const items = historyList.querySelectorAll('.history-item');
-        if (items.length > 50) {
-            historyList.removeChild(items[items.length - 1]);
-        }
-    }
-    
-    // 貧乏神のアニメーション
-    function animateBinbogami() {
-        binbogami.classList.add('binbogami-active');
-        
-        // アニメーション終了後にクラスを削除
-        setTimeout(() => {
-            binbogami.classList.remove('binbogami-active');
-        }, 500);
-    }
-    
-    // 浮遊アニメーションを開始
-    function startFloatingAnimation() {
-        binbogami.style.animation = 'float 3s ease-in-out infinite';
-    }
-    
-    // パーティクル効果の作成
-    function createParticles(player, isAddition) {
-        const playerElement = players[player].element;
-        const rect = playerElement.getBoundingClientRect();
-        
-        // パーティクルの数
-        const particleCount = 15;
-        
-        for (let i = 0; i < particleCount; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            
-            // 増減によって色を変更
-            particle.style.backgroundColor = isAddition ? '#2ecc71' : '#e74c3c';
-            
-            // ランダムな位置に配置
-            const x = rect.left + Math.random() * rect.width;
-            const y = rect.top + rect.height / 2;
-            
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            
-            document.body.appendChild(particle);
-            
-            // アニメーション終了後に要素を削除
-            setTimeout(() => {
-                document.body.removeChild(particle);
-            }, 1500);
-        }
-    }
-    
-    // イベントリスナーの設定
-    // インクリメントボタン
-    for (const player in players) {
-        document.getElementById(`increment-${player}`).addEventListener('click', () => {
-            changeAmount(player, 300);  // 基本は300ポイント増加
+    try {
+      const state = JSON.parse(savedState);
+      
+      // プレイヤーデータを復元
+      Object.keys(state.players).forEach(playerId => {
+        players[playerId] = state.players[playerId];
+        updatePlayerDisplay(playerId);
+      });
+      
+      // 没収ポイント合計を復元
+      totalForfeit = state.totalForfeit;
+      updateTotalForfeit();
+      
+      // 倍モードを復元
+      doubleMode = state.doubleMode;
+      doubleModeToggle.checked = doubleMode;
+      
+      // 履歴を復元
+      history = state.history || [];
+      if (history.length > 0) {
+        historySection.innerHTML = '';
+        history.forEach(item => {
+          const historyItem = document.createElement('div');
+          historyItem.classList.add('history-item', item.action);
+          
+          const timeString = new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          
+          let message = '';
+          if (item.action === 'transfer') {
+            message = `${timeString} - ${players[item.from].name} → ${players[item.to].name}: ${item.chipType} ×${item.count} (${item.points.toLocaleString()} Pt)`;
+          } else if (item.action === 'forfeit') {
+            message = `${timeString} - ${players[item.from].name} から没収: ${item.chipType} ×${item.count} (${item.points.toLocaleString()} Pt)`;
+          }
+          
+          historyItem.textContent = message;
+          historySection.appendChild(historyItem);
         });
+      }
+      
+      // アクティブなルールを復元
+      activeRules = state.activeRules || [];
+      updateActiveRules();
+      
+      // シャッフルされたカードを復元
+      if (state.shuffledCards && state.shuffledCards.length > 0) {
+        shuffledCards = state.shuffledCards;
+      }
+      updateRemainingCards();
+      
+      // ランキングを更新
+      updateRankings();
+      
+    } catch (error) {
+      console.error('状態の読み込みに失敗しました:', error);
+    }
+  }
+  
+  // アクションタイプの変更時の処理
+  actionTypeSelect.addEventListener('change', function() {
+    const actionType = this.value;
+    
+    if (actionType === 'transfer') {
+      fromPlayerGroup.style.display = 'flex';
+      toPlayerGroup.style.display = 'flex';
+      toPlayerSelect.querySelector('option[value="forfeit"]').style.display = 'none';
+    } else if (actionType === 'forfeit') {
+      fromPlayerGroup.style.display = 'flex';
+      toPlayerGroup.style.display = 'none';
+    }
+  });
+  
+  // フォーム送信時の処理
+  submitActionBtn.addEventListener('click', function() {
+    const actionType = actionTypeSelect.value;
+    const fromPlayer = fromPlayerSelect.value;
+    const toPlayer = toPlayerSelect.value;
+    const chipType = getSelectedChipType();
+    const count = parseInt(chipCountInput.value);
+    
+    if (isNaN(count) || count <= 0) {
+      showToast('error', 'エラー', '枚数は1以上の整数である必要があります。');
+      return;
     }
     
-    // デクリメントボタン
-    for (const player in players) {
-        document.getElementById(`decrement-${player}`).addEventListener('click', () => {
-            changeAmount(player, -300);  // 基本は300ポイント減少
-        });
+    if (actionType === 'transfer') {
+      if (fromPlayer === toPlayer) {
+        showToast('error', 'エラー', '送信元と送信先が同じです。');
+        return;
+      }
+      
+      // 移動確認モーダルを表示
+      transferModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${players[toPlayer].name} へ ${getChipTypeName(chipType)} ${count}枚 (${(CHIP_VALUES[chipType] * count).toLocaleString()} Pt) を移動します。</p>`;
+      transferModal.style.display = 'flex';
+      
+      // 確認ボタンのイベントリスナー（一旦削除してから再登録）
+      confirmTransferBtn.onclick = null;
+      confirmTransferBtn.onclick = function() {
+        if (executeTransfer(fromPlayer, toPlayer, chipType, count)) {
+          transferModal.style.display = 'none';
+        }
+      };
+      
+    } else if (actionType === 'forfeit') {
+      // 没収確認モーダルを表示
+      const displayCount = doubleMode ? count * 2 : count;
+      const displayPoints = CHIP_VALUES[chipType] * displayCount;
+      
+      forfeitModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${getChipTypeName(chipType)} ${displayCount}枚 (${displayPoints.toLocaleString()} Pt) を没収します。${doubleMode ? '<br><strong>※倍モード適用中</strong>' : ''}</p>`;
+      forfeitModal.style.display = 'flex';
+      
+      // 確認ボタンのイベントリスナー（一旦削除してから再登録）
+      confirmForfeitBtn.onclick = null;
+      confirmForfeitBtn.onclick = function() {
+        if (executeForfeit(fromPlayer, chipType, count)) {
+          forfeitModal.style.display = 'none';
+        }
+      };
     }
+  });
+  
+  // 倍モードトグルの処理
+  doubleModeToggle.addEventListener('change', function() {
+    doubleMode = this.checked;
+    saveState();
     
-    // クイックボタン
-    document.querySelectorAll('.quick-buttons button').forEach(button => {
-        button.addEventListener('click', function() {
-            const player = this.dataset.player;
-            const amount = parseInt(this.dataset.amount);
-            changeAmount(player, amount);
-        });
+    if (doubleMode) {
+      showToast('warning', '倍モード', '没収ポイントが2倍になります。');
+    } else {
+      showToast('info', '通常モード', '没収ポイントが通常に戻ります。');
+    }
+  });
+  
+  // プレイヤーカードの「移動」「没収」ボタンの処理
+  document.querySelectorAll('.player-card').forEach(card => {
+    const playerId = card.dataset.player;
+    
+    // 移動ボタン
+    card.querySelector('[data-action="transfer"]').addEventListener('click', function() {
+      actionTypeSelect.value = 'transfer';
+      fromPlayerSelect.value = playerId;
+      // イベントを発火してUIを更新
+      actionTypeSelect.dispatchEvent(new Event('change'));
+      
+      // スクロール
+      const actionPanel = document.querySelector('.action-panel');
+      actionPanel.scrollIntoView({ behavior: 'smooth' });
     });
     
-    // リセットボタン
-    document.getElementById('reset-button').addEventListener('click', function() {
-        if (confirm('本当に没収ポイントをリセットしますか？')) {
-            // すべてのプレイヤーの没収ポイントをリセット
-            for (const player in players) {
-                players[player].amount = 0;
-                updateDisplay(player);
-            }
-            
-            // 合計を更新
-            updateTotal();
-            
-            // 履歴をクリア
-            historyList.innerHTML = '';
-            
-            // ローカルストレージをクリア
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem(HISTORY_KEY);
-            
-            // 貧乏神のアニメーション
-            animateBinbogami();
-        }
+    // 没収ボタン
+    card.querySelector('[data-action="forfeit"]').addEventListener('click', function() {
+      actionTypeSelect.value = 'forfeit';
+      fromPlayerSelect.value = playerId;
+      // イベントを発火してUIを更新
+      actionTypeSelect.dispatchEvent(new Event('change'));
+      
+      // スクロール
+      const actionPanel = document.querySelector('.action-panel');
+      actionPanel.scrollIntoView({ behavior: 'smooth' });
     });
-    
-    // 貧乏神のイベント
-    binbogami.addEventListener('click', function() {
-        // クリックすると何か特別なことが起こる
-        this.style.transform = 'scale(1.2) rotate(10deg)';
-        setTimeout(() => {
-            this.style.transform = '';
-        }, 300);
-        
-        // 何か面白い効果を追加
-        const randomPlayer = Object.keys(players)[Math.floor(Math.random() * Object.keys(players).length)];
-        changeAmount(randomPlayer, 50);  // ランダムなプレイヤーに少額追加
-    });
-    
-    // 貧乏神の浮遊アニメーション開始
-    startFloatingAnimation();
-    
-    // 初期状態の復元
-    restoreState();
-    
-    // 極小画面でのレイアウト調整
-    function checkScreenSize() {
-        const width = window.innerWidth;
-        const controlsElements = document.querySelectorAll('.controls');
-        
-        if (width <= 350) {
-            controlsElements.forEach(control => {
-                if (!control.querySelector('.controls-row')) {
-                    // 既存の要素を保存
-                    const decrement = control.querySelector('.decrement');
-                    const quickButtons = control.querySelector('.quick-buttons');
-                    const increment = control.querySelector('.increment');
-                    
-                    // 内容をクリア
-                    control.innerHTML = '';
-                    
-                    // 新しい構造で再構築
-                    const row1 = document.createElement('div');
-                    row1.className = 'controls-row';
-                    row1.appendChild(decrement);
-                    row1.appendChild(increment);
-                    
-                    const row2 = document.createElement('div');
-                    row2.className = 'controls-row';
-                    row2.appendChild(quickButtons);
-                    
-                    control.appendChild(row1);
-                    control.appendChild(row2);
-                }
-            });
-        } else {
-            // 350px以上の場合は元に戻す
-            controlsElements.forEach(control => {
-                const row1 = control.querySelector('.controls-row:first-child');
-                if (row1) {
-                    const row2 = control.querySelector('.controls-row:last-child');
-                    const decrement = row1.querySelector('.decrement');
-                    const increment = row1.querySelector('.increment');
-                    const quickButtons = row2.querySelector('.quick-buttons');
-                    
-                    // 内容をクリア
-                    control.innerHTML = '';
-                    
-                    // 元の構造で再構築
-                    control.appendChild(decrement);
-                    control.appendChild(quickButtons);
-                    control.appendChild(increment);
-                }
-            });
-        }
+  });
+  
+  // カードデッキのクリックイベント
+  cardDeck.addEventListener('click', function() {
+    if (shuffledCards.length === 0) {
+      showToast('error', 'エラー', 'カードがありません。');
+      return;
     }
     
-    // 画面サイズが変更されたときにレイアウトを調整
-    window.addEventListener('resize', checkScreenSize);
+    // カードを1枚引く
+    const card = shuffledCards.pop();
+    updateRemainingCards();
+    showCard(card);
+    saveState();
     
-    // 初期レイアウト調整
-    checkScreenSize();
+    // カードをめくるアニメーションを追加
+    this.classList.add('float');
+    setTimeout(() => {
+      this.classList.remove('float');
+    }, 500);
+  });
+  
+  // カードを適用するボタンの処理
+  applyCardBtn.addEventListener('click', function() {
+    if (currentCard) {
+      applyCardRule(currentCard);
+      cardModal.style.display = 'none';
+      currentCard = null;
+    }
+  });
+  
+  // カードを破棄するボタンの処理
+  discardCardBtn.addEventListener('click', function() {
+    if (currentCard) {
+      showToast('info', 'カード破棄', `「${currentCard.title}」を破棄しました。`);
+      cardModal.style.display = 'none';
+      currentCard = null;
+    }
+  });
+  
+  // 初期化
+  loadState();
+  updateRemainingCards();
+  actionTypeSelect.dispatchEvent(new Event('change'));
 });
 </script>
 </body>
