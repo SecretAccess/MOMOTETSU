@@ -4,9 +4,241 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>桃鉄GP 2024 チップカウンター</title>
-<link rel="stylesheet" href="styles.css">
-</head>
+<style>
+/* 基本スタイル */
+:root {
+  --primary-color: #e74c3c; /* 桃鉄テーマに合わせた赤色 */
+  --secondary-color: #3498db; /* アクセントカラー */
+  --background-color: #f7f9fc;
+  --card-bg: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --button-bg: #f1f1f1;
+  --button-active: #d8d8d8;
+}
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* ヘッダースタイル */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0.5rem 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* メインコンテンツ */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+section {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.6rem;
+}
+
+h3 {
+  color: var(--text-color);
+  margin: 1rem 0;
+  font-size: 1.3rem;
+}
+
+/* チップコンテナ */
+.chip-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 2rem;
+}
+
+.chip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8f8f8;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 220px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+.chip-item:hover {
+  transform: translateY(-5px);
+}
+
+.chip-item img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.1));
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.controls button {
+  background-color: var(--button-bg);
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+.controls button:hover {
+  background-color: var(--button-active);
+}
+
+.controls button:active {
+  transform: scale(0.95);
+}
+
+.controls span {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 1rem;
+  min-width: 40px;
+  text-align: center;
+}
+
+.chip-item p {
+  margin: 0.5rem 0;
+  font-size: 1rem;
+}
+
+/* 合計表示 */
+.summary {
+  text-align: center;
+  background-color: #f8f8f8;
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.summary p {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
+
+#total-amount {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+}
+
+/* フッター */
+footer {
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* アニメーション */
+.pulse {
+  animation: pulse-animation 0.5s;
+}
+
+@keyframes pulse-animation {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 768px) {
+  .chip-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chip-item {
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  header h1 {
+    font-size: 1.5rem;
+  }
+  
+  nav {
+    gap: 5px;
+  }
+  
+  nav a {
+    font-size: 0.9rem;
+    padding: 4px 8px;
+  }
+}
+</style>
+</head>
 <body>
 <header>
     <h1>チップカウンター</h1>
@@ -18,9 +250,7 @@
     <a href="forfeit-counter.html">没収ポイント</a>
     <a href="hidden-destination.html">裏目的地</a>
 </nav>
-
 </header>
-
 <main>
     <section>
         <h2>チップカウンター</h2>
@@ -35,7 +265,6 @@
                 <p>1000Pt</p>
                 <p>計：<span id="black-total">0Pt</span></p>
             </div>
-
             <div class="chip-item">
                 <img src="white-chip.png" alt="白チップ">
                 <div class="controls">
@@ -46,7 +275,6 @@
                 <p>500Pt</p>
                 <p>計：<span id="white-total">0Pt</span></p>
             </div>
-
             <div class="chip-item">
                 <img src="color-chip.png" alt="赤青緑チップ">
                 <div class="controls">
@@ -58,18 +286,125 @@
                 <p>計：<span id="color-total">0Pt</span></p>
             </div>
         </div>
-
         <div class="summary">
-            <h3></h3>
+            <h3>合計ポイント</h3>
             <p>合計：<span id="total-amount">0Pt</span></p>
         </div>
     </section>
 </main>
-
 <footer>
     <p>桃鉄実行委員会 © 2024</p>
 </footer>
-
-<script src="script.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // チップの値と初期カウント
+    const chips = {
+        black: { value: 1000, count: 0 },
+        white: { value: 500, count: 0 },
+        color: { value: 300, count: 0 }
+    };
+    
+    // DOM要素の取得
+    const elements = {
+        blackCount: document.getElementById('black-count'),
+        whiteCount: document.getElementById('white-count'),
+        colorCount: document.getElementById('color-count'),
+        blackTotal: document.getElementById('black-total'),
+        whiteTotal: document.getElementById('white-total'),
+        colorTotal: document.getElementById('color-total'),
+        totalAmount: document.getElementById('total-amount')
+    };
+    
+    // ボタンにイベントリスナーを追加
+    document.getElementById('increment-black').addEventListener('click', () => updateCount('black', 1));
+    document.getElementById('decrement-black').addEventListener('click', () => updateCount('black', -1));
+    document.getElementById('increment-white').addEventListener('click', () => updateCount('white', 1));
+    document.getElementById('decrement-white').addEventListener('click', () => updateCount('white', -1));
+    document.getElementById('increment-color').addEventListener('click', () => updateCount('color', 1));
+    document.getElementById('decrement-color').addEventListener('click', () => updateCount('color', -1));
+    
+    // カウントを更新する関数
+    function updateCount(chipType, delta) {
+        // カウントが0未満にならないようにチェック
+        if (chips[chipType].count + delta < 0) return;
+        
+        // カウントを更新
+        chips[chipType].count += delta;
+        
+        // 表示を更新
+        elements[`${chipType}Count`].textContent = chips[chipType].count;
+        
+        // 小計を更新
+        updateSubtotal(chipType);
+        
+        // 合計を更新
+        updateTotal();
+        
+        // アニメーション効果
+        addPulseAnimation(elements[`${chipType}Count`]);
+    }
+    
+    // 小計を更新する関数
+    function updateSubtotal(chipType) {
+        const subtotal = chips[chipType].count * chips[chipType].value;
+        elements[`${chipType}Total`].textContent = `${subtotal.toLocaleString()}Pt`;
+    }
+    
+    // 合計を更新する関数
+    function updateTotal() {
+        const total = Object.keys(chips).reduce((sum, chipType) => {
+            return sum + (chips[chipType].count * chips[chipType].value);
+        }, 0);
+        
+        elements.totalAmount.textContent = `${total.toLocaleString()}Pt`;
+        
+        // 合計額のアニメーション
+        addPulseAnimation(elements.totalAmount);
+    }
+    
+    // パルスアニメーションを追加する関数
+    function addPulseAnimation(element) {
+        element.classList.add('pulse');
+        setTimeout(() => {
+            element.classList.remove('pulse');
+        }, 500);
+    }
+    
+    // 初期表示のアップデート
+    updateTotal();
+    
+    // ローカルストレージから状態を復元する
+    function restoreState() {
+        const savedState = localStorage.getItem('chipCounter');
+        if (savedState) {
+            const state = JSON.parse(savedState);
+            for (const chipType in state) {
+                if (chips.hasOwnProperty(chipType)) {
+                    chips[chipType].count = state[chipType];
+                    elements[`${chipType}Count`].textContent = chips[chipType].count;
+                    updateSubtotal(chipType);
+                }
+            }
+            updateTotal();
+        }
+    }
+    
+    // 状態をローカルストレージに保存する
+    function saveState() {
+        const state = {
+            black: chips.black.count,
+            white: chips.white.count,
+            color: chips.color.count
+        };
+        localStorage.setItem('chipCounter', JSON.stringify(state));
+    }
+    
+    // 自動保存
+    window.addEventListener('beforeunload', saveState);
+    
+    // 初期状態の復元
+    restoreState();
+});
+</script>
 </body>
 </html>
