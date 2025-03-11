@@ -4,73 +4,677 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
 <title>桃鉄GP 抽選ルーレット</title>
-<link rel="stylesheet" href="styles.css">
-<script src="roulette.js" defer></script>
+<style>
+/* 基本スタイル */
+:root {
+  --primary-color: #e74c3c; /* 桃鉄テーマに合わせた赤色 */
+  --secondary-color: #3498db; /* アクセントカラー */
+  --background-color: #f7f9fc;
+  --card-bg: #ffffff;
+  --text-color: #333333;
+  --border-color: #e0e0e0;
+  --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --button-bg: #f1f1f1;
+  --button-active: #d8d8d8;
+  --prize1-color: #9b59b6; /* 特別賞1のカラー */
+  --prize2-color: #2ecc71; /* 特別賞2のカラー */
+  --prize3-color: #f39c12; /* 特別賞3のカラー */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+/* ヘッダースタイル */
+header {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+header h1 {
+  margin-bottom: 0.5rem;
+  font-size: 1.8rem;
+}
+
+nav {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0.5rem 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* メインコンテンツ */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+section {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+h2 {
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-size: 1.6rem;
+  position: relative;
+}
+
+h2:after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 3px;
+  background-color: var(--primary-color);
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ルール説明 */
+#toggle-rules {
+  display: block;
+  margin: 0 auto 1rem;
+  padding: 0.6rem 1.2rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+#toggle-rules:hover {
+  background-color: #2980b9;
+}
+
+#rules-list {
+  background-color: #f8f8f8;
+  padding: 1.2rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  list-style-position: inside;
+}
+
+#rules-list.hidden {
+  display: none;
+}
+
+#rules-list li {
+  margin-bottom: 0.8rem;
+  padding: 0.6rem;
+  background-color: white;
+  border-left: 3px solid var(--primary-color);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* プレイヤー名入力フォーム */
+.player-form {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 15px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .player-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+label {
+  font-weight: bold;
+}
+
+input[type="text"] {
+  padding: 0.7rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus {
+  border-color: var(--secondary-color);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.3);
+}
+
+/* ルーレットスタイル */
+.roulette-container {
+  position: relative;
+  margin: 2rem auto;
+  max-width: 400px;
+}
+
+.roulette {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: #f0f0f0;
+  overflow: hidden;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 5s cubic-bezier(0.17, 0.67, 0.16, 0.99);
+}
+
+.prize1 .roulette {
+  background: linear-gradient(135deg, var(--prize1-color) 0%, #8e44ad 100%);
+}
+
+.prize2 .roulette {
+  background: linear-gradient(135deg, var(--prize2-color) 0%, #27ae60 100%);
+}
+
+.prize3 .roulette {
+  background: linear-gradient(135deg, var(--prize3-color) 0%, #e67e22 100%);
+}
+
+.segment {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 50%, 50% 0%, 100% 0%, 100% 100%, 50% 100%);
+  transform-origin: center left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 20px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.center-circle {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+}
+
+.pointer {
+  position: absolute;
+  top: 50%;
+  right: 50px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  z-index: 5;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+/* ルーレットボタン */
+.spin-button {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.spin-button:hover {
+  background-color: #c0392b;
+}
+
+.spin-button:active {
+  transform: scale(0.95);
+}
+
+.spin-button:disabled {
+  background-color: #bbb;
+  cursor: not-allowed;
+}
+
+/* 結果表示 */
+.result {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: #f8f8f8;
+  opacity: 0;
+  transition: opacity 0.5s;
+  min-height: 60px;
+}
+
+.result.visible {
+  opacity: 1;
+}
+
+.winner-highlight {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* フッター */
+footer {
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* レスポンシブ調整 */
+@media (max-width: 768px) {
+  section {
+    padding: 1.5rem;
+  }
+  
+  .roulette {
+    width: 250px;
+    height: 250px;
+  }
+  
+  .segment {
+    font-size: 0.9rem;
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .roulette {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .center-circle {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .segment {
+    font-size: 0.8rem;
+  }
+}
+</style>
 </head>
 <body>
 <header>
     <h1>抽選ルーレット</h1>
-   <nav>
-    <a href="index.html">チップカウンター</a>
-            <a href="rules.html">大会ルール</a>
-            <a href="cards.html">チャンスカード</a>
-            <a href="roulette.html">抽選ルーレット</a>
-            <a href="forfeit-counter.html">没収ポイント</a>
-            <a href="hidden-destination.html">裏目的地</a>
-</nav>
-
+    <nav>
+        <a href="index.html">チップカウンター</a>
+        <a href="rules.html">大会ルール</a>
+        <a href="cards.html">チャンスカード</a>
+        <a href="roulette.html">抽選ルーレット</a>
+        <a href="forfeit-counter.html">没収ポイント</a>
+        <a href="hidden-destination.html">裏目的地</a>
+    </nav>
 </header>
-
 <main>
     <section>
         <h2>ルール説明</h2>
         <button id="toggle-rules">ルールを表示</button>
         <ul id="rules-list" class="hidden">
-            <li>特別賞①：2位17%、3位33%、4位50%の確率で抽選し、当選者が1位に15,000Pt分のチップを支払います。</li>
-            <li>特別賞②：1位14%、3位43%、4位43%の確率で抽選し、当選者が2位に7,500Pt分のチップを支払います。</li>
-            <li>特別賞③：全プレイヤー25%の均等な確率で抽選し、当選者が没収された全チップを受け取ります。</li>
+            <li><strong>特別賞①：</strong>2位17%、3位33%、4位50%の確率で抽選し、当選者が1位に15,000Pt分のチップを支払います。</li>
+            <li><strong>特別賞②：</strong>1位14%、3位43%、4位43%の確率で抽選し、当選者が2位に7,500Pt分のチップを支払います。</li>
+            <li><strong>特別賞③：</strong>全プレイヤー25%の均等な確率で抽選し、当選者が没収された全チップを受け取ります。</li>
         </ul>
     </section>
-
+    
     <section>
         <h2>プレイヤー名入力</h2>
-        <label for="first-place">1位のプレイヤー名：</label>
-        <input type="text" id="first-place" placeholder="1位の名前を入力"><br><br>
-
-        <label for="second-place">2位のプレイヤー名：</label>
-        <input type="text" id="second-place" placeholder="2位の名前を入力"><br><br>
-
-        <label for="third-place">3位のプレイヤー名：</label>
-        <input type="text" id="third-place" placeholder="3位の名前を入力"><br><br>
-
-        <label for="fourth-place">4位のプレイヤー名：</label>
-        <input type="text" id="fourth-place" placeholder="4位の名前を入力"><br><br>
+        <div class="player-form">
+            <label for="first-place">1位のプレイヤー名：</label>
+            <input type="text" id="first-place" placeholder="1位の名前を入力">
+            
+            <label for="second-place">2位のプレイヤー名：</label>
+            <input type="text" id="second-place" placeholder="2位の名前を入力">
+            
+            <label for="third-place">3位のプレイヤー名：</label>
+            <input type="text" id="third-place" placeholder="3位の名前を入力">
+            
+            <label for="fourth-place">4位のプレイヤー名：</label>
+            <input type="text" id="fourth-place" placeholder="4位の名前を入力">
+        </div>
     </section>
-
-    <section>
+    
+    <section class="prize-section prize1">
         <h2>特別賞①ルーレット</h2>
-        <button onclick="spinRoulette('prize1')">ルーレットを回す</button>
-        <div id="roulette1" class="roulette"></div>
-        <div id="result1" class="result"></div>
+        <p>当選者は1位プレイヤーに15,000Ptを支払います</p>
+        <button class="spin-button" id="spin-prize1">ルーレットを回す</button>
+        <div class="roulette-container">
+            <div class="roulette" id="roulette1">
+                <!-- ルーレットのセグメントはJSで作成 -->
+                <div class="center-circle"></div>
+            </div>
+            <div class="pointer"></div>
+        </div>
+        <div class="result" id="result1"></div>
     </section>
-
-    <section>
+    
+    <section class="prize-section prize2">
         <h2>特別賞②ルーレット</h2>
-        <button onclick="spinRoulette('prize2')">ルーレットを回す</button>
-        <div id="roulette2" class="roulette"></div>
-        <div id="result2" class="result"></div>
+        <p>当選者は2位プレイヤーに7,500Ptを支払います</p>
+        <button class="spin-button" id="spin-prize2">ルーレットを回す</button>
+        <div class="roulette-container">
+            <div class="roulette" id="roulette2">
+                <!-- ルーレットのセグメントはJSで作成 -->
+                <div class="center-circle"></div>
+            </div>
+            <div class="pointer"></div>
+        </div>
+        <div class="result" id="result2"></div>
     </section>
-
-    <section>
+    
+    <section class="prize-section prize3">
         <h2>特別賞③ルーレット</h2>
-        <button onclick="spinRoulette('prize3')">ルーレットを回す</button>
-        <div id="roulette3" class="roulette"></div>
-        <div id="result3" class="result"></div>
+        <p>当選者は没収された全チップを受け取ります</p>
+        <button class="spin-button" id="spin-prize3">ルーレットを回す</button>
+        <div class="roulette-container">
+            <div class="roulette" id="roulette3">
+                <!-- ルーレットのセグメントはJSで作成 -->
+                <div class="center-circle"></div>
+            </div>
+            <div class="pointer"></div>
+        </div>
+        <div class="result" id="result3"></div>
     </section>
 </main>
-
 <footer>
     <p>桃鉄実行委員会 © 2024</p>
 </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ルール説明のトグル
+    const toggleRulesBtn = document.getElementById('toggle-rules');
+    const rulesList = document.getElementById('rules-list');
+    
+    toggleRulesBtn.addEventListener('click', function() {
+        rulesList.classList.toggle('hidden');
+        toggleRulesBtn.textContent = rulesList.classList.contains('hidden') ? 'ルールを表示' : 'ルールを隠す';
+    });
+    
+    // プレイヤー名の入力と保存
+    const playerInputs = {
+        first: document.getElementById('first-place'),
+        second: document.getElementById('second-place'),
+        third: document.getElementById('third-place'),
+        fourth: document.getElementById('fourth-place')
+    };
+    
+    // ローカルストレージからプレイヤー名を復元
+    const savedPlayers = JSON.parse(localStorage.getItem('momotetsuPlayers')) || {};
+    
+    for (const [key, input] of Object.entries(playerInputs)) {
+        if (savedPlayers[key]) {
+            input.value = savedPlayers[key];
+        }
+        
+        // 入力内容の変更を監視して保存
+        input.addEventListener('input', function() {
+            const players = {};
+            for (const [k, inp] of Object.entries(playerInputs)) {
+                players[k] = inp.value;
+            }
+            localStorage.setItem('momotetsuPlayers', JSON.stringify(players));
+        });
+    }
+    
+    // ルーレットの設定
+    const roulettes = {
+        prize1: {
+            element: document.getElementById('roulette1'),
+            button: document.getElementById('spin-prize1'),
+            result: document.getElementById('result1'),
+            segments: [],
+            weights: [], // 確率の重み
+            players: [], // プレイヤー名
+            // 2位:17%, 3位:33%, 4位:50%
+            setupSegments: function() {
+                this.segments = [];
+                this.weights = [17, 33, 50];
+                this.players = [
+                    playerInputs.second.value || '2位',
+                    playerInputs.third.value || '3位',
+                    playerInputs.fourth.value || '4位'
+                ];
+                
+                // ルーレットのセグメントを作成
+                this.createSegments();
+            }
+        },
+        prize2: {
+            element: document.getElementById('roulette2'),
+            button: document.getElementById('spin-prize2'),
+            result: document.getElementById('result2'),
+            segments: [],
+            weights: [],
+            players: [],
+            // 1位:14%, 3位:43%, 4位:43%
+            setupSegments: function() {
+                this.segments = [];
+                this.weights = [14, 43, 43];
+                this.players = [
+                    playerInputs.first.value || '1位',
+                    playerInputs.third.value || '3位',
+                    playerInputs.fourth.value || '4位'
+                ];
+                
+                // ルーレットのセグメントを作成
+                this.createSegments();
+            }
+        },
+        prize3: {
+            element: document.getElementById('roulette3'),
+            button: document.getElementById('spin-prize3'),
+            result: document.getElementById('result3'),
+            segments: [],
+            weights: [],
+            players: [],
+            // 全員均等25%
+            setupSegments: function() {
+                this.segments = [];
+                this.weights = [25, 25, 25, 25];
+                this.players = [
+                    playerInputs.first.value || '1位',
+                    playerInputs.second.value || '2位',
+                    playerInputs.third.value || '3位',
+                    playerInputs.fourth.value || '4位'
+                ];
+                
+                // ルーレットのセグメントを作成
+                this.createSegments();
+            }
+        }
+    };
+    
+    // ルーレットのセグメントを作成するメソッドを追加
+    for (const roulette of Object.values(roulettes)) {
+        roulette.createSegments = function() {
+            // 既存のセグメントを削除
+            const oldSegments = this.element.querySelectorAll('.segment');
+            oldSegments.forEach(seg => seg.remove());
+            
+            // 新しいセグメントを作成
+            let currentAngle = 0;
+            const totalWeight = this.weights.reduce((a, b) => a + b, 0);
+            
+            for (let i = 0; i < this.weights.length; i++) {
+                const segment = document.createElement('div');
+                segment.className = 'segment';
+                
+                // 重みに基づいて角度を計算
+                const segmentAngle = (this.weights[i] / totalWeight) * 360;
+                segment.style.transform = `rotate(${currentAngle}deg)`;
+                segment.style.clipPath = `polygon(50% 50%, 50% 0%, ${50 + Math.cos((currentAngle) * Math.PI / 180) * 50}% ${50 - Math.sin((currentAngle) * Math.PI / 180) * 50}%, ${50 + Math.cos((currentAngle + segmentAngle) * Math.PI / 180) * 50}% ${50 - Math.sin((currentAngle + segmentAngle) * Math.PI / 180) * 50}%)`;
+                
+                // 交互に色を変えてセグメントを見やすくする
+                segment.style.backgroundColor = i % 2 === 0 ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.1)';
+                
+                // プレイヤー名を中央に表示
+                segment.textContent = this.players[i];
+                
+                this.element.appendChild(segment);
+                this.segments.push({
+                    element: segment,
+                    player: this.players[i],
+                    startAngle: currentAngle,
+                    endAngle: currentAngle + segmentAngle
+                });
+                
+                currentAngle += segmentAngle;
+            }
+        };
+    }
+    
+    // 初期セグメント作成
+    for (const roulette of Object.values(roulettes)) {
+        roulette.setupSegments();
+    }
+    
+    // プレイヤー名が変更されたときにセグメントを更新
+    for (const input of Object.values(playerInputs)) {
+        input.addEventListener('input', function() {
+            for (const roulette of Object.values(roulettes)) {
+                roulette.setupSegments();
+            }
+        });
+    }
+    
+    // ルーレットスピン関数
+    function spinRoulette(rouletteId) {
+        const roulette = roulettes[rouletteId];
+        const button = roulette.button;
+        const result = roulette.result;
+        
+        // ボタンを無効化
+        button.disabled = true;
+        button.textContent = '回転中...';
+        
+        // 結果を非表示
+        result.classList.remove('visible');
+        
+        // 重み付き抽選
+        function weightedRandom(weights) {
+            let total = 0;
+            for (let i = 0; i < weights.length; i++) {
+                total += weights[i];
+            }
+            
+            const random = Math.random() * total;
+            let weightSum = 0;
+            
+            for (let i = 0; i < weights.length; i++) {
+                weightSum += weights[i];
+                if (random < weightSum) {
+                    return i;
+                }
+            }
+            return 0; // フォールバック
+        }
+        
+        // 当選者を決定
+        const winnerIndex = weightedRandom(roulette.weights);
+        const winner = roulette.players[winnerIndex];
+        
+        // ルーレットの回転角度を決定（当選セグメントの中央に停止するように調整）
+        const segment = roulette.segments[winnerIndex];
+        const middleAngle = (segment.startAngle + segment.endAngle) / 2;
+        const rotations = 5; // 回転回数
+        const stopAngle = 360 * rotations + middleAngle + 90; // 90度は調整値
+        
+        // ルーレットを回転
+        roulette.element.style.transform = `rotate(-${stopAngle}deg)`;
+        
+        // 回転が完了したら結果を表示
+        setTimeout(() => {
+            // 結果テキストの準備
+            let resultText = '';
+            
+            if (rouletteId === 'prize1') {
+                resultText = `<span class="winner-highlight">${winner}</span> が1位（${playerInputs.first.value || '1位'}）に15,000Ptを支払います`;
+            } else if (rouletteId === 'prize2') {
+                resultText = `<span class="winner-highlight">${winner}</span> が2位（${playerInputs.second.value || '2位'}）に7,500Ptを支払います`;
+            } else {
+                resultText = `<span class="winner-highlight">${winner}</span> が没収されたすべてのチップを受け取ります`;
+            }
+            
+            // 結果を表示
+            result.innerHTML = resultText;
+            result.classList.add('visible');
+            
+            // ボタンを再度有効化
+            button.disabled = false;
+            button.textContent = 'もう一度回す';
+            
+            // 振動フィードバック（対応端末のみ）
+            if (navigator.vibrate) {
+                navigator.vibrate([100, 50, 100]);
+            }
+        }, 5100); // ルーレットのトランジション時間+0.1秒
+    }
+    
+    // ルーレットスピンボタンのイベントリスナー
+    document.getElementById('spin-prize1').addEventListener('click', () => spinRoulette('prize1'));
+    document.getElementById('spin-prize2').addEventListener('click', () => spinRoulette('prize2'));
+    document.getElementById('spin-prize3').addEventListener('click', () => spinRoulette('prize3'));
+});
+</script>
 </body>
 </html>
