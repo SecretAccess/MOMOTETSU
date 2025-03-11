@@ -178,11 +178,12 @@
             padding: 1.5rem;
         }
 
+        /* カードスタイル - 修正版 */
         .card {
             height: 280px;
-            perspective: 1000px;
+            perspective: 1000px; /* 3D効果のため */
             cursor: pointer;
-            position: relative;
+            margin-bottom: 20px;
         }
 
         .card.used {
@@ -196,21 +197,21 @@
             height: 100%;
             text-align: center;
             transition: transform 0.8s;
-            transform-style: preserve-3d;
+            transform-style: preserve-3d; /* 3D変換を有効に */
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
 
         .card.flipped .card-inner {
-            transform: rotateY(180deg);
+            transform: rotateY(180deg); /* Y軸で180度回転 */
         }
 
         .card-front, .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* Safari用 */
+            backface-visibility: hidden; /* 裏面を非表示 */
             border-radius: 10px;
             display: flex;
             align-items: center;
@@ -227,6 +228,7 @@
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
 
         .card-front:before {
@@ -265,6 +267,7 @@
             flex-direction: column;
             gap: 1rem;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+            z-index: 0;
         }
 
         .card-back strong {
@@ -398,6 +401,21 @@
 
             #modal-rule {
                 font-size: 1rem;
+            }
+        }
+
+        /* iOSブラウザ用に3D変換を強化 */
+        @supports (-webkit-touch-callout: none) {
+            .card-inner {
+                -webkit-transform-style: preserve-3d;
+            }
+            .card-front, .card-back {
+                -webkit-transform: translateZ(0.01px);
+                transform: translateZ(0.01px);
+            }
+            .card-back {
+                -webkit-transform: rotateY(180deg) translateZ(0.01px);
+                transform: rotateY(180deg) translateZ(0.01px);
             }
         }
     </style>
@@ -537,7 +555,7 @@
 
             // カードがマウスオーバーされたときのエフェクト（モバイルではタッチ）
             cardElement.addEventListener('mouseenter', () => {
-                if (!usedCards.includes(cardIndex)) {
+                if (!usedCards.includes(parseInt(cardIndex))) {
                     cardElement.style.transform = 'scale(1.05)';
                     cardElement.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.2)';
                     cardElement.style.transition = 'transform 0.3s, box-shadow 0.3s';
@@ -545,7 +563,7 @@
             });
 
             cardElement.addEventListener('mouseleave', () => {
-                if (!usedCards.includes(cardIndex)) {
+                if (!usedCards.includes(parseInt(cardIndex))) {
                     cardElement.style.transform = 'scale(1)';
                     cardElement.style.boxShadow = 'none';
                 }
@@ -553,7 +571,7 @@
 
             // クリックイベント
             cardElement.addEventListener('click', () => {
-                if (usedCards.includes(cardIndex)) return; // 使用済みなら無視
+                if (usedCards.includes(parseInt(cardIndex))) return; // 使用済みなら無視
 
                 // カードをめくる
                 cardElement.classList.add('flipped');
@@ -571,7 +589,7 @@
                     modal.style.display = "block";
 
                     // カードを使用済みに追加
-                    usedCards.push(cardIndex);
+                    usedCards.push(parseInt(cardIndex));
                     localStorage.setItem(STORAGE_USED_CARDS, JSON.stringify(usedCards));
 
                     // カードを非表示にする
