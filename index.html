@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>桃鉄GP 2024 ダッシュボード (改良版)</title>
+  <title>桃鉄GP 2024 ダッシュボード (修正版)</title>
   <style>
     /* 基本スタイル */
     :root {
@@ -153,11 +153,11 @@
       font-weight: bold;
     }
     
-    .transfers-count {
+    .transfers-total {
       background-color: rgba(52, 152, 219, 0.2);
     }
     
-    .forfeit-count {
+    .forfeit-total {
       background-color: rgba(231, 76, 60, 0.2);
     }
     
@@ -196,7 +196,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 45%;
+      width: 30%;
     }
     
     .action-btn:hover {
@@ -219,6 +219,15 @@
     
     .forfeit-btn:hover {
       background-color: rgba(231, 76, 60, 0.3);
+    }
+    
+    .add-btn {
+      background-color: rgba(46, 204, 113, 0.2);
+      color: #27ae60;
+    }
+    
+    .add-btn:hover {
+      background-color: rgba(46, 204, 113, 0.3);
     }
     
     /* アクションパネル */
@@ -382,6 +391,10 @@
     
     .history-item.forfeit {
       border-left: 3px solid var(--primary-color);
+    }
+    
+    .history-item.add {
+      border-left: 3px solid #2ecc71;
     }
     
     /* 右側のサイドコンテンツ */
@@ -785,8 +798,8 @@
           <div class="player-header">
             <h2>のぞむ</h2>
             <div class="player-stats">
-              <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
-              <span class="stat-badge forfeit-count" title="没収回数">0</span>
+              <span class="stat-badge transfers-total" title="移動ポイント合計">0 Pt</span>
+              <span class="stat-badge forfeit-total" title="没収ポイント合計">0 Pt</span>
             </div>
           </div>
           <div class="player-total">
@@ -799,6 +812,9 @@
             </button>
             <button class="action-btn forfeit-btn" data-action="forfeit">
               <span>没収</span>
+            </button>
+            <button class="action-btn add-btn" data-action="add">
+              <span>追加</span>
             </button>
           </div>
         </div>
@@ -808,8 +824,8 @@
           <div class="player-header">
             <h2>まどか</h2>
             <div class="player-stats">
-              <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
-              <span class="stat-badge forfeit-count" title="没収回数">0</span>
+              <span class="stat-badge transfers-total" title="移動ポイント合計">0 Pt</span>
+              <span class="stat-badge forfeit-total" title="没収ポイント合計">0 Pt</span>
             </div>
           </div>
           <div class="player-total">
@@ -822,6 +838,9 @@
             </button>
             <button class="action-btn forfeit-btn" data-action="forfeit">
               <span>没収</span>
+            </button>
+            <button class="action-btn add-btn" data-action="add">
+              <span>追加</span>
             </button>
           </div>
         </div>
@@ -831,8 +850,8 @@
           <div class="player-header">
             <h2>ひかる</h2>
             <div class="player-stats">
-              <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
-              <span class="stat-badge forfeit-count" title="没収回数">0</span>
+              <span class="stat-badge transfers-total" title="移動ポイント合計">0 Pt</span>
+              <span class="stat-badge forfeit-total" title="没収ポイント合計">0 Pt</span>
             </div>
           </div>
           <div class="player-total">
@@ -845,6 +864,9 @@
             </button>
             <button class="action-btn forfeit-btn" data-action="forfeit">
               <span>没収</span>
+            </button>
+            <button class="action-btn add-btn" data-action="add">
+              <span>追加</span>
             </button>
           </div>
         </div>
@@ -854,8 +876,8 @@
           <div class="player-header">
             <h2>ちえ</h2>
             <div class="player-stats">
-              <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
-              <span class="stat-badge forfeit-count" title="没収回数">0</span>
+              <span class="stat-badge transfers-total" title="移動ポイント合計">0 Pt</span>
+              <span class="stat-badge forfeit-total" title="没収ポイント合計">0 Pt</span>
             </div>
           </div>
           <div class="player-total">
@@ -868,6 +890,9 @@
             </button>
             <button class="action-btn forfeit-btn" data-action="forfeit">
               <span>没収</span>
+            </button>
+            <button class="action-btn add-btn" data-action="add">
+              <span>追加</span>
             </button>
           </div>
         </div>
@@ -891,6 +916,7 @@
             <select id="action-type" class="form-control">
               <option value="transfer">プレイヤー間移動</option>
               <option value="forfeit">没収</option>
+              <option value="add">ポイント追加</option>
             </select>
           </div>
           <div class="form-group" id="from-player-group">
@@ -939,67 +965,67 @@
           <div class="forfeit-label">没収ポイント合計</div>
           <div class="forfeit-value" id="total-forfeit">0 Pt</div>
         </div>
-        <h4>取引ランキング</h4>
+        <h4>移動ポイントランキング</h4>
         <ul class="rankings" id="transfer-ranking">
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player1-color"></span>
               <span>のぞむ</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player2-color"></span>
               <span>まどか</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player3-color"></span>
               <span>ひかる</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player4-color"></span>
               <span>ちえ</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
         </ul>
         
-        <h4 style="margin-top: 15px;">没収ランキング</h4>
+        <h4 style="margin-top: 15px;">没収ポイントランキング</h4>
         <ul class="rankings" id="forfeit-ranking">
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player1-color"></span>
               <span>のぞむ</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player2-color"></span>
               <span>まどか</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player3-color"></span>
               <span>ひかる</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
           <li class="ranking-item">
             <div class="player-name">
               <span class="player-indicator player4-color"></span>
               <span>ちえ</span>
             </div>
-            <div class="ranking-value">0</div>
+            <div class="ranking-value">0 Pt</div>
           </li>
         </ul>
       </div>
@@ -1062,6 +1088,23 @@
     </div>
   </div>
   
+  <!-- ポイント追加確認モーダル -->
+  <div class="modal-container" id="add-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">ポイント追加確認</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body" id="add-modal-body">
+        <p>プレイヤーにポイントを追加します。</p>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn cancel-btn">キャンセル</button>
+        <button class="modal-btn confirm-btn" id="confirm-add">実行</button>
+      </div>
+    </div>
+  </div>
+  
   <!-- カード表示モーダル -->
   <div class="modal-container" id="card-modal">
     <div class="modal">
@@ -1094,26 +1137,26 @@
         nozomu: {
           name: "のぞむ",
           points: 15000,
-          transferCount: 0,
-          forfeitCount: 0
+          transferTotal: 0,
+          forfeitTotal: 0
         },
         madoka: {
           name: "まどか",
           points: 15000,
-          transferCount: 0,
-          forfeitCount: 0
+          transferTotal: 0,
+          forfeitTotal: 0
         },
         hikaru: {
           name: "ひかる",
           points: 15000,
-          transferCount: 0,
-          forfeitCount: 0
+          transferTotal: 0,
+          forfeitTotal: 0
         },
         chie: {
           name: "ちえ",
           points: 15000,
-          transferCount: 0,
-          forfeitCount: 0
+          transferTotal: 0,
+          forfeitTotal: 0
         }
       };
       
@@ -1160,10 +1203,13 @@
       const historySection = document.querySelector('.history-section');
       const transferModal = document.getElementById('transfer-modal');
       const forfeitModal = document.getElementById('forfeit-modal');
+      const addModal = document.getElementById('add-modal');
       const transferModalBody = document.getElementById('transfer-modal-body');
       const forfeitModalBody = document.getElementById('forfeit-modal-body');
+      const addModalBody = document.getElementById('add-modal-body');
       const confirmTransferBtn = document.getElementById('confirm-transfer');
       const confirmForfeitBtn = document.getElementById('confirm-forfeit');
+      const confirmAddBtn = document.getElementById('confirm-add');
       const totalForfeitDisplay = document.getElementById('total-forfeit');
       const transferRanking = document.getElementById('transfer-ranking');
       const forfeitRanking = document.getElementById('forfeit-ranking');
@@ -1205,15 +1251,15 @@
           }
           
           // 移動回数と没収回数を更新
-          const transfersCountElement = playerCard.querySelector('.transfers-count');
-          const forfeitCountElement = playerCard.querySelector('.forfeit-count');
+          const transfersTotalElement = playerCard.querySelector('.transfers-total');
+          const forfeitTotalElement = playerCard.querySelector('.forfeit-total');
           
-          if (transfersCountElement) {
-            transfersCountElement.textContent = player.transferCount;
+          if (transfersTotalElement) {
+            transfersTotalElement.textContent = `${player.transferTotal.toLocaleString()} Pt`;
           }
           
-          if (forfeitCountElement) {
-            forfeitCountElement.textContent = player.forfeitCount;
+          if (forfeitTotalElement) {
+            forfeitTotalElement.textContent = `${player.forfeitTotal.toLocaleString()} Pt`;
           }
         }
       }
@@ -1225,9 +1271,9 @@
       
       // ランキングを更新する関数
       function updateRankings() {
-        // 取引ランキング
-        const transferEntries = Object.entries(players).map(([id, player]) => ({ id, count: player.transferCount }));
-        transferEntries.sort((a, b) => b.count - a.count);
+        // 移動ポイントランキング
+        const transferEntries = Object.entries(players).map(([id, player]) => ({ id, total: player.transferTotal }));
+        transferEntries.sort((a, b) => b.total - a.total);
         
         const transferItems = transferRanking.querySelectorAll('.ranking-item');
         transferEntries.forEach((entry, index) => {
@@ -1241,14 +1287,14 @@
             }
             
             if (rankingValue) {
-              rankingValue.textContent = entry.count;
+              rankingValue.textContent = `${entry.total.toLocaleString()} Pt`;
             }
           }
         });
         
-        // 没収ランキング
-        const forfeitEntries = Object.entries(players).map(([id, player]) => ({ id, count: player.forfeitCount }));
-        forfeitEntries.sort((a, b) => b.count - a.count);
+        // 没収ポイントランキング
+        const forfeitEntries = Object.entries(players).map(([id, player]) => ({ id, total: player.forfeitTotal }));
+        forfeitEntries.sort((a, b) => b.total - a.total);
         
         const forfeitItems = forfeitRanking.querySelectorAll('.ranking-item');
         forfeitEntries.forEach((entry, index) => {
@@ -1262,7 +1308,7 @@
             }
             
             if (rankingValue) {
-              rankingValue.textContent = entry.count;
+              rankingValue.textContent = `${entry.total.toLocaleString()} Pt`;
             }
           }
         });
@@ -1278,6 +1324,8 @@
           message = `${timeString} - ${players[from].name} → ${players[to].name}: ${points.toLocaleString()} Pt`;
         } else if (action === 'forfeit') {
           message = `${timeString} - ${players[from].name} から没収: ${points.toLocaleString()} Pt`;
+        } else if (action === 'add') {
+          message = `${timeString} - ${players[to].name} にポイント追加: ${points.toLocaleString()} Pt`;
         }
         
         const historyItem = document.createElement('div');
@@ -1320,8 +1368,8 @@
         players[fromPlayer].points -= points;
         players[toPlayer].points += points;
         
-        players[fromPlayer].transferCount++;
-        players[toPlayer].transferCount++;
+        players[fromPlayer].transferTotal += points;
+        players[toPlayer].transferTotal += points;
         
         updatePlayerDisplay(fromPlayer);
         updatePlayerDisplay(toPlayer);
@@ -1355,7 +1403,7 @@
         players[fromPlayer].points -= points;
         totalForfeit += points;
         
-        players[fromPlayer].forfeitCount++;
+        players[fromPlayer].forfeitTotal += points;
         
         updatePlayerDisplay(fromPlayer);
         updateTotalForfeit();
@@ -1364,6 +1412,27 @@
         addHistory('forfeit', fromPlayer, 'forfeit', points);
         
         showToast('warning', 'ポイント没収', `${players[fromPlayer].name}から${points.toLocaleString()} Ptを没収しました。`);
+        
+        pointsAmountInput.value = '0';
+        
+        return true;
+      }
+      
+      // プレイヤーにポイントを追加する関数
+      function executeAddPoints(toPlayer, points) {
+        if (points <= 0) {
+          showToast('error', 'エラー', 'ポイントが0以下です。');
+          return false;
+        }
+        
+        players[toPlayer].points += points;
+        
+        updatePlayerDisplay(toPlayer);
+        updateRankings();
+        
+        addHistory('add', 'none', toPlayer, points);
+        
+        showToast('success', 'ポイント追加', `${players[toPlayer].name}に${points.toLocaleString()} Ptを追加しました。`);
         
         pointsAmountInput.value = '0';
         
@@ -1517,34 +1586,52 @@
           const state = JSON.parse(savedState);
           Object.keys(state.players).forEach(playerId => {
             players[playerId] = state.players[playerId];
+            
+            // transferTotal と forfeitTotal がない場合は初期化
+            if (players[playerId].transferTotal === undefined) {
+              players[playerId].transferTotal = 0;
+            }
+            if (players[playerId].forfeitTotal === undefined) {
+              players[playerId].forfeitTotal = 0;
+            }
+            
             updatePlayerDisplay(playerId);
           });
+          
           totalForfeit = state.totalForfeit;
           updateTotalForfeit();
           doubleMode = state.doubleMode;
           doubleModeToggle.checked = doubleMode;
           history = state.history || [];
+          
           if (history.length > 0) {
             historySection.innerHTML = '';
             history.forEach(item => {
               const historyItem = document.createElement('div');
               historyItem.classList.add('history-item', item.action);
               const timeString = new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+              
               let message = '';
               if (item.action === 'transfer') {
                 message = `${timeString} - ${players[item.from].name} → ${players[item.to].name}: ${item.points.toLocaleString()} Pt`;
               } else if (item.action === 'forfeit') {
                 message = `${timeString} - ${players[item.from].name} から没収: ${item.points.toLocaleString()} Pt`;
+              } else if (item.action === 'add') {
+                message = `${timeString} - ${players[item.to].name} にポイント追加: ${item.points.toLocaleString()} Pt`;
               }
+              
               historyItem.textContent = message;
               historySection.appendChild(historyItem);
             });
           }
+          
           activeRules = state.activeRules || [];
           updateActiveRules();
+          
           if (state.shuffledCards && state.shuffledCards.length > 0) {
             shuffledCards = state.shuffledCards;
           }
+          
           updateRemainingCards();
           updateRankings();
         } catch (error) {
@@ -1555,12 +1642,16 @@
       // アクションタイプの変更時の処理
       actionTypeSelect.addEventListener('change', function() {
         const actionType = this.value;
+        
         if (actionType === 'transfer') {
           fromPlayerGroup.style.display = 'flex';
           toPlayerGroup.style.display = 'flex';
         } else if (actionType === 'forfeit') {
           fromPlayerGroup.style.display = 'flex';
           toPlayerGroup.style.display = 'none';
+        } else if (actionType === 'add') {
+          fromPlayerGroup.style.display = 'none';
+          toPlayerGroup.style.display = 'flex';
         }
       });
       
@@ -1600,6 +1691,14 @@
               forfeitModal.style.display = 'none';
             }
           };
+        } else if (actionType === 'add') {
+          addModalBody.innerHTML = `<p>${players[toPlayer].name}に ${points.toLocaleString()} Pt を追加します。</p>`;
+          addModal.style.display = 'flex';
+          confirmAddBtn.onclick = function() {
+            if (executeAddPoints(toPlayer, points)) {
+              addModal.style.display = 'none';
+            }
+          };
         }
       });
       
@@ -1615,20 +1714,26 @@
         if (lastAction.action === 'transfer') {
           players[lastAction.from].points += lastAction.points;
           players[lastAction.to].points -= lastAction.points;
-          players[lastAction.from].transferCount--;
-          players[lastAction.to].transferCount--;
+          
+          players[lastAction.from].transferTotal -= lastAction.points;
+          players[lastAction.to].transferTotal -= lastAction.points;
           
           updatePlayerDisplay(lastAction.from);
           updatePlayerDisplay(lastAction.to);
           showToast('warning', '取り消し', '最後の移動を取り消しました。');
         } else if (lastAction.action === 'forfeit') {
           players[lastAction.from].points += lastAction.points;
-          players[lastAction.from].forfeitCount--;
+          players[lastAction.from].forfeitTotal -= lastAction.points;
           totalForfeit -= lastAction.points;
           
           updatePlayerDisplay(lastAction.from);
           updateTotalForfeit();
           showToast('warning', '取り消し', '最後の没収を取り消しました。');
+        } else if (lastAction.action === 'add') {
+          players[lastAction.to].points -= lastAction.points;
+          
+          updatePlayerDisplay(lastAction.to);
+          showToast('warning', '取り消し', '最後の追加を取り消しました。');
         }
         
         updateRankings();
@@ -1649,8 +1754,8 @@
         if (confirm("本当に全てをリセットしますか？")) {
           Object.keys(players).forEach(playerId => {
             players[playerId].points = 15000;
-            players[playerId].transferCount = 0;
-            players[playerId].forfeitCount = 0;
+            players[playerId].transferTotal = 0;
+            players[playerId].forfeitTotal = 0;
             updatePlayerDisplay(playerId);
           });
           
@@ -1714,6 +1819,28 @@
           confirmForfeitBtn.onclick = function() {
             if (executeForfeit(playerId, 300)) {
               forfeitModal.style.display = 'none';
+            }
+          };
+        });
+      });
+      
+      // プレイヤーカードの「追加」ボタンの処理
+      document.querySelectorAll('.player-card [data-action="add"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const playerId = this.closest('.player-card').dataset.player;
+          toPlayerSelect.value = playerId;
+          actionTypeSelect.value = 'add';
+          actionTypeSelect.dispatchEvent(new Event('change'));
+          
+          pointsAmountInput.value = '500';
+          pointsAmountInput.focus();
+          
+          addModalBody.innerHTML = `<p>${players[playerId].name}に 500 Pt を追加します。</p>`;
+          addModal.style.display = 'flex';
+          
+          confirmAddBtn.onclick = function() {
+            if (executeAddPoints(playerId, 500)) {
+              addModal.style.display = 'none';
             }
           };
         });
