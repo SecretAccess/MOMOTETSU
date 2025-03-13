@@ -407,9 +407,9 @@
       background-color: #e0e0e0;
     }
     
-    /* 入力フィールド追加 */
+    /* 入力フィールド追加：幅を拡大 */
     .chip-quantity-input {
-      width: 50px;
+      width: 70px;
       text-align: center;
       font-size: 1rem;
       padding: 5px;
@@ -431,15 +431,71 @@
       cursor: pointer;
       font-weight: bold;
       transition: background-color 0.2s;
-      z-index: 2;
+      /* z-index指定を削除し、確実にクリック可能に */
+      pointer-events: auto;
     }
     
     .submit-btn:hover {
       background-color: #2980b9;
     }
     
-    /* 以下は元のコードのモーダル、カード、履歴などのスタイル（省略可） */
-    /* …（既存のスタイルはそのまま）… */
+    /* 以下はモーダル、カード、履歴などの基本スタイル */
+    .modal-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 500px;
+      padding: 20px;
+    }
+    
+    .modal-header, .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+    }
+    
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    
+    .modal-body {
+      margin: 15px 0;
+    }
+    
+    .modal-btn {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .cancel-btn {
+      background-color: #ccc;
+    }
+    .confirm-btn {
+      background-color: var(--primary-color);
+      color: white;
+    }
     
     /* レスポンシブ対応 */
     @media (max-width: 1200px) {
@@ -715,7 +771,7 @@
               </div>
               <div class="chip-quantity-control">
                 <button class="decrease-btn" data-chip-type="black">-</button>
-                <input type="number" value="0" id="black-quantity" class="chip-quantity-input" min="0">
+                <input type="number" value="0" id="black-quantity" class="chip-quantity-input" min="0" step="1">
                 <button class="increase-btn" data-chip-type="black">+</button>
               </div>
             </div>
@@ -726,7 +782,7 @@
               </div>
               <div class="chip-quantity-control">
                 <button class="decrease-btn" data-chip-type="white">-</button>
-                <input type="number" value="0" id="white-quantity" class="chip-quantity-input" min="0">
+                <input type="number" value="0" id="white-quantity" class="chip-quantity-input" min="0" step="1">
                 <button class="increase-btn" data-chip-type="white">+</button>
               </div>
             </div>
@@ -737,7 +793,7 @@
               </div>
               <div class="chip-quantity-control">
                 <button class="decrease-btn" data-chip-type="color">-</button>
-                <input type="number" value="0" id="color-quantity" class="chip-quantity-input" min="0">
+                <input type="number" value="0" id="color-quantity" class="chip-quantity-input" min="0" step="1">
                 <button class="increase-btn" data-chip-type="color">+</button>
               </div>
             </div>
