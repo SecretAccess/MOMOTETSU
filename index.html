@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>桃鉄GP 2024 マスターダッシュボード</title>
+  <title>桃鉄GP 2024 ダッシュボード (改良版)</title>
   <style>
     /* 基本スタイル */
     :root {
@@ -14,18 +14,12 @@
       --text-color: #333333;
       --border-color: #e0e0e0;
       --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      --button-bg: #f1f1f1;
-      --button-active: #d8d8d8;
       
       /* プレイヤーカラー */
       --player1-color: #e74c3c;
       --player2-color: #3498db;
       --player3-color: #2ecc71;
       --player4-color: #9b59b6;
-      
-      /* カードの色 */
-      --card-front: #f39c12;
-      --card-back: #2ecc71;
     }
     
     * {
@@ -49,7 +43,6 @@
       padding: 1rem;
       text-align: center;
       box-shadow: var(--shadow);
-      position: relative;
     }
     
     header h1 {
@@ -82,12 +75,12 @@
       display: grid;
       grid-template-columns: 3fr 1fr;
       gap: 20px;
-      max-width: 1600px;
+      max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
     }
     
-    /* 左側のコンテンツ（プレイヤーエリアなど） */
+    /* 左側のコンテンツ */
     .main-content {
       display: flex;
       flex-direction: column;
@@ -106,10 +99,8 @@
       background: white;
       border-radius: 12px;
       padding: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      box-shadow: var(--shadow);
       transition: transform 0.3s, box-shadow 0.3s;
-      position: relative;
-      overflow: hidden;
     }
     
     .player-card:hover {
@@ -170,54 +161,18 @@
       background-color: rgba(231, 76, 60, 0.2);
     }
     
-    .player-chips {
-      display: flex;
-      justify-content: space-around;
-      margin: 15px 0;
-    }
-    
-    .chip-type {
-      text-align: center;
-      padding: 10px;
-      background-color: #f8f8f8;
-      border-radius: 8px;
-      width: 30%;
-    }
-    
-    .chip-type h3 {
-      font-size: 0.9rem;
-      margin-bottom: 5px;
-      color: #555;
-    }
-    
-    .chip-count {
-      font-size: 1.3rem;
-      font-weight: bold;
-    }
-    
-    .black-chip {
-      background-color: rgba(52, 73, 94, 0.1);
-    }
-    
-    .white-chip {
-      background-color: rgba(189, 195, 199, 0.3);
-    }
-    
-    .color-chip {
-      background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(52, 152, 219, 0.1), rgba(46, 204, 113, 0.1));
-    }
-    
     .player-total {
       text-align: center;
       background: linear-gradient(to right, #f6f6f6, #f0f0f0);
-      padding: 10px;
+      padding: 15px;
       border-radius: 8px;
-      margin: 10px 0;
+      margin: 15px 0;
     }
     
     .total-label {
       font-size: 0.9rem;
       color: #777;
+      margin-bottom: 5px;
     }
     
     .total-value {
@@ -232,7 +187,7 @@
     }
     
     .action-btn {
-      padding: 8px 12px;
+      padding: 10px 15px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
@@ -240,7 +195,8 @@
       transition: all 0.2s;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      width: 45%;
     }
     
     .action-btn:hover {
@@ -326,10 +282,6 @@
       background-color: var(--primary-color);
     }
     
-    input:focus + .toggle-slider {
-      box-shadow: 0 0 1px var(--primary-color);
-    }
-    
     input:checked + .toggle-slider:before {
       transform: translateX(30px);
     }
@@ -370,56 +322,28 @@
       box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
     }
     
-    /* マルチチップセレクター */
-    .multi-chip-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    
-    .chip-row {
+    /* ポイント入力エリア */
+    .points-input {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin: 15px 0;
     }
     
-    .chip-quantity-control {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    
-    .chip-quantity-control button {
-      width: 25px;
-      height: 25px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border: none;
-      background-color: #f0f0f0;
-      border-radius: 50%;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    
-    .chip-quantity-control button:hover {
-      background-color: #e0e0e0;
-    }
-    
-    /* 入力フィールド追加：幅を拡大 */
-    .chip-quantity-input {
-      width: 70px;
-      text-align: center;
-      font-size: 1rem;
-      padding: 5px;
+    .points-input-field {
+      width: 120px;
+      padding: 10px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      font-size: 1.1rem;
+      text-align: right;
     }
     
     .action-buttons {
       display: flex;
       gap: 10px;
       justify-content: flex-end;
-      margin-top: 10px;
+      margin-top: 20px;
     }
     
     .submit-btn {
@@ -431,15 +355,202 @@
       cursor: pointer;
       font-weight: bold;
       transition: background-color 0.2s;
-      /* z-index指定を削除し、確実にクリック可能に */
-      pointer-events: auto;
     }
     
     .submit-btn:hover {
       background-color: #2980b9;
     }
     
-    /* 以下はモーダル、カード、履歴などの基本スタイル */
+    /* 履歴セクション */
+    .history-section {
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+    }
+    
+    .history-item {
+      padding: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.9rem;
+    }
+    
+    .history-item.transfer {
+      border-left: 3px solid var(--secondary-color);
+    }
+    
+    .history-item.forfeit {
+      border-left: 3px solid var(--primary-color);
+    }
+    
+    /* 右側のサイドコンテンツ */
+    .side-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .summary-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+    }
+    
+    .summary-title {
+      color: var(--primary-color);
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+    
+    .total-forfeit {
+      text-align: center;
+      padding: 15px;
+      margin-bottom: 20px;
+      background-color: rgba(231, 76, 60, 0.1);
+      border-radius: 8px;
+    }
+    
+    .forfeit-label {
+      font-size: 0.9rem;
+      color: #777;
+      margin-bottom: 5px;
+    }
+    
+    .forfeit-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+    
+    .rankings {
+      list-style: none;
+    }
+    
+    .ranking-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .player-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .player-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .player1-color {
+      background-color: var(--player1-color);
+    }
+    
+    .player2-color {
+      background-color: var(--player2-color);
+    }
+    
+    .player3-color {
+      background-color: var(--player3-color);
+    }
+    
+    .player4-color {
+      background-color: var(--player4-color);
+    }
+    
+    .ranking-value {
+      font-weight: bold;
+    }
+    
+    /* カードエリア */
+    .card-deck {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      height: 120px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+    
+    .card {
+      width: 80px;
+      height: 120px;
+      background-color: #f39c12;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .cards-remaining {
+      position: absolute;
+      bottom: -25px;
+      font-size: 0.9rem;
+      color: #777;
+    }
+    
+    .active-rules {
+      margin-bottom: 20px;
+    }
+    
+    .no-rules {
+      font-style: italic;
+      color: #777;
+    }
+    
+    .rules-list {
+      list-style: none;
+    }
+    
+    .rule-item {
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .rule-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .rule-name {
+      font-weight: bold;
+    }
+    
+    .rule-action {
+      background-color: rgba(231, 76, 60, 0.1);
+      border: none;
+      padding: 3px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      color: var(--primary-color);
+    }
+    
+    .rule-description {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 5px;
+    }
+    
+    .deck-label {
+      font-size: 0.9rem;
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+    
+    /* モーダル */
     .modal-container {
       display: none;
       position: fixed;
@@ -489,37 +600,132 @@
       cursor: pointer;
       font-weight: bold;
     }
+    
     .cancel-btn {
       background-color: #ccc;
     }
+    
     .confirm-btn {
       background-color: var(--primary-color);
       color: white;
     }
     
-    /* レスポンシブ対応 */
-    @media (max-width: 1200px) {
-      .dashboard-container {
-        grid-template-columns: 1fr;
-      }
-      
-      .players-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
+    /* プレイヤー選択ポップアップ */
+    .transfer-popup {
+      display: none;
+      position: absolute;
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+      z-index: 100;
+      width: 200px;
     }
     
-    @media (max-width: 768px) {
-      .players-grid {
-        grid-template-columns: 1fr;
+    .popup-title {
+      font-size: 0.9rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .player-option {
+      padding: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 4px;
+    }
+    
+    .player-option:hover {
+      background-color: #f5f5f5;
+    }
+    
+    /* カード表示 */
+    .card-reveal {
+      text-align: center;
+    }
+    
+    .revealed-card {
+      background-color: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    
+    .card-description {
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    
+    /* トースト通知 */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1001;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .toast {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 8px;
+      padding: 12px 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      animation: slide-in 0.3s ease;
+      max-width: 350px;
+    }
+    
+    .toast-success {
+      border-left: 4px solid #2ecc71;
+    }
+    
+    .toast-error {
+      border-left: 4px solid #e74c3c;
+    }
+    
+    .toast-warning {
+      border-left: 4px solid #f39c12;
+    }
+    
+    .toast-info {
+      border-left: 4px solid #3498db;
+    }
+    
+    .toast-icon {
+      margin-right: 10px;
+      font-size: 1.2rem;
+    }
+    
+    .toast-title {
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    
+    .toast-message {
+      font-size: 0.9rem;
+    }
+    
+    @keyframes slide-in {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
       }
-      
-      .player-chips {
-        flex-direction: column;
-        gap: 10px;
-      }
-      
-      .chip-type {
-        width: 100%;
+      to {
+        transform: translateX(0);
+        opacity: 1;
       }
     }
     
@@ -534,23 +740,27 @@
       100% { transform: scale(1); }
     }
     
-    .shake {
-      animation: shake-animation 0.5s;
-    }
-    
-    @keyframes shake-animation {
-      0%, 100% { transform: translateX(0); }
-      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-      20%, 40%, 60%, 80% { transform: translateX(5px); }
-    }
-    
     .float {
-      animation: float-animation 3s infinite ease-in-out;
+      animation: float-animation 0.5s;
     }
     
     @keyframes float-animation {
-      0%, 100% { transform: translateY(0); }
+      0% { transform: translateY(0); }
       50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    
+    /* レスポンシブ対応 */
+    @media (max-width: 1000px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .players-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -558,12 +768,10 @@
   <header>
     <h1>桃鉄GP マスターダッシュボード</h1>
     <nav>
-      <a href="index.html">チップカウンター</a>
-      <a href="rules.html">大会ルール</a>
-      <a href="cards.html">チャンスカード</a>
-      <a href="roulette.html">抽選ルーレット</a>
-      <a href="forfeit-counter.html">没収ポイント</a>
-      <a href="hidden-destination.html">裏目的地</a>
+      <a href="#" class="active">ポイント管理</a>
+      <a href="#">大会ルール</a>
+      <a href="#">チャンスカード</a>
+      <a href="#">抽選ルーレット</a>
     </nav>
   </header>
   
@@ -579,20 +787,6 @@
             <div class="player-stats">
               <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
               <span class="stat-badge forfeit-count" title="没収回数">0</span>
-            </div>
-          </div>
-          <div class="player-chips">
-            <div class="chip-type black-chip">
-              <h3>黒チップ</h3>
-              <div class="chip-count" data-chip-type="black">3</div>
-            </div>
-            <div class="chip-type white-chip">
-              <h3>白チップ</h3>
-              <div class="chip-count" data-chip-type="white">6</div>
-            </div>
-            <div class="chip-type color-chip">
-              <h3>カラーチップ</h3>
-              <div class="chip-count" data-chip-type="color">30</div>
             </div>
           </div>
           <div class="player-total">
@@ -618,20 +812,6 @@
               <span class="stat-badge forfeit-count" title="没収回数">0</span>
             </div>
           </div>
-          <div class="player-chips">
-            <div class="chip-type black-chip">
-              <h3>黒チップ</h3>
-              <div class="chip-count" data-chip-type="black">3</div>
-            </div>
-            <div class="chip-type white-chip">
-              <h3>白チップ</h3>
-              <div class="chip-count" data-chip-type="white">6</div>
-            </div>
-            <div class="chip-type color-chip">
-              <h3>カラーチップ</h3>
-              <div class="chip-count" data-chip-type="color">30</div>
-            </div>
-          </div>
           <div class="player-total">
             <div class="total-label">総資産</div>
             <div class="total-value" data-total>15,000 Pt</div>
@@ -655,20 +835,6 @@
               <span class="stat-badge forfeit-count" title="没収回数">0</span>
             </div>
           </div>
-          <div class="player-chips">
-            <div class="chip-type black-chip">
-              <h3>黒チップ</h3>
-              <div class="chip-count" data-chip-type="black">3</div>
-            </div>
-            <div class="chip-type white-chip">
-              <h3>白チップ</h3>
-              <div class="chip-count" data-chip-type="white">6</div>
-            </div>
-            <div class="chip-type color-chip">
-              <h3>カラーチップ</h3>
-              <div class="chip-count" data-chip-type="color">30</div>
-            </div>
-          </div>
           <div class="player-total">
             <div class="total-label">総資産</div>
             <div class="total-value" data-total>15,000 Pt</div>
@@ -690,20 +856,6 @@
             <div class="player-stats">
               <span class="stat-badge transfers-count" title="ポイント移動回数">0</span>
               <span class="stat-badge forfeit-count" title="没収回数">0</span>
-            </div>
-          </div>
-          <div class="player-chips">
-            <div class="chip-type black-chip">
-              <h3>黒チップ</h3>
-              <div class="chip-count" data-chip-type="black">3</div>
-            </div>
-            <div class="chip-type white-chip">
-              <h3>白チップ</h3>
-              <div class="chip-count" data-chip-type="white">6</div>
-            </div>
-            <div class="chip-type color-chip">
-              <h3>カラーチップ</h3>
-              <div class="chip-count" data-chip-type="color">30</div>
             </div>
           </div>
           <div class="player-total">
@@ -757,55 +909,19 @@
               <option value="madoka">まどか</option>
               <option value="hikaru">ひかる</option>
               <option value="chie">ちえ</option>
-              <option value="forfeit">没収</option>
             </select>
           </div>
           <div class="form-group">
-            <label>チップ選択</label>
-          </div>
-          <div class="multi-chip-selector">
-            <div class="chip-row">
-              <div class="chip-label">
-                <span class="chip-icon black-icon"></span>
-                <span>黒チップ (1000Pt)</span>
-              </div>
-              <div class="chip-quantity-control">
-                <button class="decrease-btn" data-chip-type="black">-</button>
-                <input type="number" value="0" id="black-quantity" class="chip-quantity-input" min="0" step="1">
-                <button class="increase-btn" data-chip-type="black">+</button>
-              </div>
-            </div>
-            <div class="chip-row">
-              <div class="chip-label">
-                <span class="chip-icon white-icon"></span>
-                <span>白チップ (500Pt)</span>
-              </div>
-              <div class="chip-quantity-control">
-                <button class="decrease-btn" data-chip-type="white">-</button>
-                <input type="number" value="0" id="white-quantity" class="chip-quantity-input" min="0" step="1">
-                <button class="increase-btn" data-chip-type="white">+</button>
-              </div>
-            </div>
-            <div class="chip-row">
-              <div class="chip-label">
-                <span class="chip-icon color-icon"></span>
-                <span>カラーチップ (300Pt)</span>
-              </div>
-              <div class="chip-quantity-control">
-                <button class="decrease-btn" data-chip-type="color">-</button>
-                <input type="number" value="0" id="color-quantity" class="chip-quantity-input" min="0" step="1">
-                <button class="increase-btn" data-chip-type="color">+</button>
-              </div>
-            </div>
-            <div class="chip-row" style="margin-top: 10px;">
-              <div class="chip-label">合計ポイント:</div>
-              <div id="total-points">0 Pt</div>
+            <label>ポイント</label>
+            <div class="points-input">
+              <input type="number" id="points-amount" class="points-input-field" value="0" min="0" step="100">
+              <span>Pt</span>
             </div>
           </div>
           <div class="action-buttons">
             <button id="submit-action" class="submit-btn" type="button">実行</button>
             <button id="undo-action" class="submit-btn" type="button">取り消し</button>
-            <button id="reset-all" class="submit-btn" type="button">オールリセット</button>
+            <button id="reset-all" class="submit-btn" type="button">リセット</button>
           </div>
         </div>
         <div class="history-section">
@@ -823,7 +939,7 @@
           <div class="forfeit-label">没収ポイント合計</div>
           <div class="forfeit-value" id="total-forfeit">0 Pt</div>
         </div>
-        <h4 style="margin-bottom: 10px;">取引ランキング</h4>
+        <h4>取引ランキング</h4>
         <ul class="rankings" id="transfer-ranking">
           <li class="ranking-item">
             <div class="player-name">
@@ -855,7 +971,7 @@
           </li>
         </ul>
         
-        <h4 style="margin: 15px 0 10px;">没収ランキング</h4>
+        <h4 style="margin-top: 15px;">没収ランキング</h4>
         <ul class="rankings" id="forfeit-ranking">
           <li class="ranking-item">
             <div class="player-name">
@@ -897,9 +1013,7 @@
         </div>
         <div class="deck-label">チャンスカードを引く</div>
         <div class="card-deck" id="card-deck">
-          <div class="card">
-            <div class="card-front"></div>
-          </div>
+          <div class="card"></div>
           <div class="cards-remaining" id="cards-remaining">12枚</div>
         </div>
       </div>
@@ -922,7 +1036,7 @@
         <button class="close-modal">&times;</button>
       </div>
       <div class="modal-body" id="transfer-modal-body">
-        <p>プレイヤー間でチップを移動します。</p>
+        <p>プレイヤー間でポイントを移動します。</p>
       </div>
       <div class="modal-footer">
         <button class="modal-btn cancel-btn">キャンセル</button>
@@ -939,7 +1053,7 @@
         <button class="close-modal">&times;</button>
       </div>
       <div class="modal-body" id="forfeit-modal-body">
-        <p>プレイヤーからチップを没収します。</p>
+        <p>プレイヤーからポイントを没収します。</p>
       </div>
       <div class="modal-footer">
         <button class="modal-btn cancel-btn">キャンセル</button>
@@ -975,40 +1089,29 @@
   
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // チップの値を定義
-      const CHIP_VALUES = {
-        black: 1000,
-        white: 500,
-        color: 300
-      };
-      
       // プレイヤーデータ
       const players = {
         nozomu: {
           name: "のぞむ",
-          chips: { black: 3, white: 6, color: 30 },
-          total: 15000,
+          points: 15000,
           transferCount: 0,
           forfeitCount: 0
         },
         madoka: {
           name: "まどか",
-          chips: { black: 3, white: 6, color: 30 },
-          total: 15000,
+          points: 15000,
           transferCount: 0,
           forfeitCount: 0
         },
         hikaru: {
           name: "ひかる",
-          chips: { black: 3, white: 6, color: 30 },
-          total: 15000,
+          points: 15000,
           transferCount: 0,
           forfeitCount: 0
         },
         chie: {
           name: "ちえ",
-          chips: { black: 3, white: 6, color: 30 },
-          total: 15000,
+          points: 15000,
           transferCount: 0,
           forfeitCount: 0
         }
@@ -1023,16 +1126,16 @@
       // チャンスカードデータ
       const cards = [
         { title: "運命の操作", rule: "指定したプレイヤーの次のターンの進路を操作することができる。" },
-        { title: "天災", rule: "全員から黒チップ1枚を没収。" },
+        { title: "天災", rule: "全員から500ポイントを没収。" },
         { title: "阻害計画", rule: "次の目的地到達ボーナスを無効化。" },
-        { title: "革命の灯", rule: "1位のプレイヤーと自身のチップを交換する。" },
+        { title: "革命の灯", rule: "1位のプレイヤーと自身のポイントを交換する。" },
         { title: "経済成長期", rule: "次回の目的地到達ボーナスが2倍。" },
         { title: "経済不況", rule: "今回の目的地到達ボーナス没収。" },
-        { title: "偽善の心", rule: "全員が白チップ1枚を、最も少ないチップを持つプレイヤーに全て贈与。" },
-        { title: "強奪", rule: "指定したプレイヤーから黒チップ1枚を獲得。" },
-        { title: "大富豪の恩恵", rule: "全員から黒チップ1枚ずつを獲得。" },
-        { title: "破産宣告", rule: "指定したプレイヤーの全ての黒チップを没収。" },
-        { title: "復讐の一撃", rule: "指定したプレイヤーから黒チップ2枚を獲得。" },
+        { title: "偽善の心", rule: "全員が500ポイントを、最も少ないポイントを持つプレイヤーに贈与。" },
+        { title: "強奪", rule: "指定したプレイヤーから1000ポイントを獲得。" },
+        { title: "大富豪の恩恵", rule: "全員から1000ポイントずつを獲得。" },
+        { title: "破産宣告", rule: "指定したプレイヤーのポイントの半分を没収。" },
+        { title: "復讐の一撃", rule: "指定したプレイヤーから2000ポイントを獲得。" },
         { title: "無敵の防御", rule: "他のプレイヤーのカード効果を受けなくなる。" }
       ];
       
@@ -1043,22 +1146,11 @@
       // 履歴データ（最新が先頭）
       let history = [];
       
-      // 選択中のプレイヤー情報
-      let selectedFromPlayer = null;
-      let selectedToPlayer = null;
-      
-      // 選択中のチップ情報
-      let selectedChips = {
-        black: 0,
-        white: 0,
-        color: 0
-      };
-      
       // DOM要素の参照を取得
       const actionTypeSelect = document.getElementById('action-type');
       const fromPlayerSelect = document.getElementById('from-player');
       const toPlayerSelect = document.getElementById('to-player');
-      const totalPoints = document.getElementById('total-points');
+      const pointsAmountInput = document.getElementById('points-amount');
       const submitActionBtn = document.getElementById('submit-action');
       const undoActionBtn = document.getElementById('undo-action');
       const resetAllBtn = document.getElementById('reset-all');
@@ -1088,11 +1180,6 @@
       const playerPopup = document.getElementById('player-popup');
       const popupContent = document.getElementById('popup-content');
       
-      // 入力フィールド（数値）の参照
-      const blackQuantity = document.getElementById('black-quantity');
-      const whiteQuantity = document.getElementById('white-quantity');
-      const colorQuantity = document.getElementById('color-quantity');
-      
       // 現在選択中のカード
       let currentCard = null;
       
@@ -1105,24 +1192,16 @@
         });
       });
       
-      // プレイヤーのチップ数と総資産を更新する関数
+      // プレイヤーの表示を更新する関数
       function updatePlayerDisplay(playerId) {
         const player = players[playerId];
         const playerCard = document.querySelector(`.player-card[data-player="${playerId}"]`);
         
         if (playerCard) {
-          // チップ数を更新
-          Object.keys(player.chips).forEach(chipType => {
-            const chipElement = playerCard.querySelector(`[data-chip-type="${chipType}"]`);
-            if (chipElement) {
-              chipElement.textContent = player.chips[chipType];
-            }
-          });
-          
           // 総資産を更新
           const totalElement = playerCard.querySelector('[data-total]');
           if (totalElement) {
-            totalElement.textContent = `${player.total.toLocaleString()} Pt`;
+            totalElement.textContent = `${player.points.toLocaleString()} Pt`;
           }
           
           // 移動回数と没収回数を更新
@@ -1137,15 +1216,6 @@
             forfeitCountElement.textContent = player.forfeitCount;
           }
         }
-      }
-      
-      // 総資産を計算する関数
-      function calculateTotal(player) {
-        let total = 0;
-        Object.keys(player.chips).forEach(chipType => {
-          total += player.chips[chipType] * CHIP_VALUES[chipType];
-        });
-        return total;
       }
       
       // 没収ポイント合計を更新する関数
@@ -1199,31 +1269,15 @@
       }
       
       // 履歴を追加する関数
-      function addHistory(action, from, to, chips, points) {
+      function addHistory(action, from, to, points) {
         const now = new Date();
         const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
         
         let message = '';
         if (action === 'transfer') {
-          let chipDetails = [];
-          Object.keys(chips).forEach(chipType => {
-            if (chips[chipType] > 0) {
-              const name = getChipTypeName(chipType);
-              chipDetails.push(`${name} ×${chips[chipType]}`);
-            }
-          });
-          
-          message = `${timeString} - ${players[from].name} → ${players[to].name}: ${chipDetails.join(', ')} (${points.toLocaleString()} Pt)`;
+          message = `${timeString} - ${players[from].name} → ${players[to].name}: ${points.toLocaleString()} Pt`;
         } else if (action === 'forfeit') {
-          let chipDetails = [];
-          Object.keys(chips).forEach(chipType => {
-            if (chips[chipType] > 0) {
-              const name = getChipTypeName(chipType);
-              chipDetails.push(`${name} ×${chips[chipType]}`);
-            }
-          });
-          
-          message = `${timeString} - ${players[from].name} から没収: ${chipDetails.join(', ')} (${points.toLocaleString()} Pt)`;
+          message = `${timeString} - ${players[from].name} から没収: ${points.toLocaleString()} Pt`;
         }
         
         const historyItem = document.createElement('div');
@@ -1240,7 +1294,6 @@
           action,
           from,
           to,
-          chips,
           points,
           timestamp: now.getTime()
         });
@@ -1253,34 +1306,19 @@
       }
       
       // ポイント移動を実行する関数
-      function executeTransfer(fromPlayer, toPlayer, chips) {
-        const totalChips = Object.values(chips).reduce((sum, count) => sum + count, 0);
-        if (totalChips === 0) {
-          showToast('error', 'エラー', 'チップが選択されていません。');
+      function executeTransfer(fromPlayer, toPlayer, points) {
+        if (points <= 0) {
+          showToast('error', 'エラー', 'ポイントが0以下です。');
           return false;
         }
         
-        for (const chipType in chips) {
-          if (players[fromPlayer].chips[chipType] < chips[chipType]) {
-            showToast('error', 'エラー', `${players[fromPlayer].name}の${getChipTypeName(chipType)}が不足しています。`);
-            return false;
-          }
+        if (players[fromPlayer].points < points) {
+          showToast('error', 'エラー', `${players[fromPlayer].name}のポイントが不足しています。`);
+          return false;
         }
         
-        let totalPointsValue = 0;
-        Object.keys(chips).forEach(chipType => {
-          totalPointsValue += CHIP_VALUES[chipType] * chips[chipType];
-        });
-        
-        Object.keys(chips).forEach(chipType => {
-          if (chips[chipType] > 0) {
-            players[fromPlayer].chips[chipType] -= chips[chipType];
-            players[toPlayer].chips[chipType] += chips[chipType];
-          }
-        });
-        
-        players[fromPlayer].total = calculateTotal(players[fromPlayer]);
-        players[toPlayer].total = calculateTotal(players[toPlayer]);
+        players[fromPlayer].points -= points;
+        players[toPlayer].points += points;
         
         players[fromPlayer].transferCount++;
         players[toPlayer].transferCount++;
@@ -1289,72 +1327,47 @@
         updatePlayerDisplay(toPlayer);
         updateRankings();
         
-        addHistory('transfer', fromPlayer, toPlayer, chips, totalPointsValue);
+        addHistory('transfer', fromPlayer, toPlayer, points);
         
-        showToast('success', 'ポイント移動', `${players[fromPlayer].name}から${players[toPlayer].name}へ${totalPointsValue.toLocaleString()} Pt移動しました。`);
+        showToast('success', 'ポイント移動', `${players[fromPlayer].name}から${players[toPlayer].name}へ${points.toLocaleString()} Pt移動しました。`);
         
-        resetChipSelection();
+        pointsAmountInput.value = '0';
         
         return true;
       }
       
       // プレイヤーからのポイント没収を実行する関数
-      function executeForfeit(fromPlayer, chips) {
-        const totalChips = Object.values(chips).reduce((sum, count) => sum + count, 0);
-        if (totalChips === 0) {
-          showToast('error', 'エラー', 'チップが選択されていません。');
+      function executeForfeit(fromPlayer, points) {
+        if (points <= 0) {
+          showToast('error', 'エラー', 'ポイントが0以下です。');
           return false;
         }
         
         if (doubleMode) {
-          Object.keys(chips).forEach(chipType => {
-            chips[chipType] *= 2;
-          });
+          points *= 2;
         }
         
-        for (const chipType in chips) {
-          if (players[fromPlayer].chips[chipType] < chips[chipType]) {
-            showToast('error', 'エラー', `${players[fromPlayer].name}の${getChipTypeName(chipType)}が不足しています。`);
-            return false;
-          }
+        if (players[fromPlayer].points < points) {
+          showToast('error', 'エラー', `${players[fromPlayer].name}のポイントが不足しています。`);
+          return false;
         }
         
-        let totalPointsValue = 0;
-        Object.keys(chips).forEach(chipType => {
-          totalPointsValue += CHIP_VALUES[chipType] * chips[chipType];
-        });
+        players[fromPlayer].points -= points;
+        totalForfeit += points;
         
-        Object.keys(chips).forEach(chipType => {
-          if (chips[chipType] > 0) {
-            players[fromPlayer].chips[chipType] -= chips[chipType];
-          }
-        });
-        
-        totalForfeit += totalPointsValue;
-        players[fromPlayer].total = calculateTotal(players[fromPlayer]);
         players[fromPlayer].forfeitCount++;
         
         updatePlayerDisplay(fromPlayer);
         updateTotalForfeit();
         updateRankings();
         
-        addHistory('forfeit', fromPlayer, 'forfeit', chips, totalPointsValue);
+        addHistory('forfeit', fromPlayer, 'forfeit', points);
         
-        showToast('warning', 'ポイント没収', `${players[fromPlayer].name}から${totalPointsValue.toLocaleString()} Ptを没収しました。`);
+        showToast('warning', 'ポイント没収', `${players[fromPlayer].name}から${points.toLocaleString()} Ptを没収しました。`);
         
-        resetChipSelection();
+        pointsAmountInput.value = '0';
         
         return true;
-      }
-      
-      // チップタイプの日本語名を取得する関数
-      function getChipTypeName(chipType) {
-        switch (chipType) {
-          case 'black': return '黒チップ';
-          case 'white': return '白チップ';
-          case 'color': return 'カラーチップ';
-          default: return chipType;
-        }
       }
       
       // トースト通知を表示する関数
@@ -1381,26 +1394,11 @@
         toastContainer.appendChild(toast);
         
         setTimeout(() => {
-          toast.remove();
+          toast.classList.add('fade-out');
+          setTimeout(() => {
+            toast.remove();
+          }, 300);
         }, 3000);
-      }
-      
-      // 選択されたチップの合計ポイントを計算する関数
-      function calculateSelectedPoints() {
-        let total = 0;
-        Object.keys(selectedChips).forEach(chipType => {
-          total += selectedChips[chipType] * CHIP_VALUES[chipType];
-        });
-        return total;
-      }
-      
-      // チップ選択をリセットする関数
-      function resetChipSelection() {
-        selectedChips = { black: 0, white: 0, color: 0 };
-        blackQuantity.value = '0';
-        whiteQuantity.value = '0';
-        colorQuantity.value = '0';
-        totalPoints.textContent = '0 Pt';
       }
       
       // プレイヤー選択ポップアップを表示する関数
@@ -1426,12 +1424,10 @@
             `;
             
             option.addEventListener('click', function() {
-              selectedFromPlayer = fromPlayerId;
-              selectedToPlayer = playerId;
               fromPlayerSelect.value = fromPlayerId;
               toPlayerSelect.value = playerId;
               playerPopup.style.display = 'none';
-              document.querySelector('.multi-chip-selector').scrollIntoView({ behavior: 'smooth' });
+              pointsAmountInput.focus();
               actionTypeSelect.value = 'transfer';
               actionTypeSelect.dispatchEvent(new Event('change'));
             });
@@ -1536,23 +1532,9 @@
               const timeString = new Date(item.timestamp).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
               let message = '';
               if (item.action === 'transfer') {
-                let chipDetails = [];
-                Object.keys(item.chips).forEach(chipType => {
-                  if (item.chips[chipType] > 0) {
-                    const name = getChipTypeName(chipType);
-                    chipDetails.push(`${name} ×${item.chips[chipType]}`);
-                  }
-                });
-                message = `${timeString} - ${players[item.from].name} → ${players[item.to].name}: ${chipDetails.join(', ')} (${item.points.toLocaleString()} Pt)`;
+                message = `${timeString} - ${players[item.from].name} → ${players[item.to].name}: ${item.points.toLocaleString()} Pt`;
               } else if (item.action === 'forfeit') {
-                let chipDetails = [];
-                Object.keys(item.chips).forEach(chipType => {
-                  if (item.chips[chipType] > 0) {
-                    const name = getChipTypeName(chipType);
-                    chipDetails.push(`${name} ×${item.chips[chipType]}`);
-                  }
-                });
-                message = `${timeString} - ${players[item.from].name} から没収: ${chipDetails.join(', ')} (${item.points.toLocaleString()} Pt)`;
+                message = `${timeString} - ${players[item.from].name} から没収: ${item.points.toLocaleString()} Pt`;
               }
               historyItem.textContent = message;
               historySection.appendChild(historyItem);
@@ -1576,47 +1558,10 @@
         if (actionType === 'transfer') {
           fromPlayerGroup.style.display = 'flex';
           toPlayerGroup.style.display = 'flex';
-          toPlayerSelect.querySelector('option[value="forfeit"]').style.display = 'none';
         } else if (actionType === 'forfeit') {
           fromPlayerGroup.style.display = 'flex';
           toPlayerGroup.style.display = 'none';
         }
-      });
-      
-      // プラス・マイナスボタンの処理（入力フィールド更新）
-      document.querySelectorAll('.increase-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const chipType = this.dataset.chipType;
-          const inputField = document.getElementById(`${chipType}-quantity`);
-          selectedChips[chipType] = parseInt(inputField.value) + 1;
-          inputField.value = selectedChips[chipType];
-          totalPoints.textContent = `${calculateSelectedPoints().toLocaleString()} Pt`;
-        });
-      });
-      
-      document.querySelectorAll('.decrease-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          const chipType = this.dataset.chipType;
-          const inputField = document.getElementById(`${chipType}-quantity`);
-          let currentVal = parseInt(inputField.value);
-          if (currentVal > 0) {
-            selectedChips[chipType] = currentVal - 1;
-            inputField.value = selectedChips[chipType];
-            totalPoints.textContent = `${calculateSelectedPoints().toLocaleString()} Pt`;
-          }
-        });
-      });
-      
-      // 数値入力フィールドの直接入力反映
-      document.querySelectorAll('.chip-quantity-input').forEach(input => {
-        input.addEventListener('change', function() {
-          const chipType = this.id.split('-')[0];
-          let value = parseInt(this.value);
-          if (isNaN(value) || value < 0) value = 0;
-          selectedChips[chipType] = value;
-          this.value = value;
-          totalPoints.textContent = `${calculateSelectedPoints().toLocaleString()} Pt`;
-        });
       });
       
       // 実行ボタンの処理
@@ -1624,9 +1569,10 @@
         const actionType = actionTypeSelect.value;
         const fromPlayer = fromPlayerSelect.value;
         const toPlayer = toPlayerSelect.value;
-        const totalChips = Object.values(selectedChips).reduce((sum, count) => sum + count, 0);
-        if (totalChips === 0) {
-          showToast('error', 'エラー', 'チップが選択されていません。');
+        const points = parseInt(pointsAmountInput.value);
+        
+        if (isNaN(points) || points <= 0) {
+          showToast('error', 'エラー', 'ポイントが正しく入力されていません。');
           return;
         }
         
@@ -1635,43 +1581,22 @@
             showToast('error', 'エラー', '送信元と送信先が同じです。');
             return;
           }
-          let chipDetails = [];
-          Object.keys(selectedChips).forEach(chipType => {
-            if (selectedChips[chipType] > 0) {
-              chipDetails.push(`${getChipTypeName(chipType)} ${selectedChips[chipType]}枚`);
-            }
-          });
-          const totalPointsValue = calculateSelectedPoints();
-          transferModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${players[toPlayer].name} へ ${chipDetails.join('、')} (${totalPointsValue.toLocaleString()} Pt) を移動します。</p>`;
+          
+          transferModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${players[toPlayer].name} へ ${points.toLocaleString()} Pt を移動します。</p>`;
           transferModal.style.display = 'flex';
-          confirmTransferBtn.onclick = null;
           confirmTransferBtn.onclick = function() {
-            if (executeTransfer(fromPlayer, toPlayer, { ...selectedChips })) {
+            if (executeTransfer(fromPlayer, toPlayer, points)) {
               transferModal.style.display = 'none';
             }
           };
         } else if (actionType === 'forfeit') {
-          let chipDetails = [];
-          const displayChips = { ...selectedChips };
-          if (doubleMode) {
-            Object.keys(displayChips).forEach(chipType => {
-              displayChips[chipType] *= 2;
-            });
-          }
-          Object.keys(displayChips).forEach(chipType => {
-            if (displayChips[chipType] > 0) {
-              chipDetails.push(`${getChipTypeName(chipType)} ${displayChips[chipType]}枚`);
-            }
-          });
-          let totalPointsValue = 0;
-          Object.keys(displayChips).forEach(chipType => {
-            totalPointsValue += CHIP_VALUES[chipType] * displayChips[chipType];
-          });
-          forfeitModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${chipDetails.join('、')} (${totalPointsValue.toLocaleString()} Pt) を没収します。${doubleMode ? '<br><strong>※倍モード適用中</strong>' : ''}</p>`;
+          let displayPoints = points;
+          if (doubleMode) displayPoints *= 2;
+          
+          forfeitModalBody.innerHTML = `<p>${players[fromPlayer].name}から ${displayPoints.toLocaleString()} Pt を没収します。${doubleMode ? '<br><strong>※倍モード適用中</strong>' : ''}</p>`;
           forfeitModal.style.display = 'flex';
-          confirmForfeitBtn.onclick = null;
           confirmForfeitBtn.onclick = function() {
-            if (executeForfeit(fromPlayer, { ...selectedChips })) {
+            if (executeForfeit(fromPlayer, points)) {
               forfeitModal.style.display = 'none';
             }
           };
@@ -1684,58 +1609,68 @@
           showToast('error', 'エラー', '取り消す動作がありません。');
           return;
         }
+        
         const lastAction = history.shift(); // 最新の動作（先頭）を削除
+        
         if (lastAction.action === 'transfer') {
-          Object.keys(lastAction.chips).forEach(chipType => {
-            players[lastAction.from].chips[chipType] += lastAction.chips[chipType];
-            players[lastAction.to].chips[chipType] -= lastAction.chips[chipType];
-          });
+          players[lastAction.from].points += lastAction.points;
+          players[lastAction.to].points -= lastAction.points;
           players[lastAction.from].transferCount--;
           players[lastAction.to].transferCount--;
-          players[lastAction.from].total = calculateTotal(players[lastAction.from]);
-          players[lastAction.to].total = calculateTotal(players[lastAction.to]);
+          
           updatePlayerDisplay(lastAction.from);
           updatePlayerDisplay(lastAction.to);
           showToast('warning', '取り消し', '最後の移動を取り消しました。');
         } else if (lastAction.action === 'forfeit') {
-          Object.keys(lastAction.chips).forEach(chipType => {
-            players[lastAction.from].chips[chipType] += lastAction.chips[chipType];
-          });
+          players[lastAction.from].points += lastAction.points;
           players[lastAction.from].forfeitCount--;
-          players[lastAction.from].total = calculateTotal(players[lastAction.from]);
           totalForfeit -= lastAction.points;
+          
           updatePlayerDisplay(lastAction.from);
           updateTotalForfeit();
           showToast('warning', '取り消し', '最後の没収を取り消しました。');
         }
+        
         updateRankings();
+        
         if (historySection.firstChild) {
           historySection.removeChild(historySection.firstChild);
         }
+        
+        if (historySection.children.length === 0) {
+          historySection.innerHTML = '<div class="no-history">まだ履歴はありません</div>';
+        }
+        
         saveState();
       });
       
-      // オールリセットボタンの処理
+      // リセットボタンの処理
       resetAllBtn.addEventListener('click', function() {
         if (confirm("本当に全てをリセットしますか？")) {
           Object.keys(players).forEach(playerId => {
-            players[playerId].chips = { black: 3, white: 6, color: 30 };
-            players[playerId].total = 15000;
+            players[playerId].points = 15000;
             players[playerId].transferCount = 0;
             players[playerId].forfeitCount = 0;
             updatePlayerDisplay(playerId);
           });
+          
           totalForfeit = 0;
           updateTotalForfeit();
+          
           history = [];
           historySection.innerHTML = '<div class="no-history">まだ履歴はありません</div>';
+          
           activeRules = [];
           updateActiveRules();
-          resetChipSelection();
+          
+          pointsAmountInput.value = '0';
+          
           shuffledCards = [...cards].sort(() => Math.random() - 0.5);
           updateRemainingCards();
+          
           updateRankings();
           saveState();
+          
           showToast('info', 'リセット', '全ての状態をリセットしました。');
         }
       });
@@ -1744,6 +1679,7 @@
       doubleModeToggle.addEventListener('change', function() {
         doubleMode = this.checked;
         saveState();
+        
         if (doubleMode) {
           showToast('warning', '倍モード', '没収ポイントが2倍になります。');
         } else {
@@ -1766,18 +1702,17 @@
           fromPlayerSelect.value = playerId;
           actionTypeSelect.value = 'forfeit';
           actionTypeSelect.dispatchEvent(new Event('change'));
-          document.querySelector('.multi-chip-selector').scrollIntoView({ behavior: 'smooth' });
-          resetChipSelection();
-          selectedChips.color = 1;
-          colorQuantity.value = '1';
-          totalPoints.textContent = `${CHIP_VALUES.color.toLocaleString()} Pt`;
-          const displayChips = { ...selectedChips };
-          if (doubleMode) displayChips.color *= 2;
-          const totalPointsValue = CHIP_VALUES.color * displayChips.color;
-          forfeitModalBody.innerHTML = `<p>${players[playerId].name}から カラーチップ ${displayChips.color}枚 (${totalPointsValue.toLocaleString()} Pt) を没収します。${doubleMode ? '<br><strong>※倍モード適用中</strong>' : ''}</p>`;
+          
+          pointsAmountInput.value = '300';
+          pointsAmountInput.focus();
+          
+          const displayPoints = doubleMode ? 600 : 300;
+          
+          forfeitModalBody.innerHTML = `<p>${players[playerId].name}から ${displayPoints.toLocaleString()} Pt を没収します。${doubleMode ? '<br><strong>※倍モード適用中</strong>' : ''}</p>`;
           forfeitModal.style.display = 'flex';
+          
           confirmForfeitBtn.onclick = function() {
-            if (executeForfeit(playerId, { ...selectedChips })) {
+            if (executeForfeit(playerId, 300)) {
               forfeitModal.style.display = 'none';
             }
           };
@@ -1786,7 +1721,9 @@
       
       // ドキュメント全体のクリックイベントでポップアップを閉じる
       document.addEventListener('click', function(event) {
-        if (playerPopup.style.display === 'block' && !playerPopup.contains(event.target) && !event.target.classList.contains('transfer-btn')) {
+        if (playerPopup.style.display === 'block' && 
+            !playerPopup.contains(event.target) && 
+            !event.target.classList.contains('transfer-btn')) {
           playerPopup.style.display = 'none';
         }
       });
@@ -1797,10 +1734,12 @@
           showToast('error', 'エラー', 'カードがありません。');
           return;
         }
+        
         const card = shuffledCards.pop();
         updateRemainingCards();
         showCard(card);
         saveState();
+        
         this.classList.add('float');
         setTimeout(() => {
           this.classList.remove('float');
@@ -1825,8 +1764,10 @@
         }
       });
       
+      // 初期化
       loadState();
       updateRemainingCards();
+      updateRankings();
       actionTypeSelect.dispatchEvent(new Event('change'));
     });
   </script>
