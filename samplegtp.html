@@ -1,1 +1,278 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>桃鉄ポイントマネージャー</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --border: #e0e0e0;
+      --p1: #e74c3c;  /* のぞむ */
+      --p2: #3498db;  /* まどか */
+      --p3: #2ecc71;  /* ひかる */
+      --p4: #9b59b6;  /* ちえ */
+    }
+    body{margin:0;background:var(--bg);font-family:"Hiragino Sans","Yu Gothic","Helvetica Neue",sans-serif;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+    header{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fff;box-shadow:var(--shadow);}
+    header h1{font-size:20px;margin:0;}
+    #controls{display:flex;gap:12px;align-items:center;}
+    button, .btn{cursor:pointer;border:none;border-radius:6px;padding:6px 12px;font-size:14px;transition:0.2s all}
+    .btn-primary{background:#2196f3;color:#fff;}
+    .btn-secondary{background:#607d8b;color:#fff;}
+    .btn-danger{background:#f44336;color:#fff;}
+    .btn-success{background:#4caf50;color:#fff;}
+    .toggle{display:flex;align-items:center;gap:4px;}
+    .toggle input{accent-color:#f44336;}
 
+    /* layout */
+    .board{display:grid;grid-template-columns:repeat(2,1fr);grid-gap:16px;padding:16px;}
+    .card{background:var(--card-bg);border-radius:12px;box-shadow:var(--shadow);padding:12px;display:flex;flex-direction:column;}
+    .card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .tag{color:#fff;font-weight:bold;padding:2px 8px;border-radius:6px;}
+    .total{font-size:28px;font-weight:600;text-align:center;margin:12px 0;}
+    .actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+    .actions .btn{flex:1 1 30%;min-width:96px}
+
+    /* log */
+    .log-wrap{flex:1;overflow:auto;border-top:1px solid var(--border);background:#fff;padding:8px 16px;}
+    .log-item{display:flex;justify-content:space-between;border-bottom:1px solid var(--border);padding:4px 0;font-size:13px;}
+    .log-item:last-child{border-bottom:none}
+    .log-item button{background:none;color:#f44336;font-size:12px}
+
+    /* modals */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);z-index:1000;}
+    .modal.active{display:flex;}
+    .modal-content{background:#fff;border-radius:12px;box-shadow:var(--shadow);padding:20px;max-width:90vw;max-height:90vh;overflow:auto;min-width:260px}
+    .modal-footer{margin-top:12px;text-align:right;}
+
+    /* ranking */
+    table{border-collapse:collapse;width:100%;font-size:14px}
+    th,td{border:1px solid var(--border);padding:6px;text-align:center}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>桃鉄 Pt マネージャー</h1>
+    <div id="controls">
+      <div class="toggle"><label>倍モード</label><input type="checkbox" id="doubleMode"></div>
+      <button id="rankBtn" class="btn btn-secondary">ランキング</button>
+      <button id="settingsBtn" class="btn btn-primary">設定</button>
+      <button id="resetBtn" class="btn btn-danger">リセット</button>
+    </div>
+  </header>
+
+  <main style="flex:1;display:flex;flex-direction:column;overflow:hidden">
+    <section class="board" id="board"></section>
+    <section class="log-wrap" id="logWrap"></section>
+  </main>
+
+  <!-- generic modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+
+  <!-- ranking modal -->
+  <div class="modal" id="rankModal">
+    <div class="modal-content">
+      <h3 style="margin-top:0">ランキング</h3>
+      <div id="rankTables"></div>
+      <div class="modal-footer"><button class="btn" onclick="closeRank()">閉じる</button></div>
+    </div>
+  </div>
+
+  <!-- settings modal -->
+  <div class="modal" id="settingsModal">
+    <div class="modal-content" style="min-width:300px">
+      <h3 style="margin-top:0">設定</h3>
+      <div id="settingsBody"></div>
+      <div class="modal-footer"><button class="btn btn-primary" onclick="saveSettings()">保存</button></div>
+    </div>
+  </div>
+
+<script>
+  /* ======= データ定義 ======= */
+  const defaultPlayers=[
+    {id:0,name:'のぞむ',color:'var(--p1)',total:15000,lost:0,gained:0,confiscated:0},
+    {id:1,name:'まどか',color:'var(--p2)',total:15000,lost:0,gained:0,confiscated:0},
+    {id:2,name:'ひかる',color:'var(--p3)',total:15000,lost:0,gained:0,confiscated:0},
+    {id:3,name:'ちえ',color:'var(--p4)',total:15000,lost:0,gained:0,confiscated:0}
+  ];
+  let players=JSON.parse(localStorage.getItem('mtPlayers')||'null')||defaultPlayers;
+  let logs=JSON.parse(localStorage.getItem('mtLogs')||'null')||[];
+
+  const boardEl=document.getElementById('board');
+  const logWrap=document.getElementById('logWrap');
+  const modal=document.getElementById('modal');
+  const modalContent=document.getElementById('modalContent');
+  const rankModal=document.getElementById('rankModal');
+  const doubleMode=document.getElementById('doubleMode');
+  /* restore double mode */
+  doubleMode.checked=localStorage.getItem('mtDouble')==='1';
+
+  function saveAll(){localStorage.setItem('mtPlayers',JSON.stringify(players));localStorage.setItem('mtLogs',JSON.stringify(logs));localStorage.setItem('mtDouble',doubleMode.checked?'1':'0');}
+
+  /* ======= UI Render ======= */
+  function render(){
+    boardEl.innerHTML='';
+    players.forEach(p=>{
+      const card=document.createElement('div');card.className='card';
+      card.innerHTML=`<div class="card-header"><span class="tag" style="background:${p.color}">${p.name}</span></div>
+      <div class="total">${p.total.toLocaleString()} Pt</div>
+      <div class="actions">
+        <button class="btn" onclick="openGive(${p.id})">渡す</button>
+        <button class="btn btn-danger" onclick="openConfiscate(${p.id})">没収</button>
+        <button class="btn btn-success" onclick="openBuy(${p.id})">Pt購入</button>
+        <button class="btn" onclick="openGiveAll(${p.id})">全員に渡す</button>
+        <button class="btn" onclick="openTakeAll(${p.id})">全員から貰う</button>
+      </div>`;
+      boardEl.appendChild(card);
+    });
+    renderLog();
+  }
+
+  function renderLog(){
+    logWrap.innerHTML='';
+    logs.slice().reverse().forEach((l,idx)=>{
+      const row=document.createElement('div');row.className='log-item';
+      row.innerHTML=`<span>${l.time} - ${l.text}</span><button onclick="deleteLog(${logs.length-1-idx})">×</button>`;
+      logWrap.appendChild(row);
+    });
+  }
+
+  /* ===== Helper ===== */
+  function nowTime(){
+    const d=new Date();
+    return `${String(d.getHours()).padStart(2,'0')}時${String(d.getMinutes()).padStart(2,'0')}分${String(d.getSeconds()).padStart(2,'0')}秒`;
+  }
+  function addLog(text){logs.push({time:nowTime(),text});saveAll();renderLog();updateRanks();}
+
+  /* ===== Modal Utilities ===== */
+  function showModal(html){modalContent.innerHTML=html;modal.classList.add('active');}
+  function closeModal(){modal.classList.remove('active');}
+  modal.addEventListener('click',e=>{if(e.target===modal)closeModal();});
+
+  /* ===== Actions ===== */
+  function openGive(fromId){
+    const from=players[fromId];
+    const others=players.filter(p=>p.id!==fromId);
+    let html=`<h3>${from.name} → ? に渡す</h3><div style="display:flex;gap:6px;margin-bottom:12px">`;
+    others.forEach(o=>{html+=`<button class="btn" onclick="selectRecipient(${fromId},${o.id})" style="flex:1">${o.name}</button>`});
+    html+='</div><div class="modal-footer"><button class="btn" onclick="closeModal()">戻る</button></div>';
+    showModal(html);
+  }
+  function selectRecipient(fromId,toId){
+    let amount=500;
+    const step=100;
+    const from=players[fromId];const to=players[toId];
+    const update=()=>{document.getElementById('amt').textContent=amount.toLocaleString();}
+    let html=`<h3>${from.name} → ${to.name}</h3>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:20px;margin:12px 0;">
+        <button class="btn" onclick="chg(-${step})">－</button>
+        <span id="amt">${amount}</span> Pt
+        <button class="btn" onclick="chg(${step})">＋</button>
+      </div>
+      <div class="modal-footer"><button class="btn" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-primary" onclick="execGive(${fromId},${toId},${step})">実行</button></div>`;
+    showModal(html);
+    window.chg=(delta)=>{amount=Math.max(step,amount+delta);update();};
+    window.execGive=(f,t,s)=>{players[f].total-=amount;players[t].total+=amount;players[f].lost+=amount;players[t].gained+=amount;addLog(`${players[f].name} → ${players[t].name}: ${amount} Pt`);saveAll();render();closeModal();};
+  }
+
+  function openConfiscate(id){
+    const p=players[id];
+    const base=300;const amount=doubleMode.checked?base*2:base;
+    const html=`<h3>${p.name} から ${amount} Pt 没収します</h3><div class="modal-footer"><button class="btn" onclick="closeModal()">キャンセル</button><button class="btn btn-danger" onclick="execConfiscate(${id},${amount})">実行</button></div>`;
+    showModal(html);
+  }
+  function execConfiscate(id,amt){players[id].total-=amt;players[id].confiscated+=amt;addLog(`${players[id].name} から没収: ${amt} Pt`);saveAll();render();closeModal();}
+
+  function openBuy(id){
+    let amount=500;const step=500;const p=players[id];
+    const update=()=>{document.getElementById('amt').textContent=amount.toLocaleString();}
+    const html=`<h3>${p.name} が Pt 購入</h3>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:20px;margin:12px 0;">
+        <button class="btn" onclick="chg(-${step})">－</button>
+        <span id="amt">${amount}</span> Pt
+        <button class="btn" onclick="chg(${step})">＋</button>
+      </div>
+      <div class="modal-footer"><button class="btn" onclick="closeModal()">キャンセル</button><button class="btn btn-success" onclick="execBuy(${id})">実行</button></div>`;
+    showModal(html);
+    window.chg=(d)=>{amount=Math.max(step,amount+d);update();};
+    window.execBuy=(pid)=>{players[pid].total+=amount;addLog(`${players[pid].name} が Pt 購入: +${amount} Pt`);saveAll();render();closeModal();};
+  }
+
+  function openGiveAll(id){ commonAll(id,'全員に渡す','→ 全員',false); }
+  function openTakeAll(id){ commonAll(id,'全員から貰う','← 全員',true); }
+  function commonAll(id,title,suffix,isTake){
+    let amount=500;const step=100;const p=players[id];
+    const update=()=>{document.getElementById('amt').textContent=amount.toLocaleString();}
+    const html=`<h3>${p.name} ${suffix}</h3>
+    <div style="display:flex;align-items:center;justify-content:center;gap:12px;font-size:20px;margin:12px 0;">
+      <button class="btn" onclick="chg(-${step})">－</button>
+      <span id="amt">${amount}</span> Pt
+      <button class="btn" onclick="chg(${step})">＋</button>
+    </div>
+    <div class="modal-footer"><button class="btn" onclick="closeModal()">キャンセル</button><button class="btn btn-primary" onclick="execAll(${id},${isTake})">実行</button></div>`;
+    showModal(html);
+    window.chg=(d)=>{amount=Math.max(step,amount+d);update();};
+    window.execAll=(pid,take)=>{
+      players.forEach((pl,idx)=>{
+        if(idx===pid)return;
+        if(take){pl.total-=amount;pl.lost+=amount;players[pid].total+=amount;players[pid].gained+=amount;}
+        else{pl.total+=amount;pl.gained+=amount;players[pid].total-=amount;players[pid].lost+=amount;}
+      });
+      addLog(`${players[pid].name} ${take?'←':'→'} 全員: ${amount} Pt`);saveAll();render();closeModal();};
+  }
+
+  /* ==== Log delete */
+  function deleteLog(idx){
+    logs.splice(idx,1);saveAll();renderLog();updateRanks();}
+
+  /* ===== Ranking ===== */
+  document.getElementById('rankBtn').onclick=()=>{updateRanks();rankModal.classList.add('active');};
+  function closeRank(){rankModal.classList.remove('active');}
+  rankModal.addEventListener('click',e=>{if(e.target===rankModal)closeRank();});
+  function updateRanks(){
+    const div=document.getElementById('rankTables');
+    const make=(title,key)=>{
+      const sorted=[...players].sort((a,b)=>b[key]-a[key]);
+      let rows='';sorted.forEach(p=>{rows+=`<tr><td>${p.name}</td><td>${p[key].toLocaleString()} Pt</td></tr>`});
+      return `<h4>${title}</h4><table><tr><th>プレイヤー</th><th>Pt</th></tr>${rows}</table>`;}
+    div.innerHTML=make('没収されたポイント', 'confiscated')+make('失ったポイント', 'lost')+make('奪ったポイント','gained');
+  }
+
+  /* ===== Settings (簡易) ===== */
+  document.getElementById('settingsBtn').onclick=()=>{openSettings();};
+  const settingsModal=document.getElementById('settingsModal');
+  settingsModal.addEventListener('click',e=>{if(e.target===settingsModal)settingsModal.classList.remove('active');});
+  function openSettings(){
+    const body=document.getElementById('settingsBody');
+    body.innerHTML='';
+    players.forEach(p=>{
+      body.innerHTML+=`<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><input style="flex:1" value="${p.name}" data-id="${p.id}" class="pname"><input type="number" style="width:100px" value="${p.total}" data-pt="${p.id}"> Pt</div>`;
+    });
+    settingsModal.classList.add('active');
+  }
+  function saveSettings(){
+    document.querySelectorAll('.pname').forEach(inp=>{let id=+inp.dataset.id;players[id].name=inp.value.trim()||players[id].name;});
+    document.querySelectorAll('[data-pt]').forEach(inp=>{let id=+inp.dataset.pt;players[id].total=parseInt(inp.value)||players[id].total;});
+    saveAll();render();settingsModal.classList.remove('active');
+  }
+
+  /* ===== Reset ===== */
+  document.getElementById('resetBtn').onclick=()=>{
+    if(confirm('すべてのデータをリセットしますか？')){
+      players=JSON.parse(JSON.stringify(defaultPlayers));logs=[];saveAll();render();updateRanks();}
+  };
+
+  /* toggle double save */
+  doubleMode.addEventListener('change',saveAll);
+
+  /* init */
+  render();updateRanks();
+</script>
+</body>
+</html>
