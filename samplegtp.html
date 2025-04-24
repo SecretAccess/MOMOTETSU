@@ -915,3 +915,412 @@
             <div class="player-header">${p.name}</div>
             <div class="player-body">
               <div class="player-points">${p.pts.toLocaleString()} Pt</div>
+                        <div class="player-buttons">
+            <button class="btn-primary" onclick="openGive(${i})">
+              <i class="fas fa-hand-holding"></i> 渡す
+            </button>
+            <button class="btn-danger" onclick="openConfiscate(${i})">
+              <i class="fas fa-ban"></i> 没収
+            </button>
+            <button class="btn-success" onclick="openPurchase(${i})">
+              <i class="fas fa-plus-circle"></i> Pt購入
+            </button>
+            <button class="btn-warning" onclick="openGiveAll(${i}, true)">
+              <i class="fas fa-users"></i> 全員に
+            </button>
+            <button class="btn-secondary" onclick="openGiveAll(${i}, false)">
+              <i class="fas fa-user"></i> 全員から
+            </button>
+          </div>
+          ${btnCard}
+        </div>
+      </div>`;
+      });
+    }
+
+    // --- ルール描画 ---
+    function renderRules() {
+      document.getElementById('rulesCount').textContent = `${rules.length} 件`;
+      const list = document.getElementById("rulesList");
+      list.innerHTML = "";
+      rules.forEach((r, i) => {
+        const cls = r.deleted ? 'rule-entry deleted' : 'rule-entry';
+        const by = r.by ? `<div class="rule-by">by ${r.by}</div>` : '';
+        list.innerHTML += `
+          <div class="${cls}">
+            <div class="rule-content">
+              <div class="rule-title">${r.title}</div>
+              <div class="rule-desc">${r.rule}</div>
+              ${by}
+            </div>
+            <div class="rule-action">
+              <button class="btn-danger btn-icon" onclick="delRule(${i})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>`;
+      });
+    }
+
+    // --- ログ描画 ---
+    function renderLogs() {
+      const container = document.getElementById("logs");
+      container.innerHTML = "";
+      logs.slice().reverse().forEach((l, idx) => {
+        const isLatest = (idx === 0);
+        container.innerHTML += `
+          <div class="log-entry${isLatest ? ' latest' : ''}">
+            <div class="log-time">${l.time}</div>
+            <div class="log-message">${l.desc}</div>
+            <div class="log-action">
+              <button onclick="delLog(${logs.length - 1 - idx})">
+                <i class="fas fa-times-circle"></i>
+              </button>
+            </div>
+          </div>`;
+      });
+    }
+
+    // --- 年数＆タイマー描画 ---
+    function renderTimers() {
+      document.getElementById("currentYearDisplay").textContent = `${currentYear}年目`;
+      const now = Date.now();
+      document.getElementById("totalTimerDisplay").textContent =
+        `通算: ${formatTime(now - startTime)}`;
+      document.getElementById("yearTimerSingleDisplay").textContent =
+        `本年: ${formatTime(now - currentYearStartTime)}`;
+    }
+
+    function formatTime(ms) {
+      const s = Math.floor(ms / 1000),
+            h = Math.floor(s / 3600),
+            m = Math.floor((s % 3600) / 60),
+            ss = s % 60;
+      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+    }
+
+    // --- モーダル共通 ---
+    function showModal(html) {
+      document.getElementById("modalContainer").innerHTML = `
+        <div class="modal-backdrop active" onclick="closeModal()">
+          <div class="modal" onclick="event.stopPropagation()">
+            ${html}
+          </div>
+        </div>`;
+    }
+    function closeModal() {
+      document.getElementById("modalContainer").innerHTML = "";
+    }
+
+    // --- ポイント操作 ---
+    function openGive(idx) {
+      const from = players[idx].name;
+      const btns = players.filter((_,i) => i!==idx)
+        .map(p => `<button class="btn-primary" onclick="chooseGive('${from}','${p.name}')">${p.name}</button>`)
+        .join("");
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">渡す相手を選択</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body player-select">${btns}</div>
+      `);
+    }
+
+    function chooseGive(from, to) {
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">${from} → ${to}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper">
+            <button class="btn-primary" onclick="changeAmt(-100)">－</button>
+            <div class="stepper-value" id="amt">500</div>
+            <button class="btn-primary" onclick="changeAmt(100)">＋</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button class="btn-success" onclick="execGive()">実行</button>
+        </div>
+      `);
+      currentOp = { type:"give", from, to, amt:500 };
+    }
+
+    function changeAmt(delta) {
+      const el = document.getElementById("amt");
+      let v = Math.max(0, parseInt(el.textContent) + delta);
+      el.textContent = v;
+      currentOp.amt = v;
+    }
+
+    function execGive() {
+      const {from, to, amt} = currentOp;
+      players.find(p=>p.name===from).pts -= amt;
+      players.find(p=>p.name===to).pts   += amt;
+      logs.push({ time: timeStamp(), type:"give", from, to, amt,
+                  desc:`${from} → ${to}: ${amt.toLocaleString()} Pt` });
+      saveData(); render(); closeModal();
+    }
+
+    function openConfiscate(idx) {
+      const who = players[idx].name;
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">没収: ${who}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">このプレイヤーからポイントを没収しますか？</div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn-danger" onclick="execConfiscate('${who}')">実行</button>
+        </div>
+      `);
+    }
+
+    function execConfiscate(who) {
+      const base = 300, dbl = document.getElementById("doubleMode").checked;
+      const real = dbl ? base*2 : base;
+      players.find(p=>p.name===who).pts -= real;
+      logs.push({ time: timeStamp(), type:"confiscate", from:who, to:null, amt:real,
+                  desc:`${who} から没収: ${real.toLocaleString()} Pt` });
+      saveData(); render(); closeModal();
+    }
+
+    function openPurchase(idx) {
+      const who = players[idx].name;
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">Pt購入: ${who}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper">
+            <button class="btn-primary" onclick="changeAmt(-500)">－</button>
+            <div class="stepper-value" id="amt">500</div>
+            <button class="btn-primary" onclick="changeAmt(500)">＋</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn-success" onclick="execPurchase()">実行</button>
+        </div>
+      `);
+      currentOp = { type:"purchase", from:who, amt:500 };
+    }
+
+    function execPurchase() {
+      const {from, amt} = currentOp;
+      players.find(p=>p.name===from).pts += amt;
+      logs.push({ time: timeStamp(), type:"purchase", from, to:null, amt,
+                  desc:`${from} が購入: ${amt.toLocaleString()} Pt` });
+      saveData(); render(); closeModal();
+    }
+
+    function openGiveAll(idx, isGive) {
+      const who = players[idx].name;
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">${isGive ? '全員に渡す' : '全員から貰う'}: ${who}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper">
+            <button class="btn-primary" onclick="changeAmt(-100)">－</button>
+            <div class="stepper-value" id="amt">500</div>
+            <button class="btn-primary" onclick="changeAmt(100)">＋</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">取消</button>
+          <button class="btn-success" onclick="execGiveAll()">
+            実行
+          </button>
+        </div>
+      `);
+      currentOp = { type: isGive ? "giveAll" : "takeAll", from: who, amt: 500 };
+    }
+
+    function execGiveAll() {
+      const {from, amt, type} = currentOp;
+      players.forEach(p => {
+        if(p.name === from) return;
+        if(type === "giveAll") {
+          players.find(x=>x.name===from).pts   -= amt;
+          players.find(x=>x.name===p.name).pts += amt;
+          logs.push({ time: timeStamp(), type:"give", from, to:p.name, amt,
+                      desc:`${from} → ${p.name}: ${amt.toLocaleString()} Pt` });
+        } else {
+          players.find(x=>x.name===from).pts   += amt;
+          players.find(x=>x.name===p.name).pts -= amt;
+          logs.push({ time: timeStamp(), type:"give", from:p.name, to:from, amt,
+                      desc:`${p.name} → ${from}: ${amt.toLocaleString()} Pt` });
+        }
+      });
+      saveData(); render(); closeModal();
+    }
+
+    // --- チャンスカード ---
+    function drawCard(who) {
+      if(deck.length === 0) return;
+      const idx = Math.floor(Math.random()*deck.length);
+      const card = deck.splice(idx,1)[0];
+      rules.push({ title: card.title, rule: card.rule, by: who, deleted: false });
+      logs.push({ time: timeStamp(), type:"card", from:who, to:null, amt:0,
+                  desc:`${who} がカード「${card.title}」を引いた` });
+      saveData(); render();
+    }
+
+    function delRule(i) {
+      rules[i].deleted = true;
+      saveData(); render();
+    }
+
+    // --- ログ取消 + 逆転 ---
+    function delLog(i) {
+      const l = logs.splice(i,1)[0];
+      if(l.type === "give") {
+        players.find(p=>p.name===l.from).pts += l.amt;
+        players.find(p=>p.name===l.to).pts   -= l.amt;
+      } else if(l.type === "confiscate") {
+        players.find(p=>p.name===l.from).pts += l.amt;
+      } else if(l.type === "purchase") {
+        players.find(p=>p.name===l.from).pts -= l.amt;
+      } else if(l.type === "card") {
+        const title = l.desc.match(/「(.+)」/)[1];
+        const idx = rules.findIndex(r=>r.title===title && r.by===l.from);
+        if(idx >= 0) rules.splice(idx,1);
+      }
+      saveData(); render();
+    }
+
+    // --- ランキングモーダル ---
+    function showRank() {
+      const ct = { confiscated:{}, lost:{}, taken:{} };
+      logs.forEach(l => {
+        if(l.type==="confiscate") {
+          ct.confiscated[l.from] = (ct.confiscated[l.from]||0) + l.amt;
+        } else if(l.type==="give") {
+          ct.lost[l.from] = (ct.lost[l.from]||0) + l.amt;
+          ct.taken[l.to]  = (ct.taken[l.to] ||0) + l.amt;
+        }
+      });
+      let html = `<div class="modal-header">
+                    <div class="modal-title"><i class="fas fa-trophy"></i> ランキング</div>
+                    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                  </div><div class="modal-body">`;
+      [["confiscated","没収累計"],["lost","失った累計"],["taken","奪った累計"]]
+        .forEach(([k,label])=>{
+          html += `<h5>${label}</h5>
+                    <table class="rank-table">
+                      <tr><th>プレイヤー</th><th>Pt</th></tr>`;
+          Object.entries(ct[k]).sort((a,b)=>b[1]-a[1])
+            .forEach(([n,a])=>{
+              html += `<tr><td>${n}</td><td>${a.toLocaleString()}</td></tr>`;
+            });
+          html += `</table>`;
+        });
+      html += `</div>`;
+      showModal(html);
+    }
+
+    // --- 設定モーダル ---
+    function showSettings() {
+      let html = `<div class="modal-header">
+                    <div class="modal-title"><i class="fas fa-cog"></i> カード設定</div>
+                    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+                  </div>
+                  <div class="modal-body">`;
+      cards.forEach((c,i)=>{
+        html += `<div class="card-form">
+                   <div class="card-form-fields">
+                     <input type="text" class="card-title" value="${c.title}" placeholder="タイトル">
+                     <input type="text" class="card-rule"  value="${c.rule}"  placeholder="効果">
+                   </div>
+                   <button class="btn-danger btn-icon" onclick="delCard(${i})">
+                     <i class="fas fa-trash"></i>
+                   </button>
+                 </div>`;
+      });
+      html += `<button class="btn-primary" id="addCardBtn"><i class="fas fa-plus"></i> カード追加</button>
+               </div>`;
+      showModal(html);
+      document.getElementById("addCardBtn").onclick = ()=> {
+        cards.push({ title:"", rule:"" });
+        showSettings();
+      };
+    }
+
+    function delCard(i) {
+      cards.splice(i,1);
+      saveData();
+      showSettings();
+    }
+
+    function saveSettings() {
+      document.querySelectorAll(".card-form").forEach((div,i)=>{
+        cards[i].title = div.querySelector(".card-title").value;
+        cards[i].rule  = div.querySelector(".card-rule").value;
+      });
+      deck = cards.slice();
+      saveData();
+      closeModal();
+      render();
+    }
+
+    // --- 年数進行 ---
+    document.getElementById("nextYearBtn").onclick = ()=>{
+      const now = Date.now();
+      yearTimes.push(now - currentYearStartTime);
+      currentYear++;
+      currentYearStartTime = now;
+      saveData(); render();
+    };
+
+    // --- ログクリア ---
+    document.getElementById("clearLogsBtn").onclick = ()=>{
+      if(!confirm("ログをすべてクリアしますか？")) return;
+      logs = [];
+      saveData(); render();
+    };
+
+    // --- リセット ---
+    document.getElementById("resetBtn").onclick = ()=>{
+      if(!confirm("全データをリセットしますか？")) return;
+      localStorage.clear();
+      loadData(); saveData(); render();
+    };
+
+    // --- ダークモード切替 ---
+    document.getElementById("darkModeBtn").onclick = ()=>{
+      isDarkMode = !isDarkMode;
+      document.body.classList.toggle('dark-mode', isDarkMode);
+      document.getElementById('darkModeBtn').innerHTML =
+        isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      saveData();
+    };
+
+    // --- ユーティリティ ---
+    function timeStamp() {
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2,'0'),
+            mm = String(d.getMinutes()).padStart(2,'0'),
+            ss = String(d.getSeconds()).padStart(2,'0');
+      return `${hh}:${mm}:${ss}`;
+    }
+
+    // 初期化
+    document.addEventListener("DOMContentLoaded", ()=>{
+      loadData(); render();
+      setInterval(renderTimers, 1000);
+      document.getElementById("rankBtn").onclick     = showRank;
+      document.getElementById("settingsBtn").onclick = showSettings;
+      document.getElementById("doubleMode").onchange = ()=>{
+        saveData(); render();
+      };
+    });
+  </script>
+</body>
+</html>
+
