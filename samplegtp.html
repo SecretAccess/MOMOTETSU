@@ -1323,14 +1323,30 @@ function showSettings() {
     }
 
     // --- 年数進行 ---
-    document.getElementById("nextYearBtn").onclick = ()=>{
-      const now = Date.now();
-      yearTimes.push(now - currentYearStartTime);
-      currentYear++;
-      currentYearStartTime = now;
-      saveData(); render();
-    };
-
+  document.getElementById("nextYearBtn").onclick = () => {
+  const now = Date.now();
+  // １）今回終わった年
+  const prevYear = currentYear;
+  // ２）その年の所要時間
+  const duration = now - currentYearStartTime;
+  // ３）年タイム配列へ格納
+  yearTimes.push(duration);
+  // ４）ログへ追加
+  logs.push({
+    time: timeStamp(),
+    type: "yearEnd",
+    from: null,
+    to: null,
+    amt: 0,
+    desc: `${prevYear}年目を終えました：${formatTime(duration)}`
+  });
+  // ５）年数を進めてタイマーリセット
+  currentYear++;
+  currentYearStartTime = now;
+  // 永続化＆再描画
+  saveData();
+  render();
+};
     // --- ログクリア ---
     document.getElementById("clearLogsBtn").onclick = ()=>{
       if(!confirm("ログをすべてクリアしますか？")) return;
