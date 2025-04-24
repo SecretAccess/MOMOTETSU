@@ -100,7 +100,6 @@
     .switch input:checked + .slider:before {
       transform:translateX(26px);
     }
-
     header {
       background:var(--card-bg); box-shadow:var(--shadow);
       position:sticky; top:0; z-index:10;
@@ -131,7 +130,6 @@
     .btn-info      { background:#00BCD4; }
     .btn-dark      { background:#424242; }
     .btn-icon      { width:36px; padding:.5rem; }
-
     .panel {
       background:var(--card-bg); border-radius:var(--border-radius);
       box-shadow:var(--shadow); padding:1rem; margin-bottom:1.5rem;
@@ -145,7 +143,6 @@
       font-size:1.2rem; font-weight:500;
     }
     .panel-title i { margin-right:.5rem; color:var(--primary); }
-
     #board {
       display:grid;
       grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
@@ -185,7 +182,7 @@
       background:var(--bg); color:var(--text);
     }
     .player-buttons {
-      display:grid; grid-template-columns:1fr 1fr; gap:.5rem;
+      display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem;
     }
     .player-buttons button { padding:.5rem; font-size:.85rem; }
     .player-color-1 .player-header { background:linear-gradient(135deg,#2196F3,#0D47A1); }
@@ -195,9 +192,7 @@
     .player-color-5 .player-header { background:linear-gradient(135deg,#9C27B0,#4A148C); }
     .player-color-6 .player-header { background:linear-gradient(135deg,#FF5722,#BF360C); }
 
-    #rulesList {
-      display:flex; flex-direction:column; gap:.5rem;
-    }
+    #rulesList { display:flex; flex-direction:column; gap:.5rem; }
     .rule-entry {
       padding:.75rem; border-radius:var(--border-radius);
       background:var(--bg); display:flex;
@@ -316,7 +311,7 @@
       .header-content{flex-direction:column;align-items:stretch;}
       .controls-container{flex-direction:column;align-items:stretch;}
       #menu{justify-content:space-between;}
-      .player-buttons{grid-template-columns:1fr;}
+      .player-buttons{grid-template-columns:repeat(2,1fr);}
       .player-select{grid-template-columns:1fr;}
     }
     @media(max-width:480px){
@@ -398,26 +393,29 @@
 
   <script>
     // カラーセット
-    const playerColors = ['player-color-1','player-color-2','player-color-3','player-color-4','player-color-5','player-color-6'];
+    const playerColors = [
+      'player-color-1','player-color-2','player-color-3',
+      'player-color-4','player-color-5','player-color-6'
+    ];
 
-    // デフォルト
+    // デフォルトプレイヤー・カード
     const defaultPlayers = ["のぞむ","まどか","ひかる","ちえ"];
     const defaultCards = [
       { title:"運命の操作", rule:"指定したプレイヤーの次のターンの進路を操作することができる。" },
-      { title:"天災", rule:"全員から500ポイントを没収。" },
+      { title:"天災", rule:"全員から1500ポイントを没収。" },
       { title:"阻害計画", rule:"次の目的地到達ボーナスを無効化。" },
-      { title:"革命の灯", rule:"1位のプレイヤーと自身のポイントを交換する。" },
+      { title:"革命の灯", rule:"ポイント保有数1位のプレイヤーと自身のポイントを交換する。自身が１位の場合は４位のものと交換する" },
       { title:"経済成長期", rule:"次回の目的地到達ボーナスが2倍。" },
       { title:"経済不況", rule:"今回の目的地到達ボーナス没収。" },
-      { title:"偽善の心", rule:"全員が500ポイントを、最も少ないポイントを持つプレイヤーに贈与。" },
-      { title:"強奪", rule:"指定したプレイヤーから1000ポイントを獲得。" },
-      { title:"大富豪の恩恵", rule:"全員から1000ポイントずつを獲得。" },
+      { title:"偽善の心", rule:"全員が2000ポイントを、最も少ないポイントを持つプレイヤーに贈与。" },
+      { title:"強奪", rule:"指定したプレイヤーから5000ポイントを獲得。" },
+      { title:"大富豪の恩恵", rule:"全員から1500ポイントずつを獲得。" },
       { title:"破産宣告", rule:"指定したプレイヤーのポイントの半分を没収。" },
-      { title:"復讐の一撃", rule:"指定したプレイヤーから2000ポイントを獲得。" },
+      { title:"復讐の一撃", rule:"指定したプレイヤーから4000ポイントを獲得。" },
       { title:"無敵の防御", rule:"他のプレイヤーのカード効果を受けなくなる。" }
     ];
 
-    // 状態
+    // 状態変数
     let players, cards, deck, logs, rules, currentOp;
     let startTime, currentYearStartTime, currentYear, yearTimes;
     let isDarkMode = false;
@@ -425,7 +423,9 @@
     // 順位選択用
     let rankSelections = [];
 
-    // ロード
+    // ----------------------------------------
+    // 永続化データロード／保存
+    // ----------------------------------------
     function loadData(){
       players = JSON.parse(localStorage.getItem("mt_players")) ||
         defaultPlayers.map(n=>({name:n,pts:15000}));
@@ -438,24 +438,25 @@
       isDarkMode = JSON.parse(localStorage.getItem("mt_darkMode")) || false;
 
       startTime = parseInt(localStorage.getItem("mt_startTime")) || Date.now();
-      currentYearStartTime = parseInt(localStorage.getItem("mt_currentYearStartTime")) || startTime;
+      currentYearStartTime =
+        parseInt(localStorage.getItem("mt_currentYearStartTime")) || startTime;
       currentYear = parseInt(localStorage.getItem("mt_currentYear")) || 1;
-      yearTimes = JSON.parse(localStorage.getItem("mt_yearTimes")) || [];
+      yearTimes  = JSON.parse(localStorage.getItem("mt_yearTimes")) || [];
 
       if(isDarkMode){
         document.body.classList.add("dark-mode");
-        document.getElementById("darkModeBtn").innerHTML = '<i class="fas fa-sun"></i>';
+        document.getElementById("darkModeBtn").innerHTML =
+          '<i class="fas fa-sun"></i>';
       }
     }
-
-    // 保存
     function saveData(){
       localStorage.setItem("mt_players", JSON.stringify(players));
       localStorage.setItem("mt_cards",   JSON.stringify(cards));
       localStorage.setItem("mt_deck",    JSON.stringify(deck));
       localStorage.setItem("mt_logs",    JSON.stringify(logs));
       localStorage.setItem("mt_rules",   JSON.stringify(rules));
-      localStorage.setItem("mt_double",  JSON.stringify(document.getElementById("doubleMode").checked));
+      localStorage.setItem("mt_double",
+        JSON.stringify(document.getElementById("doubleMode").checked));
       localStorage.setItem("mt_darkMode",JSON.stringify(isDarkMode));
       localStorage.setItem("mt_startTime",            startTime);
       localStorage.setItem("mt_currentYearStartTime", currentYearStartTime);
@@ -463,7 +464,9 @@
       localStorage.setItem("mt_yearTimes",            JSON.stringify(yearTimes));
     }
 
-    // 描画呼び出し
+    // ----------------------------------------
+    // 描画まとめ
+    // ----------------------------------------
     function render(){
       renderPlayers();
       renderRules();
@@ -471,26 +474,48 @@
       renderTimers();
     }
 
-    // プレイヤーカード
+    // ----------------------------------------
+    // プレイヤーカード描画
+    // ----------------------------------------
     function renderPlayers(){
       const board = document.getElementById("board");
       board.innerHTML = "";
       players.forEach((p,i)=>{
         const c = playerColors[i%playerColors.length];
         const btnCard = deck.length>0
-          ? `<button class="btn-info" onclick="drawCard('${p.name}')"><i class="fas fa-cards"></i> チャンスカード</button>`
-          : `<button class="btn-info" disabled><i class="fas fa-cards"></i> カードなし</button>`;
+          ? `<button class="btn-info" onclick="drawCard('${p.name}')">
+               <i class="fas fa-cards"></i> チャンスカード
+             </button>`
+          : `<button class="btn-info" disabled>
+               <i class="fas fa-cards"></i> カードなし
+             </button>`;
         board.innerHTML += `
           <div class="player-card ${c} fade-in">
             <div class="player-header">${p.name}</div>
             <div class="player-body">
               <div class="player-points">${p.pts.toLocaleString()} Pt</div>
               <div class="player-buttons">
-                <button class="btn-primary" onclick="openGive(${i})"><i class="fas fa-hand-holding"></i> 渡す</button>
-                <button class="btn-danger"   onclick="openConfiscate(${i})"><i class="fas fa-ban"></i> 没収</button>
-                <button class="btn-success"  onclick="openPurchase(${i})"><i class="fas fa-plus-circle"></i> Pt購入</button>
-                <button class="btn-warning"  onclick="openGiveAll(${i},true)"><i class="fas fa-users"></i> 全員に</button>
-                <button class="btn-secondary"onclick="openGiveAll(${i},false)"><i class="fas fa-user"></i> 全員から</button>
+                <button class="btn-primary" onclick="openGive(${i})">
+                  <i class="fas fa-hand-holding"></i> 渡す
+                </button>
+                <button class="btn-danger" onclick="openConfiscate(${i})">
+                  <i class="fas fa-ban"></i> 没収
+                </button>
+                <button class="btn-success" onclick="openPurchase(${i})">
+                  <i class="fas fa-plus-circle"></i> Pt購入
+                </button>
+                <button class="btn-warning" onclick="openGiveAll(${i},true)">
+                  <i class="fas fa-users"></i> 全員に
+                </button>
+                <button class="btn-secondary" onclick="openGiveAll(${i},false)">
+                  <i class="fas fa-user"></i> 全員から
+                </button>
+                <button class="btn-danger" onclick="openSuperConfiscate(${i})">
+                  <i class="fas fa-skull-crossbones"></i> 超没収
+                </button>
+                <button class="btn-info" onclick="openExchange(${i})">
+                  <i class="fas fa-exchange-alt"></i> 交換
+                </button>
               </div>
               ${btnCard}
             </div>
@@ -498,7 +523,9 @@
       });
     }
 
-    // ルールパネル
+    // ----------------------------------------
+    // ルールパネル描画
+    // ----------------------------------------
     function renderRules(){
       document.getElementById("rulesCount").textContent = `${rules.length} 件`;
       const list = document.getElementById("rulesList");
@@ -514,13 +541,17 @@
               ${by}
             </div>
             <div class="rule-action">
-              <button class="btn-danger btn-icon" onclick="delRule(${i})"><i class="fas fa-trash"></i></button>
+              <button class="btn-danger btn-icon" onclick="delRule(${i})">
+                <i class="fas fa-trash"></i>
+              </button>
             </div>
           </div>`;
       });
     }
 
-    // ログパネル
+    // ----------------------------------------
+    // ログパネル描画
+    // ----------------------------------------
     function renderLogs(){
       const ctnr = document.getElementById("logs");
       ctnr.innerHTML = "";
@@ -531,26 +562,38 @@
             <div class="log-time">${l.time}</div>
             <div class="log-message">${l.desc}</div>
             <div class="log-action">
-              <button onclick="delLog(${logs.length-1-idx})"><i class="fas fa-times-circle"></i></button>
+              <button onclick="delLog(${logs.length-1-idx})">
+                <i class="fas fa-times-circle"></i>
+              </button>
             </div>
           </div>`;
       });
     }
 
-    // タイマー
+    // ----------------------------------------
+    // タイマー描画
+    // ----------------------------------------
     function renderTimers(){
       document.getElementById("currentYearDisplay").textContent = `${currentYear}年目`;
       const now = Date.now();
-      document.getElementById("totalTimerDisplay").textContent = `通算: ${formatTime(now-startTime)}`;
-      document.getElementById("yearTimerSingleDisplay").textContent = `本年: ${formatTime(now-currentYearStartTime)}`;
+      document.getElementById("totalTimerDisplay")
+        .textContent = `通算: ${formatTime(now - startTime)}`;
+      document.getElementById("yearTimerSingleDisplay")
+        .textContent = `本年: ${formatTime(now - currentYearStartTime)}`;
     }
     function formatTime(ms){
-      const s=Math.floor(ms/1000), h=Math.floor(s/3600),
-            m=Math.floor((s%3600)/60), ss=s%60;
-      return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+      const s = Math.floor(ms/1000),
+            h = Math.floor(s/3600),
+            m = Math.floor((s%3600)/60),
+            ss = s%60;
+      return `${String(h).padStart(2,'0')}:`+
+             `${String(m).padStart(2,'0')}:`+
+             `${String(ss).padStart(2,'0')}`;
     }
 
+    // ----------------------------------------
     // モーダル共通
+    // ----------------------------------------
     function showModal(html){
       document.getElementById("modalContainer").innerHTML = `
         <div class="modal-backdrop active" onclick="closeModal()">
@@ -563,7 +606,11 @@
       document.getElementById("modalContainer").innerHTML = "";
     }
 
-    // ■ ポイント操作系 ■
+    // ----------------------------------------
+    // 標準ポイント操作系
+    // （渡す・没収・購入・全員に・全員から・カード引き・削除）
+    // ※省略せず全関数を下に続けます...
+    // ----------------------------------------
     function openGive(idx){
       const from = players[idx].name;
       let btns = players.filter((_,i)=>i!==idx)
@@ -574,9 +621,8 @@
           <div class="modal-title">渡す相手を選択</div>
           <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
         </div>
-        <div class="modal-body player-select">
-          ${btns}
-        </div>`);
+        <div class="modal-body player-select">${btns}</div>
+        `);
     }
     function chooseGive(from,to){
       showModal(`
@@ -607,7 +653,7 @@
       const {from,to,amt} = currentOp;
       players.find(p=>p.name===from).pts -= amt;
       players.find(p=>p.name===to).pts   += amt;
-      logs.push({ time:timeStamp(), type:"give", from, to, amt,
+      logs.push({ time:timeStamp(), type:"give", from,to,amt,
                   desc:`${from} → ${to}: ${amt.toLocaleString()} Pt` });
       saveData(); render(); closeModal();
     }
@@ -626,11 +672,12 @@
         </div>`);
     }
     function execConfiscate(who){
-      const base = 300;
-      const dbl = document.getElementById("doubleMode").checked;
-      const real = dbl? base*2 : base;
+      const base = 300,
+            dbl  = document.getElementById("doubleMode").checked,
+            real = dbl? base*2 : base;
       players.find(p=>p.name===who).pts -= real;
-      logs.push({ time:timeStamp(), type:"confiscate", from:who, to:null, amt:real,
+      logs.push({ time:timeStamp(), type:"confiscate",
+                  from:who,to:null,amt:real,
                   desc:`${who} から没収: ${real.toLocaleString()} Pt` });
       saveData(); render(); closeModal();
     }
@@ -658,7 +705,7 @@
     function execPurchase(){
       const {from,amt} = currentOp;
       players.find(p=>p.name===from).pts += amt;
-      logs.push({ time:timeStamp(), type:"purchase", from, to:null, amt,
+      logs.push({ time:timeStamp(), type:"purchase", from,to:null,amt,
                   desc:`${from} が購入: ${amt.toLocaleString()} Pt` });
       saveData(); render(); closeModal();
     }
@@ -690,12 +737,14 @@
         if(type==="giveAll"){
           players.find(x=>x.name===from).pts   -= amt;
           players.find(x=>x.name===p.name).pts += amt;
-          logs.push({ time:timeStamp(), type:"give", from, to:p.name, amt,
+          logs.push({ time:timeStamp(), type:"give",
+                      from,to:p.name,amt,
                       desc:`${from} → ${p.name}: ${amt.toLocaleString()} Pt` });
         } else {
           players.find(x=>x.name===from).pts   += amt;
           players.find(x=>x.name===p.name).pts -= amt;
-          logs.push({ time:timeStamp(), type:"give", from:p.name, to:from, amt,
+          logs.push({ time:timeStamp(), type:"give",
+                      from:p.name,to:from,amt,
                       desc:`${p.name} → ${from}: ${amt.toLocaleString()} Pt` });
         }
       });
@@ -704,8 +753,8 @@
 
     function drawCard(who){
       if(deck.length===0) return;
-      const idx=Math.floor(Math.random()*deck.length);
-      const card=deck.splice(idx,1)[0];
+      const idx = Math.floor(Math.random()*deck.length);
+      const card = deck.splice(idx,1)[0];
       rules.push({ title:card.title, rule:card.rule, by:who, deleted:false });
       logs.push({ time:timeStamp(), type:"card", from:who, to:null, amt:0,
                   desc:`${who} がカード「${card.title}」を引いた` });
@@ -734,70 +783,155 @@
       saveData(); render();
     }
 
-    // ■ ランキ���グモーダル ■
+    // ----------------------------------------
+    // 「超没収」機能
+    // ----------------------------------------
+    function openSuperConfiscate(idx){
+      const who = players[idx].name;
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">超没収: ${who}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+          <div class="stepper">
+            <button class="btn-danger" onclick="changeSuperAmt(-100)">－</button>
+            <div class="stepper-value" id="superAmt">1000</div>
+            <button class="btn-danger" onclick="changeSuperAmt(100)">＋</button>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button class="btn-danger" onclick="execSuperConfiscate()">実行</button>
+        </div>`);
+      currentOp = { type:"superConfiscate", who, amt:1000 };
+    }
+    function changeSuperAmt(delta){
+      const el = document.getElementById("superAmt");
+      let v = parseInt(el.textContent) + delta;
+      el.textContent = v;
+      currentOp.amt = v;
+    }
+    function execSuperConfiscate(){
+      const {who,amt} = currentOp;
+      players.find(p=>p.name===who).pts -= amt;
+      logs.push({ time:timeStamp(), type:"superConfiscate",
+                  from:who,to:null,amt,
+                  desc:`${who} から超没収: ${amt.toLocaleString()} Pt` });
+      saveData(); render(); closeModal();
+    }
+
+    // ----------------------------------------
+    // 「交換」機能
+    // ----------------------------------------
+    function openExchange(idx){
+      const from = players[idx].name;
+      let btns = players.filter((_,i)=>i!==idx)
+        .map(p=>`<button class="btn-info" onclick="chooseExchange('${from}','${p.name}')">${p.name}</button>`)
+        .join("");
+      showModal(`
+        <div class="modal-header">
+          <div class="modal-title">交換: ${from}</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body player-select">
+          ${btns}
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
+        </div>`);
+    }
+    function chooseExchange(from,to){
+      if(!confirm(`${from} と ${to} のポイントを交換します。よろしいですか？`)) return;
+      const p1 = players.find(p=>p.name===from);
+      const p2 = players.find(p=>p.name===to);
+      const v1 = p1.pts, v2 = p2.pts;
+      p1.pts = v2;
+      p2.pts = v1;
+      logs.push({
+        time:timeStamp(),
+        type:"exchange",
+        desc:`${from}の${v1.toLocaleString()} Ptと${to}の${v2.toLocaleString()} Ptが交換されました`
+      });
+      saveData(); render(); closeModal();
+    }
+
+    // ----------------------------------------
+    // ランキングモーダル
+    // ----------------------------------------
     function showRank(){
       const ct={confiscated:{},lost:{},taken:{}};
       logs.forEach(l=>{
         if(l.type==="confiscate"){
-          ct.confiscated[l.from]=(ct.confiscated[l.from]||0)+l.amt;
+          ct.confiscated[l.from] = (ct.confiscated[l.from]||0) + l.amt;
         } else if(l.type==="give"){
-          ct.lost[l.from]=(ct.lost[l.from]||0)+l.amt;
-          ct.taken[l.to] =(ct.taken[l.to]||0)+l.amt;
+          ct.lost[l.from]   = (ct.lost[l.from]||0)+l.amt;
+          ct.taken[l.to]    = (ct.taken[l.to]||0)+l.amt;
         }
       });
-      let html=`<div class="modal-header">
-                    <div class="modal-title"><i class="fas fa-trophy"></i> ランキング</div>
-                    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-                </div><div class="modal-body">`;
+      let html = `
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-trophy"></i> ランキング</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">`;
       [["confiscated","没収累計"],["lost","失った累計"],["taken","奪った累計"]].forEach(([k,label])=>{
-        html+=`<h5>${label}</h5>
-               <table class="rank-table">
-                 <tr><th>プレイヤー</th><th>Pt</th></tr>`;
+        html += `<h5>${label}</h5>
+          <table class="rank-table">
+            <tr><th>プレイヤー</th><th>Pt</th></tr>`;
         Object.entries(ct[k]).sort((a,b)=>b[1]-a[1]).forEach(([n,a])=>{
-          html+=`<tr><td>${n}</td><td>${a.toLocaleString()}</td></tr>`;
+          html += `<tr><td>${n}</td><td>${a.toLocaleString()}</td></tr>`;
         });
-        html+=`</table>`;
+        html += `</table>`;
       });
-      html+=`</div>`;
+      html += `</div>`;
       showModal(html);
     }
 
-    // ■ 設定モーダル ■
+    // ----------------------------------------
+    // 設定モーダル
+    // ----------------------------------------
     function showSettings(){
-      let html=`<div class="modal-header">
-                    <div class="modal-title"><i class="fas fa-cog"></i> カード設定</div>
-                    <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-                </div>
-                <div class="modal-body">`;
+      let html = `
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-cog"></i> カード設定</div>
+          <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">`;
       cards.forEach((c,i)=>{
-        html+=`<div class="card-form">
-                  <div class="card-form-fields">
-                    <input type="text" class="card-title" value="${c.title}" placeholder="タイトル">
-                    <input type="text" class="card-rule"  value="${c.rule}"  placeholder="効果">
-                  </div>
-                  <button class="btn-danger btn-icon" onclick="delCard(${i})"><i class="fas fa-trash"></i></button>
-                </div>`;
-      });
-      html+=`<button class="btn-primary" id="addCardBtn"><i class="fas fa-plus"></i> カード追加</button>
+        html += `
+          <div class="card-form">
+            <div class="card-form-fields">
+              <input type="text" class="card-title" value="${c.title}" placeholder="タイトル">
+              <input type="text" class="card-rule"  value="${c.rule}"  placeholder="効果">
             </div>
-            <div class="modal-footer">
-              <button class="btn-secondary" onclick="saveSettings()">保存</button>
-            </div>`;
-      document.getElementById("modalContainer").innerHTML=`
+            <button class="btn-danger btn-icon" onclick="delCard(${i})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>`;
+      });
+      html += `
+          <button class="btn-primary" id="addCardBtn">
+            <i class="fas fa-plus"></i> カード追加
+          </button>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="saveSettings()">保存</button>
+        </div>`;
+      document.getElementById("modalContainer").innerHTML = `
         <div class="modal-backdrop active" onclick="closeModal()">
           <div class="modal fullscreen" onclick="event.stopPropagation()">
             ${html}
           </div>
         </div>`;
-      document.getElementById("addCardBtn").onclick=()=>{
-        cards.push({title:"",rule:""});
+      document.getElementById("addCardBtn").onclick = ()=>{
+        cards.push({ title:"", rule:"" });
         showSettings();
       };
     }
     function delCard(i){
       cards.splice(i,1);
-      saveData();
-      showSettings();
+      saveData(); showSettings();
     }
     function saveSettings(){
       document.querySelectorAll(".card-form").forEach((div,i)=>{
@@ -805,21 +939,20 @@
         cards[i].rule  = div.querySelector(".card-rule").value;
       });
       deck = cards.slice();
-      saveData();
-      closeModal();
-      render();
+      saveData(); closeModal(); render();
     }
 
-    // ■ 年数進行 ■
-    document.getElementById("nextYearBtn").onclick = () => {
-      const now=Date.now();
+    // ----------------------------------------
+    // 年数進行
+    // ----------------------------------------
+    document.getElementById("nextYearBtn").onclick = ()=>{
+      const now = Date.now();
       const prev = currentYear;
       const dur  = now - currentYearStartTime;
       yearTimes.push(dur);
       logs.push({
-        time:timeStamp(),
-        type:"yearEnd",
-        from:null,to:null,amt:0,
+        time:timeStamp(), type:"yearEnd",
+        from:null, to:null, amt:0,
         desc:`${prev}年目を終えました：${formatTime(dur)}`
       });
       currentYear++;
@@ -827,10 +960,12 @@
       saveData(); render();
     };
 
-    // ■ ルーレット用重み付ランダム ■
+    // ----------------------------------------
+    // ルーレット用重み付きランダム
+    // ----------------------------------------
     function weightedRandom(items, weights){
       let sum = weights.reduce((a,b)=>a+b,0);
-      let r = Math.random()*sum;
+      let r   = Math.random()*sum;
       for(let i=0;i<items.length;i++){
         if(r < weights[i]) return items[i];
         r -= weights[i];
@@ -838,34 +973,38 @@
       return items[items.length-1];
     }
 
-    // ■ ゲーム終了モーダル ■
+    // ----------------------------------------
+    // ゲーム終了モーダル
+    // ----------------------------------------
     function showGameEnd(){
       rankSelections = [];
       let html = `
-      <div class="modal-header">
-        <div class="modal-title"><i class="fas fa-flag-checkered"></i> ゲーム終了</div>
-        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <h4>現在のポイント</h4>
-        <ul>`;
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-flag-checkered"></i> ゲーム終了</div>
+          <button class="modal-close" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h4>現在のポイント</h4>
+          <ul>`;
       players.forEach(p=>{
-        html+=`<li>${p.name}：${p.pts.toLocaleString()} Pt</li>`;
+        html += `<li>${p.name}：${p.pts.toLocaleString()} Pt</li>`;
       });
-      html+=`</ul>
-        <h4>順位をタップ (1位→2位→3位→4位)</h4>
-        <div class="player-select">`;
+      html += `</ul>
+          <h4>順位をタップ (1位→2位→3位→4位)</h4>
+          <div class="player-select">`;
       players.forEach(p=>{
-        html+=`<button class="btn-primary" onclick="selectRank('${p.name}', this)">${p.name}</button>`;
+        html += `<button class="btn-primary" onclick="selectRank('${p.name}', this)">${p.name}</button>`;
       });
-      html+=`</div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
-        <button class="btn-warning" onclick="showGameEnd()" style="margin:0 8px;">やり直し</button>
-        <button id="confirmRankBtn" class="btn-success" disabled>抽選開始</button>
-      </div>`;
-      document.getElementById("modalContainer").innerHTML=`
+      html += `</div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
+          <button class="btn-warning" onclick="showGameEnd()" style="margin:0 8px;">やり直し</button>
+          <button id="confirmRankBtn" class="btn-success" disabled>抽選開始</button>
+        </div>`;
+      document.getElementById("modalContainer").innerHTML = `
         <div class="modal-backdrop active" onclick="closeModal()">
           <div class="modal fullscreen" onclick="event.stopPropagation()">
             ${html}
@@ -873,8 +1012,6 @@
         </div>`;
       document.getElementById("confirmRankBtn").onclick = processRoulette;
     }
-
-    // 順位選択
     function selectRank(name, btn){
       if(rankSelections.includes(name)) return;
       rankSelections.push(name);
@@ -886,17 +1023,21 @@
       }
     }
 
-    // ■ ルーレット実行 ■
+    // ----------------------------------------
+    // ルーレット実行
+    // ----------------------------------------
     function processRoulette(){
       const [first,second,third,fourth] = rankSelections;
-      const pool = logs.reduce((sum,l)=> l.type==="confiscate" ? sum + l.amt : sum, 0);
+      const pool = logs.reduce((sum,l)=>{
+        return l.type==="confiscate" ? sum + l.amt : sum;
+      }, 0);
 
       // ① 1位支払ルーレット
       const pool1 = [second,third,fourth];
       const w1    = [0.17,0.33,0.50];
       const w1Winner = weightedRandom(pool1,w1);
-      players.find(p=>p.name===w1Winner).pts -=15000;
-      players.find(p=>p.name===first).pts   +=15000;
+      players.find(p=>p.name===w1Winner).pts -= 15000;
+      players.find(p=>p.name===first).pts   += 15000;
       logs.push({
         time:timeStamp(), type:"roulette",
         desc:`① ${w1Winner} → ${first}: 15,000 Pt支払い`
@@ -906,8 +1047,8 @@
       const pool2 = [first,third,fourth];
       const w2    = [0.14,0.43,0.43];
       const w2Winner = weightedRandom(pool2,w2);
-      players.find(p=>p.name===w2Winner).pts -=7500;
-      players.find(p=>p.name===second).pts   +=7500;
+      players.find(p=>p.name===w2Winner).pts -= 7500;
+      players.find(p=>p.name===second).pts   += 7500;
       logs.push({
         time:timeStamp(), type:"roulette",
         desc:`② ${w2Winner} → ${second}: 7,500 Pt支払い`
@@ -927,37 +1068,41 @@
 
       // 結果表示
       const resultHtml = `
-      <div class="modal-header">
-        <div class="modal-title"><i class="fas fa-trophy"></i> 抽選結果</div>
-        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="modal-body">
-        <ul>
-          <li>① ${w1Winner} が ${first} に15,000 Pt支払い</li>
-          <li>② ${w2Winner} が ${second} に7,500 Pt支払い</li>
-          <li>③ ${w3Winner} が没収チップ全量 ${pool.toLocaleString()} Pt受取</li>
-        </ul>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeModal()">閉じる</button>
-      </div>`;
+        <div class="modal-header">
+          <div class="modal-title"><i class="fas fa-trophy"></i> 抽選結果</div>
+          <button class="modal-close" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <ul>
+            <li>① ${w1Winner} が ${first} に15,000 Pt支払い</li>
+            <li>② ${w2Winner} が ${second} に7,500 Pt支払い</li>
+            <li>③ ${w3Winner} が没収チップ全量 ${pool.toLocaleString()} Pt受取</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeModal()">閉じる</button>
+        </div>`;
       showModal(resultHtml);
     }
 
-    // ========================================
-    // イベント & 初期化
-    // ========================================
+    // ----------------------------------------
+    // 初期化
+    // ----------------------------------------
     document.addEventListener("DOMContentLoaded",()=>{
       loadData(); render();
       setInterval(renderTimers,1000);
       document.getElementById("rankBtn").onclick     = showRank;
       document.getElementById("settingsBtn").onclick = showSettings;
       document.getElementById("gameEndBtn").onclick  = showGameEnd;
-      document.getElementById("doubleMode").onchange = ()=>{ saveData(); render(); };
-      document.getElementById("nextYearBtn").onclick; // see above
+      document.getElementById("doubleMode").onchange = ()=>{
+        saveData(); render();
+      };
       document.getElementById("resetBtn").onclick = ()=>{
         if(!confirm("全データをリセットしますか？")) return;
-        localStorage.clear(); loadData(); saveData(); render();
+        localStorage.clear();
+        loadData(); saveData(); render();
       };
       document.getElementById("darkModeBtn").onclick = ()=>{
         isDarkMode = !isDarkMode;
@@ -968,16 +1113,19 @@
       };
       document.getElementById("clearLogsBtn").onclick = ()=>{
         if(!confirm("ログをすべてクリアしますか？")) return;
-        logs=[]; saveData(); render();
+        logs = [];
+        saveData(); render();
       };
     });
 
+    // ----------------------------------------
     // ユーティリティ：タイムスタンプ
+    // ----------------------------------------
     function timeStamp(){
-      const d=new Date();
-      const hh=String(d.getHours()).padStart(2,'0'),
-            mm=String(d.getMinutes()).padStart(2,'0'),
-            ss=String(d.getSeconds()).padStart(2,'0');
+      const d = new Date();
+      const hh = String(d.getHours()).padStart(2,'0'),
+            mm = String(d.getMinutes()).padStart(2,'0'),
+            ss = String(d.getSeconds()).padStart(2,'0');
       return `${hh}:${mm}:${ss}`;
     }
   </script>
