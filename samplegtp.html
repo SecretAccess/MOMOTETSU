@@ -6,9 +6,21 @@
   <title>Momotetsu Point Manager</title>
   <style>
     body { font-family: sans-serif; margin: 0; padding: 0; }
-    header { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f0f0f0; }
-    #doubleToggle { display: flex; align-items: center; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #f0f0f0;
+    }
+    #doubleToggle, #yearTimerContainer, #menu {
+      display: flex;
+      align-items: center;
+    }
     #doubleToggle input { margin-right: 5px; }
+    #yearTimerContainer { flex-direction: column; text-align: left; }
+    #yearTimerContainer > div { font-size: 0.9em; }
+    #yearTimerContainer button { margin: 4px 0; padding: 4px 8px; }
     #menu button { margin-left: 8px; }
     #board { display: flex; justify-content: space-around; flex-wrap: wrap; padding: 10px; }
     .player-card {
@@ -63,6 +75,16 @@
     <div id="doubleToggle">
       <input type="checkbox" id="doubleMode" /><label for="doubleMode">倍モード</label>
     </div>
+
+    <div id="yearTimerContainer">
+      <div><span id="currentYearDisplay">1年目</span> <button id="nextYearBtn">次の年へ</button></div>
+      <div>
+        <span id="totalTimerDisplay">通算経過: 00:00:00</span><br/>
+        <span id="yearTimerSingleDisplay">本年経過: 00:00:00</span>
+      </div>
+      <div id="yearTimesList"></div>
+    </div>
+
     <div id="menu">
       <button id="rankBtn">ランキング</button>
       <button id="settingsBtn">設定</button>
@@ -71,13 +93,13 @@
   </header>
 
   <div id="rulesPanel">
-    <strong>適用中のルール：</strong>
-    <div id="rulesList"></div>
+    <strong>適用中のルール：</strong><div id="rulesList"></div>
   </div>
+
   <div id="board"></div>
+
   <div id="logPanel">
-    <strong>ログ：</strong>
-    <div id="logs"></div>
+    <strong>ログ：</strong><div id="logs"></div>
   </div>
 
   <div id="modalContainer"></div>
@@ -103,7 +125,7 @@
   </div>
 
 <script>
-  // カラー設定（左から）
+  // カラー設定（左から水色・ピンク・黄・黄緑）
   const borderColors  = ['#81D4FA','#F48FB1','#FFF176','#AED581'];
   const defaultPlayers = ["のぞむ","まどか","ひかる","ちえ"];
   const defaultCards = [
@@ -121,9 +143,12 @@
     { title:"無敵の防御", rule:"他のプレイヤーのカード効果を受けなくなる。" }
   ];
 
-  let players, cards, deck, logs, rules, currentOp;
+  let players, cards, deck, logs, rules;
+  let currentOp;
+  let startTime, currentYearStartTime, currentYear, yearTimes;
 
   function loadData(){
+    // ポイント管理
     players = JSON.parse(localStorage.getItem("mt_players")) ||
       defaultPlayers.map(name=>({ name, pts:15000 }));
     cards   = JSON.parse(localStorage.getItem("mt_cards"))   || defaultCards.slice();
@@ -132,6 +157,12 @@
     rules   = JSON.parse(localStorage.getItem("mt_rules"))   || [];
     document.getElementById("doubleMode").checked =
       JSON.parse(localStorage.getItem("mt_double"))||false;
+
+    // 年数＆タイマー管理
+    startTime            = parseInt(localStorage.getItem("mt_startTime"))            || Date.now();
+    currentYearStartTime = parseInt(localStorage.getItem("mt_currentYearStartTime")) || startTime;
+    currentYear          = parseInt(localStorage.getItem("mt_currentYear"))          || 1;
+    yearTimes            = JSON.parse(localStorage.getItem("mt_yearTimes"))           || [];
   }
   function saveData(){
     localStorage.setItem("mt_players", JSON.stringify(players));
@@ -140,6 +171,11 @@
     localStorage.setItem("mt_logs",    JSON.stringify(logs));
     localStorage.setItem("mt_rules",   JSON.stringify(rules));
     localStorage.setItem("mt_double",  JSON.stringify(document.getElementById("doubleMode").checked));
+
+    localStorage.setItem("mt_startTime",            startTime);
+    localStorage.setItem("mt_currentYearStartTime", currentYearStartTime);
+    localStorage.setItem("mt_currentYear",          currentYear);
+    localStorage.setItem("mt_yearTimes",            JSON.stringify(yearTimes));
   }
 
   function render(){
@@ -147,8 +183,10 @@
     renderRules();
     renderLogs();
     updateRankTables();
+    renderTimers();
   }
 
+  // --- プレイヤーカード ---
   function renderPlayers(){
     const board = document.getElementById("board");
     board.innerHTML = "";
@@ -161,22 +199,23 @@
         <div class="player-card" style="border-color:${color};">
           <h3 style="background:${color};">${p.name}</h3>
           <div class="points">${p.pts} Pt</div>
-          <button class="btn-give" onclick="openGive(${i})">渡す</button>
+          <button class="btn-give"       onclick="openGive(${i})">渡す</button>
           <button class="btn-confiscate" onclick="openConfiscate(${i})">没収</button>
-          <button class="btn-purchase" onclick="openPurchase(${i})">Pt購入</button>
-          <button class="btn-all" onclick="openGiveAll(${i}, true)">全員に渡す</button>
-          <button class="btn-all" onclick="openGiveAll(${i}, false)">全員から貰う</button>
+          <button class="btn-purchase"   onclick="openPurchase(${i})">Pt購入</button>
+          <button class="btn-all"        onclick="openGiveAll(${i}, true)">全員に渡す</button>
+          <button class="btn-all"        onclick="openGiveAll(${i}, false)">全員から貰う</button>
           ${btnCard}
         </div>`;
     });
   }
 
+  // --- 適用中ルール ---
   function renderRules(){
     const list = document.getElementById("rulesList");
     list.innerHTML = "";
     rules.forEach((r,i)=>{
       const cls = r.deleted ? 'rule-entry deleted' : 'rule-entry';
-      const by = r.by ? `【${r.by}】` : '';
+      const by  = r.by ? `【${r.by}】` : '';
       list.innerHTML += `
         <div class="${cls}">
           ${by}${r.title}：${r.rule}
@@ -185,12 +224,13 @@
     });
   }
 
+  // --- ログ ---
   function renderLogs(){
     const container = document.getElementById("logs");
     container.innerHTML = "";
-    for(let i=logs.length-1;i>=0;i--){
+    for(let i = logs.length - 1; i >= 0; i--){
       const l = logs[i];
-      const isLatest = (i === logs.length-1);
+      const isLatest = (i === logs.length - 1);
       const div = document.createElement("div");
       div.className = "log-entry" + (isLatest ? " latest" : "");
       div.innerHTML = `
@@ -201,29 +241,55 @@
     }
   }
 
+  // --- ランキング ---
   function updateRankTables(){
     const ct = { confiscated:{}, lost:{}, taken:{} };
     logs.forEach(l=>{
       if(l.type==="confiscate"){
         const amt = document.getElementById("doubleMode").checked ? l.amt*2 : l.amt;
-        ct.confiscated[l.from] = (ct.confiscated[l.from]||0)+amt;
+        ct.confiscated[l.from] = (ct.confiscated[l.from]||0) + amt;
       }
       if(l.type==="give"){
-        ct.lost[l.from] = (ct.lost[l.from]||0)+l.amt;
-        ct.taken[l.to]  = (ct.taken[l.to]||0)+l.amt;
+        ct.lost[l.from] = (ct.lost[l.from]||0) + l.amt;
+        ct.taken[l.to]  = (ct.taken[l.to] ||0) + l.amt;
       }
     });
-    let html="";
+    let html = "";
     [["confiscated","没収累計"],["lost","失った累計"],["taken","奪った累計"]]
       .forEach(([key,label])=>{
-        html+=`<h5>${label}</h5><table><tr><th>プレイヤー</th><th>Pt</th></tr>`;
+        html += `<h5>${label}</h5><table><tr><th>プレイヤー</th><th>Pt</th></tr>`;
         Object.entries(ct[key]).sort((a,b)=>b[1]-a[1])
-          .forEach(([n,a])=>html+=`<tr><td>${n}</td><td>${a}</td></tr>`);
-        html+="</table>";
+          .forEach(([name,amt])=> html+=`<tr><td>${name}</td><td>${amt}</td></tr>`);
+        html += `</table>`;
       });
     document.getElementById("rankTables").innerHTML = html;
   }
 
+  // --- 年数＆タイマー表示 ---
+  function renderTimers(){
+    // 現在年表示
+    document.getElementById("currentYearDisplay").textContent = `${currentYear}年目`;
+
+    // 経過時間
+    const now = Date.now();
+    const totalMs = now - startTime;
+    const yearMs  = now - currentYearStartTime;
+    document.getElementById("totalTimerDisplay").textContent      = `通算経過: ${formatTime(totalMs)}`;
+    document.getElementById("yearTimerSingleDisplay").textContent = `本年経過: ${formatTime(yearMs)}`;
+
+    // 単年ごとの時間一覧
+    const list = document.getElementById("yearTimesList");
+    list.innerHTML = yearTimes.map((ms, idx) =>
+      `<div>${idx+1}年目: ${formatTime(ms)}</div>`
+    ).join("");
+  }
+  function formatTime(ms){
+    const s = Math.floor(ms/1000);
+    const h = Math.floor(s/3600), m = Math.floor((s%3600)/60), ss = s%60;
+    return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  }
+
+  // --- 共通モーダル ---
   function showModal(html){
     document.getElementById("modalContainer").innerHTML = `
       <div class="modal-backdrop" onclick="closeModal()">
@@ -234,7 +300,9 @@
     document.getElementById("modalContainer").innerHTML = "";
   }
 
-  // --- ポイント操作 ---
+  // --- ポイント操作関数 (openGive, execGive, openConfiscate, execConfiscate, openPurchase, execPurchase, openGiveAll, execGiveAll) ---
+  // （前回と同様、すべてグローバル関数として定義）
+
   function openGive(idx){
     const from = players[idx].name;
     const others = players.filter((_,i)=>i!==idx)
@@ -266,7 +334,7 @@
     const {from,to,amt} = currentOp;
     players.find(p=>p.name===from).pts -= amt;
     players.find(p=>p.name===to).pts   += amt;
-    logs.push({ time:timeStamp(), type:"give", from, to, amt, desc:`${from} → ${to}: ${amt} Pt` });
+    logs.push({ time: timeStamp(), type:"give", from, to, amt, desc:`${from} → ${to}: ${amt} Pt` });
     saveData(); render(); closeModal();
   }
 
@@ -284,7 +352,7 @@
     const amt=300, dbl=document.getElementById("doubleMode").checked;
     const real = dbl?amt*2:amt;
     players.find(p=>p.name===who).pts -= real;
-    logs.push({ time:timeStamp(), type:"confiscate", from:who, to:null, amt, desc:`${who} から没収: ${real} Pt` });
+    logs.push({ time: timeStamp(), type:"confiscate", from:who, to:null, amt, desc:`${who} から没収: ${real} Pt` });
     saveData(); render(); closeModal();
   }
 
@@ -307,7 +375,7 @@
   function execPurchase(){
     const {from,amt} = currentOp;
     players.find(p=>p.name===from).pts += amt;
-    logs.push({ time:timeStamp(), type:"purchase", from, to:null, amt, desc:`${from} が購入: ${amt} Pt` });
+    logs.push({ time: timeStamp(), type:"purchase", from, to:null, amt, desc:`${from} が購入: ${amt} Pt` });
     saveData(); render(); closeModal();
   }
 
@@ -334,22 +402,23 @@
       if(type==="giveAll"){
         players.find(x=>x.name===from).pts   -= amt;
         players.find(x=>x.name===p.name).pts += amt;
-        logs.push({ time:timeStamp(), type:"give", from, to:p.name, amt, desc:`${from} → ${p.name}: ${amt} Pt` });
+        logs.push({ time: timeStamp(), type:"give", from, to:p.name, amt, desc:`${from} → ${p.name}: ${amt} Pt` });
       } else {
         players.find(x=>x.name===from).pts   += amt;
         players.find(x=>x.name===p.name).pts -= amt;
-        logs.push({ time:timeStamp(), type:"give", from:p.name, to:from, amt, desc:`${p.name} → ${from}: ${amt} Pt` });
+        logs.push({ time: timeStamp(), type:"give", from:p.name, to:from, amt, desc:`${p.name} → ${from}: ${amt} Pt` });
       }
     });
     saveData(); render(); closeModal();
   }
 
+  // チャンスカード
   function drawCard(who){
     if(deck.length===0) return;
     const idx = Math.floor(Math.random()*deck.length);
     const card = deck.splice(idx,1)[0];
     rules.push({ title:card.title, rule:card.rule, by:who, deleted:false });
-    logs.push({ time:timeStamp(), type:"card", from:who, to:null, amt:0,
+    logs.push({ time: timeStamp(), type:"card", from:who, to:null, amt:0,
                 desc:`${who} がカード「${card.title}」を引いた` });
     saveData(); render();
   }
@@ -358,6 +427,7 @@
     saveData(); render();
   }
 
+  // ログ取消＋逆転
   function delLog(i){
     const l = logs[i];
     if(l.type==="give"){
@@ -377,13 +447,11 @@
     saveData(); render();
   }
 
-  function showRank(){
-    document.getElementById("rankModal").style.display="block";
-  }
-  function closeRank(){
-    document.getElementById("rankModal").style.display="none";
-  }
+  // ランキングモーダル
+  function showRank(){ document.getElementById("rankModal").style.display="block"; }
+  function closeRank(){ document.getElementById("rankModal").style.display="none"; }
 
+  // 設定モーダル
   function renderSettings(){
     const c = document.getElementById("settingsContent");
     c.innerHTML = cards.map((card,i)=>`
@@ -394,20 +462,11 @@
       </div>
     `).join("");
   }
-  function showSettings(){
-    renderSettings();
-    document.getElementById("settingsModal").style.display="block";
-  }
-  function closeSettings(){
-    document.getElementById("settingsModal").style.display="none";
-  }
-  function delCard(i){
-    cards.splice(i,1);
-    renderSettings();
-  }
+  function showSettings(){ renderSettings(); document.getElementById("settingsModal").style.display="block"; }
+  function closeSettings(){ document.getElementById("settingsModal").style.display="none"; }
+  function delCard(i){ cards.splice(i,1); renderSettings(); }
   document.getElementById("addCardBtn").addEventListener("click",()=>{
-    cards.push({ title:"", rule:"" });
-    renderSettings();
+    cards.push({ title:"", rule:"" }); renderSettings();
   });
   function saveSettings(){
     document.querySelectorAll("#settingsContent > div").forEach(div=>{
@@ -416,32 +475,41 @@
       cards[i].rule  = div.querySelector(".card-rule").value;
     });
     deck = cards.slice();
-    saveData();
-    closeSettings();
-    render();
+    saveData(); closeSettings(); render();
   }
 
-  function resetAll(){
+  // 次の年へ
+  document.getElementById("nextYearBtn").addEventListener("click",()=>{
+    // 単年時間を記録
+    const now = Date.now();
+    yearTimes.push(now - currentYearStartTime);
+    currentYear += 1;
+    currentYearStartTime = now;
+    saveData(); render();
+  });
+
+  // リセット
+  document.getElementById("resetBtn").addEventListener("click",()=>{
     if(!confirm("全データをリセットしますか？")) return;
     localStorage.clear();
-    loadData();
-    saveData();
-    render();
-  }
+    loadData(); saveData(); render();
+  });
 
   function timeStamp(){
     const d=new Date();
     return `${d.getHours()}時${d.getMinutes()}分${d.getSeconds()}秒`;
   }
 
+  // 初期化
   document.addEventListener("DOMContentLoaded",()=>{
     loadData();
     render();
+    // タイマー更新
+    setInterval(renderTimers, 1000);
     document.getElementById("doubleMode")
       .addEventListener("change", ()=>{ saveData(); render(); });
     document.getElementById("rankBtn").addEventListener("click", showRank);
     document.getElementById("settingsBtn").addEventListener("click", showSettings);
-    document.getElementById("resetBtn").addEventListener("click", resetAll);
   });
 </script>
 
